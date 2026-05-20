@@ -1,542 +1,2986 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Employee Onboarding - Code Origin.Ai Private Limited</title>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
-<style>
-:root{
-  --primary:#0d47a1;--primary-hover:#1565c0;--primary-light:#e3f2fd;
-  --accent:#1976d2;--accent-light:#bbdefb;
-  --success:#2e7d32;--success-light:#e8f5e9;
-  --danger:#c62828;--danger-light:#ffebee;
-  --warning:#f57f17;--warning-light:#fff8e1;
-  --bg:#f5f7fa;--surface:#ffffff;
-  --text:#1a1a2e;--text-secondary:#546e7a;--text-light:#90a4ae;
-  --border:#e0e6ed;--border-light:#f0f4f8;
-  --shadow-sm:0 1px 3px rgba(0,0,0,0.06);
-  --shadow:0 4px 16px rgba(0,0,0,0.08);
-  --shadow-lg:0 12px 40px rgba(0,0,0,0.12);
-  --radius:10px;--radius-lg:16px;
-  --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Onboarding - Code Origin.Ai Private Limited</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --primary: #1e3a5f;
+            --primary-light: #2d5a8e;
+            --accent: #0ea5e9;
+            --accent-light: #38bdf8;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --sidebar-width: 260px;
+            --header-height: 64px;
+            --radius: 8px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --transition: all 0.3s ease;
+        }
 
-/* === HEADER === */
-.app-header{
-  background:linear-gradient(135deg,#0d47a1 0%,#1565c0 50%,#1976d2 100%);
-  padding:0 32px;height:72px;display:flex;align-items:center;justify-content:space-between;
-  box-shadow:0 4px 24px rgba(13,71,161,0.25);position:sticky;top:0;z-index:100;
-}
-.app-header .brand{display:flex;align-items:center;gap:14px;}
-.app-header .brand-icon{
-  width:42px;height:42px;background:rgba(255,255,255,0.15);border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-weight:800;font-size:16px;color:#fff;letter-spacing:-0.5px;
-  backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.1);
-}
-.app-header .brand-text h1{font-size:18px;font-weight:700;color:#fff;letter-spacing:-0.3px;}
-.app-header .brand-text span{font-size:11px;color:rgba(255,255,255,0.75);letter-spacing:0.3px;}
-.app-header .header-actions{display:flex;gap:10px;align-items:center;}
 
-/* === BUTTONS === */
-.btn{
-  display:inline-flex;align-items:center;gap:7px;padding:9px 18px;
-  border:none;border-radius:8px;font-size:13px;font-weight:600;
-  cursor:pointer;transition:all 0.2s ease;text-decoration:none;
-  font-family:var(--font);white-space:nowrap;
-}
-.btn:active{transform:scale(0.97);}
-.btn-primary{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(25,118,210,0.3);}
-.btn-primary:hover{background:var(--primary-hover);box-shadow:0 4px 12px rgba(25,118,210,0.4);}
-.btn-success{background:var(--success);color:#fff;box-shadow:0 2px 8px rgba(46,125,50,0.3);}
-.btn-success:hover{background:#1b5e20;}
-.btn-danger{background:var(--danger);color:#fff;}
-.btn-danger:hover{background:#b71c1c;}
-.btn-outline{background:transparent;color:var(--accent);border:1.5px solid var(--border);}
-.btn-outline:hover{background:var(--primary-light);border-color:var(--accent);}
-.btn-ghost{background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(4px);}
-.btn-ghost:hover{background:rgba(255,255,255,0.2);}
-.btn-sm{padding:6px 12px;font-size:12px;}
-.btn-icon{width:34px;height:34px;padding:0;display:grid;place-items:center;border-radius:8px;background:var(--surface);border:1px solid var(--border);}
-.btn-icon:hover{background:var(--primary-light);border-color:var(--accent);color:var(--accent);}
-.btn-icon.danger:hover{background:var(--danger-light);border-color:var(--danger);color:var(--danger);}
+        [data-theme="dark"] {
+            --primary: #0f2440;
+            --primary-light: #1e3a5f;
+            --bg: #0f172a;
+            --white: #1e293b;
+            --gray-50: #1e293b;
+            --gray-100: #334155;
+            --gray-200: #475569;
+            --gray-300: #64748b;
+            --gray-400: #94a3b8;
+            --gray-500: #cbd5e1;
+            --gray-600: #e2e8f0;
+            --gray-700: #f1f5f9;
+            --gray-800: #f8fafc;
+            --gray-900: #ffffff;
+            --shadow: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.3);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.3);
+        }
 
-/* === CONTAINER === */
-.container{max-width:1360px;margin:0 auto;padding:28px 32px 60px;}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* === STATS === */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:28px;}
-.stat-card{
-  background:var(--surface);border-radius:var(--radius-lg);padding:22px 24px;
-  box-shadow:var(--shadow-sm);border:1px solid var(--border-light);
-  position:relative;overflow:hidden;transition:all 0.2s;
-}
-.stat-card:hover{box-shadow:var(--shadow);transform:translateY(-2px);}
-.stat-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;border-radius:0 4px 4px 0;}
-.stat-card.blue::before{background:var(--accent);}
-.stat-card.green::before{background:var(--success);}
-.stat-card.orange::before{background:var(--warning);}
-.stat-card.purple::before{background:#7b1fa2;}
-.stat-card .stat-value{font-size:32px;font-weight:800;color:var(--text);letter-spacing:-1px;}
-.stat-card .stat-label{font-size:12px;color:var(--text-secondary);margin-top:4px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;}
-.stat-card .stat-icon{position:absolute;top:18px;right:18px;width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:18px;}
-.stat-card.blue .stat-icon{background:var(--primary-light);color:var(--accent);}
-.stat-card.green .stat-icon{background:var(--success-light);color:var(--success);}
-.stat-card.orange .stat-icon{background:var(--warning-light);color:var(--warning);}
-.stat-card.purple .stat-icon{background:#f3e5f5;color:#7b1fa2;}
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--gray-800);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
 
-/* === TABLE CARD === */
-.main-card{background:var(--surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid var(--border-light);overflow:hidden;}
-.main-card .card-top{padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--border-light);}
-.main-card .card-top h2{font-size:17px;font-weight:700;color:var(--text);}
-.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
-.search-input{
-  padding:9px 14px 9px 36px;border:1.5px solid var(--border);border-radius:8px;
-  font-size:13px;width:260px;outline:none;transition:all 0.2s;
-  background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2390a4ae' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242.656a5 5 0 1 1 0-10 5 5 0 0 1 0 10z'/%3E%3C/svg%3E") no-repeat 12px center;
-  font-family:var(--font);
-}
-.search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(25,118,210,0.1);background-color:var(--surface);}
-.filter-select{
-  padding:9px 14px;border:1.5px solid var(--border);border-radius:8px;
-  font-size:13px;outline:none;background:var(--bg);cursor:pointer;font-family:var(--font);
-}
-.filter-select:focus{border-color:var(--accent);}
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary) 0%, #0f2440 100%);
+            z-index: 1000;
+            transition: var(--transition);
+            overflow-y: auto;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
 
-/* === TABLE === */
-.table-wrap{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;}
-thead th{
-  padding:14px 16px;text-align:left;font-size:11px;font-weight:700;
-  text-transform:uppercase;letter-spacing:0.6px;color:var(--text-secondary);
-  background:var(--bg);border-bottom:1px solid var(--border);white-space:nowrap;
-}
-tbody td{padding:14px 16px;font-size:13px;border-bottom:1px solid var(--border-light);vertical-align:middle;}
-tbody tr{transition:background 0.15s;}
-tbody tr:hover{background:var(--primary-light);}
-.emp-name{font-weight:600;color:var(--text);}
-.emp-role{font-size:11px;color:var(--text-light);margin-top:1px;}
-.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;}
-.badge::before{content:'';width:6px;height:6px;border-radius:50%;}
-.badge-active{background:var(--success-light);color:var(--success);}
-.badge-active::before{background:var(--success);}
-.badge-probation{background:var(--warning-light);color:var(--warning);}
-.badge-probation::before{background:var(--warning);}
-.badge-inactive{background:var(--danger-light);color:var(--danger);}
-.badge-inactive::before{background:var(--danger);}
-.badge-resigned{background:#f3e5f5;color:#7b1fa2;}
-.badge-resigned::before{background:#7b1fa2;}
-.actions-cell{display:flex;gap:6px;}
-.empty-state{text-align:center;padding:60px 20px;}
-.empty-state svg{width:80px;height:80px;margin-bottom:16px;opacity:0.4;}
-.empty-state h3{font-size:16px;color:var(--text-secondary);margin-bottom:6px;}
-.empty-state p{font-size:13px;color:var(--text-light);}
+        .sidebar-brand {
+            padding: 24px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
 
-/* === MODAL === */
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:flex-start;justify-content:center;z-index:1000;padding:40px 20px;overflow-y:auto;backdrop-filter:blur(3px);}
-.modal-backdrop.open{display:flex;}
-.modal{background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:860px;box-shadow:var(--shadow-lg);animation:modalIn 0.25s ease;}
-@keyframes modalIn{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
-.modal-head{padding:22px 28px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:1;border-radius:var(--radius-lg) var(--radius-lg) 0 0;}
-.modal-head h2{font-size:18px;font-weight:700;}
-.modal-close{width:34px;height:34px;border-radius:50%;border:none;background:var(--bg);cursor:pointer;font-size:20px;display:grid;place-items:center;transition:all 0.2s;}
-.modal-close:hover{background:var(--danger-light);color:var(--danger);}
-.modal-body{padding:28px;}
-.form-section{margin-bottom:28px;}
-.form-section-title{font-size:13px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--primary-light);display:flex;align-items:center;gap:8px;}
-.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;}
-.form-field{display:flex;flex-direction:column;gap:5px;}
-.form-field label{font-size:12px;font-weight:600;color:var(--text-secondary);}
-.form-field input,.form-field select,.form-field textarea{
-  padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;
-  font-size:14px;font-family:var(--font);outline:none;transition:all 0.2s;background:var(--surface);
-}
-.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(25,118,210,0.08);}
-.form-field textarea{resize:vertical;min-height:70px;}
-.form-field.full{grid-column:1/-1;}
-.checkbox-field{flex-direction:row;align-items:center;gap:8px;}
-.checkbox-field input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);cursor:pointer;}
-.checkbox-field label{cursor:pointer;font-size:13px;font-weight:500;color:var(--text);}
-.modal-foot{padding:18px 28px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end;gap:10px;background:var(--bg);border-radius:0 0 var(--radius-lg) var(--radius-lg);}
 
-/* === DETAIL VIEW === */
-.detail-back{margin-bottom:20px;}
-.profile-card{background:var(--surface);border-radius:var(--radius-lg);padding:28px 32px;box-shadow:var(--shadow-sm);border:1px solid var(--border-light);margin-bottom:20px;display:flex;align-items:center;gap:22px;}
-.profile-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center;color:#fff;font-size:24px;font-weight:800;flex-shrink:0;}
-.profile-info h2{font-size:22px;font-weight:700;margin-bottom:3px;}
-.profile-info p{font-size:13px;color:var(--text-secondary);}
-.profile-actions{margin-left:auto;display:flex;gap:8px;}
-.info-card{background:var(--surface);border-radius:var(--radius-lg);padding:24px 28px;box-shadow:var(--shadow-sm);border:1px solid var(--border-light);margin-bottom:16px;}
-.info-card h3{font-size:13px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--primary-light);}
-.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
-.info-item .info-label{font-size:11px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.4px;}
-.info-item .info-value{font-size:14px;font-weight:500;color:var(--text);margin-top:2px;}
+        .sidebar-brand h2 {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
 
-/* === TOAST === */
-.toast{position:fixed;bottom:24px;right:24px;padding:14px 22px;border-radius:10px;color:#fff;font-size:13px;font-weight:600;z-index:2000;animation:toastIn 0.3s ease;box-shadow:var(--shadow-lg);}
-.toast.success{background:var(--success);}
-.toast.error{background:var(--danger);}
-@keyframes toastIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+        .sidebar-brand p {
+            color: rgba(255,255,255,0.6);
+            font-size: 11px;
+            margin-top: 4px;
+            letter-spacing: 0.3px;
+        }
 
-/* === RESPONSIVE === */
-@media(max-width:768px){
-  .app-header{padding:0 16px;height:auto;padding:14px 16px;flex-wrap:wrap;gap:12px;}
-  .container{padding:16px;}
-  .stats-grid{grid-template-columns:repeat(2,1fr);}
-  .main-card .card-top{flex-direction:column;align-items:stretch;}
-  .search-input{width:100%;}
-  .profile-card{flex-direction:column;text-align:center;}
-  .profile-actions{margin-left:0;}
-  .form-row{grid-template-columns:1fr;}
-}
-</style>
+        .sidebar-brand .brand-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 20px;
+            color: white;
+        }
+
+        .sidebar-nav {
+            padding: 16px 12px;
+        }
+
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 4px;
+        }
+
+        .sidebar-nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: #ffffff;
+        }
+
+        .sidebar-nav-item.active {
+            background: rgba(14, 165, 233, 0.2);
+            color: var(--accent-light);
+            border-left: 3px solid var(--accent);
+        }
+
+        .sidebar-nav-item i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+
+        .sidebar-section-title {
+            color: rgba(255,255,255,0.4);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 16px 16px 8px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        /* Header */
+        .header {
+            height: var(--header-height);
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+
+        .breadcrumb a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .breadcrumb span {
+            color: var(--gray-800);
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+
+        .dark-mode-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--gray-200);
+            background: var(--white);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            color: var(--gray-600);
+            font-size: 16px;
+        }
+
+        .dark-mode-toggle:hover {
+            background: var(--gray-100);
+            transform: rotate(15deg);
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 32px;
+        }
+
+        /* Page Title */
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: var(--gray-500);
+            margin-bottom: 24px;
+        }
+
+        /* Stat Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--gray-200);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            border-radius: 12px 12px 0 0;
+        }
+
+
+        .stat-card:nth-child(2)::before {
+            background: linear-gradient(90deg, var(--success), #34d399);
+        }
+
+        .stat-card:nth-child(3)::before {
+            background: linear-gradient(90deg, var(--warning), #fbbf24);
+        }
+
+        .stat-card:nth-child(4)::before {
+            background: linear-gradient(90deg, var(--info), #60a5fa);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .stat-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+        }
+
+        .stat-card:nth-child(2) .stat-card-icon {
+            background: linear-gradient(135deg, var(--success), #34d399);
+        }
+
+        .stat-card:nth-child(3) .stat-card-icon {
+            background: linear-gradient(135deg, var(--warning), #fbbf24);
+        }
+
+        .stat-card:nth-child(4) .stat-card-icon {
+            background: linear-gradient(135deg, var(--info), #60a5fa);
+        }
+
+        .stat-card-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--gray-900);
+            line-height: 1;
+        }
+
+        .stat-card-label {
+            font-size: 13px;
+            color: var(--gray-500);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-card-value {
+            animation: countUp 0.6s ease-out;
+        }
+
+
+        /* Table Styles */
+        .table-container {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-200);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .table-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 8px 12px 8px 36px;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            width: 240px;
+            transition: var(--transition);
+            background: var(--gray-50);
+            color: var(--gray-800);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+            background: var(--white);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            font-size: 13px;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #0284c7);
+            color: white;
+            box-shadow: 0 2px 4px rgba(14, 165, 233, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(14, 165, 233, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--gray-300);
+            color: var(--gray-700);
+        }
+
+        .btn-outline:hover {
+            background: var(--gray-100);
+            border-color: var(--gray-400);
+        }
+
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            border: 1px solid var(--gray-200);
+            background: var(--white);
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-icon:hover {
+            background: var(--gray-100);
+            color: var(--gray-800);
+        }
+
+
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-500);
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .data-table td {
+            padding: 12px 16px;
+            font-size: 13px;
+            color: var(--gray-700);
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .data-table tr:nth-child(even) {
+            background: var(--gray-50);
+        }
+
+        .data-table tr:hover {
+            background: rgba(14, 165, 233, 0.05);
+        }
+
+        .data-table .emp-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .data-table .emp-id {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+        }
+
+        .status-on-leave {
+            background: rgba(245, 158, 11, 0.1);
+            color: #d97706;
+        }
+
+        .status-resigned {
+            background: rgba(107, 114, 128, 0.1);
+            color: #4b5563;
+        }
+
+        .status-terminated {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 4px;
+        }
+
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .pagination-info {
+            font-size: 13px;
+            color: var(--gray-500);
+        }
+
+        .pagination-btns {
+            display: flex;
+            gap: 4px;
+        }
+
+        .pagination-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--gray-700);
+            background: var(--white);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .pagination-btn:hover {
+            background: var(--gray-100);
+        }
+
+        .pagination-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow: hidden;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-overlay.show .modal {
+            transform: translateY(0);
+        }
+
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            max-height: calc(90vh - 140px);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 16px 24px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        /* Form Tabs */
+        .form-tabs {
+            display: flex;
+            gap: 4px;
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 0;
+        }
+
+        .form-tab {
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--gray-500);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: var(--transition);
+            white-space: nowrap;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-tab:hover {
+            color: var(--gray-700);
+        }
+
+        .form-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: var(--transition);
+            background: var(--gray-50);
+            color: var(--gray-800);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+            background: var(--white);
+        }
+
+        .form-group input.valid {
+            border-color: var(--success);
+        }
+
+        .form-group input.invalid {
+            border-color: var(--danger);
+        }
+
+        .form-group .validation-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .checkbox-item:hover {
+            background: var(--gray-50);
+            border-color: var(--accent);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent);
+        }
+
+        .checkbox-item label {
+            font-size: 13px;
+            color: var(--gray-700);
+            cursor: pointer;
+            margin: 0;
+            text-transform: none;
+            letter-spacing: 0;
+            font-weight: 400;
+        }
+
+
+        /* Employee Profile View */
+        .profile-card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            padding: 32px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 12px;
+            border: 3px solid rgba(255,255,255,0.3);
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .profile-designation {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .profile-body {
+            padding: 24px;
+        }
+
+        .profile-section {
+            margin-bottom: 24px;
+        }
+
+        .profile-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .profile-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .profile-info-item {
+            padding: 8px 0;
+        }
+
+        .profile-info-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: var(--gray-500);
+            margin-bottom: 2px;
+        }
+
+        .profile-info-value {
+            font-size: 14px;
+            color: var(--gray-800);
+            font-weight: 500;
+        }
+
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 64px 24px;
+        }
+
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 32px;
+            color: var(--gray-400);
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            color: var(--gray-500);
+            margin-bottom: 24px;
+        }
+
+        /* Confirm Dialog */
+        .confirm-dialog {
+            text-align: center;
+            padding: 24px;
+        }
+
+        .confirm-dialog-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 28px;
+            color: var(--danger);
+        }
+
+        .confirm-dialog h3 {
+            font-size: 18px;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .confirm-dialog p {
+            font-size: 14px;
+            color: var(--gray-500);
+            margin-bottom: 24px;
+        }
+
+        .confirm-dialog-btns {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+
+        /* Footer */
+        .footer {
+            padding: 24px 32px;
+            border-top: 1px solid var(--gray-200);
+            text-align: center;
+            font-size: 12px;
+            color: var(--gray-500);
+            margin-top: 32px;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            padding: 12px 20px;
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-weight: 500;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: slideInRight 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .toast-success {
+            background: var(--success);
+        }
+
+        .toast-error {
+            background: var(--danger);
+        }
+
+        .toast-info {
+            background: var(--info);
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Print Styles */
+        @media print {
+            .sidebar, .header, .modal-overlay, .toast-container,
+            .table-header, .pagination, .action-btns, .footer,
+            .btn, .dark-mode-toggle {
+                display: none !important;
+            }
+            .main-content {
+                margin-left: 0 !important;
+            }
+            .content-area {
+                padding: 0 !important;
+            }
+            .profile-card {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+            }
+            .profile-header {
+                background: #1e3a5f !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            body {
+                background: white !important;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .content-area {
+                padding: 16px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .modal {
+                width: 95%;
+                max-height: 95vh;
+            }
+        }
+
+        /* Glassmorphism card effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        [data-theme="dark"] .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Section divider in view */
+        .section-divider {
+            height: 1px;
+            background: var(--gray-200);
+            margin: 16px 0;
+        }
+
+        /* File input styling */
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-<div id="app"></div>
-<script>
-// ======== DATA LAYER ========
-const DB_KEY = 'codeorigin_onboarding_db';
-const getDB = () => { try { return JSON.parse(localStorage.getItem(DB_KEY)) || []; } catch { return []; } };
-const saveDB = (d) => localStorage.setItem(DB_KEY, JSON.stringify(d));
-const genId = () => 'E' + Date.now().toString(36) + Math.random().toString(36).substr(2,5);
-const initials = (n) => n.split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
 
-// ======== EXCEL EXPORT (XLSX format - opens in Excel, not Notepad) ========
-function exportToExcel() {
-  const data = getDB();
-  if (!data.length) { showToast('No records to export','error'); return; }
-  const rows = data.map(e => ({
-    'Employee ID': e.empId, 'Full Name': e.fullName, 'Date of Birth': e.dob, 'Gender': e.gender,
-    'Marital Status': e.maritalStatus, 'Blood Group': e.bloodGroup, 'Phone': e.phone,
-    'Official Email': e.email, 'Personal Email': e.personalEmail,
-    'Address': e.address, 'City': e.city, 'State': e.state, 'Pincode': e.pincode, 'Country': e.country,
-    'Aadhar Number': e.aadhar, 'PAN Number': e.pan, 'Passport': e.passport, 'Driving License': e.drivingLicense,
-    'Department': e.department, 'Designation': e.designation, 'Date of Joining': e.doj,
-    'Employment Type': e.employmentType, 'Reporting Manager': e.reportingManager,
-    'Work Location': e.workLocation, 'Status': e.status, 'Probation End': e.probationEnd,
-    'Previous Company': e.prevCompany, 'Previous Designation': e.prevDesignation, 'Experience (Yrs)': e.totalExp,
-    'Qualification': e.qualification, 'University': e.university, 'Year of Passing': e.yearOfPassing,
-    'Emergency Name': e.emergencyName, 'Emergency Relation': e.emergencyRelation, 'Emergency Phone': e.emergencyPhone,
-    'Offer Letter': e.offerLetter?'Yes':'No', 'ID Card': e.idCard?'Yes':'No', 'NDA Signed': e.ndaSigned?'Yes':'No',
-    'Laptop Assigned': e.laptopAssigned?'Yes':'No', 'Laptop Serial': e.laptopSerial,
-    'Official Email Given': e.officialEmail, 'Slack/Teams': e.slackAdded?'Yes':'No', 'Notes': e.notes
-  }));
-  const ws = XLSX.utils.json_to_sheet(rows);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Employees');
-  // Auto-size columns
-  const colWidths = Object.keys(rows[0]).map(k => ({ wch: Math.max(k.length + 2, ...rows.map(r => String(r[k]||'').length + 2)) }));
-  ws['!cols'] = colWidths;
-  XLSX.writeFile(wb, `CodeOrigin_Employees_${new Date().toISOString().slice(0,10)}.xlsx`);
-  showToast('Excel file downloaded successfully!','success');
-}
 
-// ======== TOAST ========
-function showToast(msg, type='success') {
-  const t = document.createElement('div');
-  t.className = 'toast ' + type;
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3000);
-}
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
 
-// ======== STATE ========
-let view = 'list', editId = null, viewId = null, search = '', statusFilter = 'all';
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">
+                <i class="fas fa-code"></i>
+            </div>
+            <h2>Code Origin.Ai</h2>
+            <p>Private Limited</p>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="sidebar-section-title">Main</div>
+            <a class="sidebar-nav-item active" onclick="showPage('dashboard')">
+                <i class="fas fa-chart-pie"></i> Dashboard
+            </a>
+            <a class="sidebar-nav-item" onclick="showPage('employees')">
+                <i class="fas fa-users"></i> Employees
+            </a>
+            <a class="sidebar-nav-item" onclick="showPage('add')">
+                <i class="fas fa-user-plus"></i> Add Employee
+            </a>
+            <div class="sidebar-section-title">Tools</div>
+            <a class="sidebar-nav-item" onclick="exportToExcel()">
+                <i class="fas fa-file-excel"></i> Export Excel
+            </a>
+            <a class="sidebar-nav-item" onclick="document.getElementById('importFile').click()">
+                <i class="fas fa-file-import"></i> Import Excel
+            </a>
+            <input type="file" id="importFile" accept=".xlsx,.xls" style="display:none" onchange="importFromExcel(event)">
+        </nav>
+    </aside>
 
-// ======== RENDER ENGINE ========
-function render() {
-  document.getElementById('app').innerHTML = renderHeader() + '<div class="container">' + (view === 'detail' ? renderDetail() : renderDashboard()) + '</div>' + renderModal();
-}
 
-function renderHeader() {
-  return `<header class="app-header">
-    <div class="brand">
-      <div class="brand-icon">CO</div>
-      <div class="brand-text">
-        <h1>Code Origin.Ai Pvt Ltd</h1>
-        <span>Employee Onboarding Portal</span>
-      </div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="breadcrumb" id="breadcrumb">
+                    <a href="#" onclick="showPage('dashboard')">Home</a>
+                    <i class="fas fa-chevron-right" style="font-size:10px"></i>
+                    <span>Dashboard</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                    <i class="fas fa-moon" id="darkModeIcon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Dashboard Page -->
+        <div class="content-area page" id="page-dashboard">
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-subtitle">Employee onboarding overview and statistics</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-card-value" id="statTotal">0</div>
+                            <div class="stat-card-label">Total Employees</div>
+                        </div>
+                        <div class="stat-card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-card-value" id="statActive">0</div>
+                            <div class="stat-card-label">Active Employees</div>
+                        </div>
+                        <div class="stat-card-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-card-value" id="statLeave">0</div>
+                            <div class="stat-card-label">On Leave</div>
+                        </div>
+                        <div class="stat-card-icon">
+                            <i class="fas fa-calendar-minus"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-card-value" id="statNew">0</div>
+                            <div class="stat-card-label">New This Month</div>
+                        </div>
+                        <div class="stat-card-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Employees Table on Dashboard -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3 style="font-size:16px;font-weight:600;color:var(--gray-900)">Recent Employees</h3>
+                    <button class="btn btn-primary" onclick="showPage('employees')">
+                        <i class="fas fa-arrow-right"></i> View All
+                    </button>
+                </div>
+                <div id="recentTableBody"></div>
+            </div>
+        </div>
+
+
+        <!-- Employees Page -->
+        <div class="content-area page" id="page-employees" style="display:none">
+            <h1 class="page-title">Employees</h1>
+            <p class="page-subtitle">Manage all employee records</p>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-header-left">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search employees..." oninput="filterEmployees()">
+                        </div>
+                        <select class="filter-select" id="filterStatus" onchange="filterEmployees()">
+                            <option value="">All Status</option>
+                            <option value="Active">Active</option>
+                            <option value="On Leave">On Leave</option>
+                            <option value="Resigned">Resigned</option>
+                            <option value="Terminated">Terminated</option>
+                        </select>
+                        <select class="filter-select" id="filterDepartment" onchange="filterEmployees()">
+                            <option value="">All Departments</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="showPage('add')">
+                            <i class="fas fa-plus"></i> Add Employee
+                        </button>
+                    </div>
+                </div>
+                <div id="employeeTableBody"></div>
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </div>
+
+
+        <!-- Add/Edit Employee Page -->
+        <div class="content-area page" id="page-add" style="display:none">
+            <h1 class="page-title" id="formTitle">Add New Employee</h1>
+            <p class="page-subtitle" id="formSubtitle">Fill in the details to onboard a new employee</p>
+
+            <div class="table-container" style="padding:24px">
+                <div class="form-tabs">
+                    <button class="form-tab active" onclick="switchTab('personal')">Personal</button>
+                    <button class="form-tab" onclick="switchTab('address')">Address</button>
+                    <button class="form-tab" onclick="switchTab('identity')">Identity</button>
+                    <button class="form-tab" onclick="switchTab('employment')">Employment</button>
+                    <button class="form-tab" onclick="switchTab('experience')">Experience</button>
+                    <button class="form-tab" onclick="switchTab('education')">Education</button>
+                    <button class="form-tab" onclick="switchTab('emergency')">Emergency</button>
+                    <button class="form-tab" onclick="switchTab('checklist')">Checklist</button>
+                    <button class="form-tab" onclick="switchTab('notes')">Notes</button>
+                </div>
+
+                <form id="employeeForm" onsubmit="saveEmployee(event)">
+                    <input type="hidden" id="editId" value="">
+
+                    <!-- Personal Tab -->
+                    <div class="tab-content active" id="tab-personal">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Full Name *</label>
+                                <input type="text" id="fullName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Father's Name</label>
+                                <input type="text" id="fatherName">
+                            </div>
+                            <div class="form-group">
+                                <label>Date of Birth</label>
+                                <input type="date" id="dob">
+                            </div>
+                            <div class="form-group">
+                                <label>Gender</label>
+                                <select id="gender">
+                                    <option value="">Select</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Marital Status</label>
+                                <select id="maritalStatus">
+                                    <option value="">Select</option>
+                                    <option value="Single">Single</option>
+                                    <option value="Married">Married</option>
+                                    <option value="Divorced">Divorced</option>
+                                    <option value="Widowed">Widowed</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Blood Group</label>
+                                <select id="bloodGroup">
+                                    <option value="">Select</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Nationality</label>
+                                <input type="text" id="nationality" value="Indian">
+                            </div>
+                            <div class="form-group">
+                                <label>Religion</label>
+                                <input type="text" id="religion">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone *</label>
+                                <input type="tel" id="phone" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Alternate Phone</label>
+                                <input type="tel" id="altPhone">
+                            </div>
+                            <div class="form-group">
+                                <label>Personal Email</label>
+                                <input type="email" id="personalEmail">
+                            </div>
+                            <div class="form-group">
+                                <label>Official Email</label>
+                                <input type="email" id="officialEmail">
+                            </div>
+                            <div class="form-group">
+                                <label>Profile Photo URL</label>
+                                <input type="url" id="profilePhoto" placeholder="https://...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Address Tab -->
+                    <div class="tab-content" id="tab-address">
+                        <div class="form-grid">
+                            <div class="form-group" style="grid-column: 1/-1">
+                                <label>Current Address</label>
+                                <textarea id="currentAddress" rows="2"></textarea>
+                            </div>
+                            <div class="form-group" style="grid-column: 1/-1">
+                                <label>Permanent Address</label>
+                                <textarea id="permanentAddress" rows="2"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" id="city">
+                            </div>
+                            <div class="form-group">
+                                <label>State</label>
+                                <input type="text" id="state">
+                            </div>
+                            <div class="form-group">
+                                <label>Pincode</label>
+                                <input type="text" id="pincode">
+                            </div>
+                            <div class="form-group">
+                                <label>Country</label>
+                                <input type="text" id="country" value="India">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Identity Tab -->
+                    <div class="tab-content" id="tab-identity">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Aadhar Number</label>
+                                <input type="text" id="aadhar" maxlength="12" placeholder="XXXX XXXX XXXX">
+                            </div>
+                            <div class="form-group">
+                                <label>PAN Number</label>
+                                <input type="text" id="pan" maxlength="10" placeholder="ABCDE1234F" style="text-transform:uppercase">
+                            </div>
+                            <div class="form-group">
+                                <label>Passport Number</label>
+                                <input type="text" id="passport">
+                            </div>
+                            <div class="form-group">
+                                <label>Passport Expiry</label>
+                                <input type="date" id="passportExpiry">
+                            </div>
+                            <div class="form-group">
+                                <label>Driving License</label>
+                                <input type="text" id="drivingLicense">
+                            </div>
+                            <div class="form-group">
+                                <label>Voter ID</label>
+                                <input type="text" id="voterId">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Employment Tab -->
+                    <div class="tab-content" id="tab-employment">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Employee ID</label>
+                                <input type="text" id="employeeId" readonly placeholder="Auto-generated">
+                            </div>
+                            <div class="form-group">
+                                <label>Department *</label>
+                                <select id="department" required>
+                                    <option value="">Select Department</option>
+                                    <option value="Engineering">Engineering</option>
+                                    <option value="Design">Design</option>
+                                    <option value="Product">Product</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Sales">Sales</option>
+                                    <option value="HR">HR</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="Operations">Operations</option>
+                                    <option value="Support">Support</option>
+                                    <option value="QA">QA</option>
+                                    <option value="DevOps">DevOps</option>
+                                    <option value="Data Science">Data Science</option>
+                                    <option value="Admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Designation *</label>
+                                <input type="text" id="designation" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Date of Joining *</label>
+                                <input type="date" id="doj" required>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Employment Type</label>
+                                <select id="employmentType">
+                                    <option value="Full-time">Full-time</option>
+                                    <option value="Part-time">Part-time</option>
+                                    <option value="Contract">Contract</option>
+                                    <option value="Intern">Intern</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Shift</label>
+                                <select id="shift">
+                                    <option value="General">General</option>
+                                    <option value="Morning">Morning</option>
+                                    <option value="Evening">Evening</option>
+                                    <option value="Night">Night</option>
+                                    <option value="Rotational">Rotational</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Reporting Manager</label>
+                                <input type="text" id="reportingManager">
+                            </div>
+                            <div class="form-group">
+                                <label>Work Location</label>
+                                <input type="text" id="workLocation">
+                            </div>
+                            <div class="form-group">
+                                <label>Office Branch</label>
+                                <input type="text" id="officeBranch">
+                            </div>
+                            <div class="form-group">
+                                <label>Employee Status</label>
+                                <select id="empStatus">
+                                    <option value="Active">Active</option>
+                                    <option value="On Leave">On Leave</option>
+                                    <option value="Resigned">Resigned</option>
+                                    <option value="Terminated">Terminated</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Probation End Date</label>
+                                <input type="date" id="probationEnd">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirmation Date</label>
+                                <input type="date" id="confirmationDate">
+                            </div>
+                            <div class="form-group">
+                                <label>CTC / Package (LPA)</label>
+                                <input type="text" id="ctc" placeholder="e.g., 12.5">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Experience Tab -->
+                    <div class="tab-content" id="tab-experience">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Previous Company</label>
+                                <input type="text" id="prevCompany">
+                            </div>
+                            <div class="form-group">
+                                <label>Previous Designation</label>
+                                <input type="text" id="prevDesignation">
+                            </div>
+                            <div class="form-group">
+                                <label>Previous CTC (LPA)</label>
+                                <input type="text" id="prevCtc">
+                            </div>
+                            <div class="form-group">
+                                <label>Total Experience (Years)</label>
+                                <input type="text" id="totalExperience" placeholder="e.g., 3.5">
+                            </div>
+                            <div class="form-group" style="grid-column: 1/-1">
+                                <label>Reason for Leaving</label>
+                                <textarea id="reasonLeaving" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Education Tab -->
+                    <div class="tab-content" id="tab-education">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Highest Qualification</label>
+                                <select id="qualification">
+                                    <option value="">Select</option>
+                                    <option value="10th">10th</option>
+                                    <option value="12th">12th</option>
+                                    <option value="Diploma">Diploma</option>
+                                    <option value="B.Tech">B.Tech</option>
+                                    <option value="B.E.">B.E.</option>
+                                    <option value="B.Sc">B.Sc</option>
+                                    <option value="BCA">BCA</option>
+                                    <option value="BBA">BBA</option>
+                                    <option value="B.Com">B.Com</option>
+                                    <option value="M.Tech">M.Tech</option>
+                                    <option value="MBA">MBA</option>
+                                    <option value="MCA">MCA</option>
+                                    <option value="M.Sc">M.Sc</option>
+                                    <option value="PhD">PhD</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Specialization</label>
+                                <input type="text" id="specialization" placeholder="e.g., Computer Science">
+                            </div>
+                            <div class="form-group">
+                                <label>University / Institute</label>
+                                <input type="text" id="university">
+                            </div>
+                            <div class="form-group">
+                                <label>Year of Passing</label>
+                                <input type="text" id="yearPassing" placeholder="e.g., 2022">
+                            </div>
+                            <div class="form-group">
+                                <label>Percentage / CGPA</label>
+                                <input type="text" id="percentage" placeholder="e.g., 8.5 CGPA or 85%">
+                            </div>
+                            <div class="form-group" style="grid-column: 1/-1">
+                                <label>Additional Certifications</label>
+                                <textarea id="certifications" rows="2" placeholder="AWS, Azure, Google Cloud, etc."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Emergency Tab -->
+                    <div class="tab-content" id="tab-emergency">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Emergency Contact Name</label>
+                                <input type="text" id="emergencyName">
+                            </div>
+                            <div class="form-group">
+                                <label>Relation</label>
+                                <input type="text" id="emergencyRelation" placeholder="e.g., Father, Spouse">
+                            </div>
+                            <div class="form-group">
+                                <label>Emergency Phone</label>
+                                <input type="tel" id="emergencyPhone">
+                            </div>
+                            <div class="form-group">
+                                <label>Alternate Emergency Phone</label>
+                                <input type="tel" id="emergencyAltPhone">
+                            </div>
+                            <div class="form-group" style="grid-column: 1/-1">
+                                <label>Emergency Contact Address</label>
+                                <textarea id="emergencyAddress" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Checklist Tab -->
+                    <div class="tab-content" id="tab-checklist">
+                        <h3 style="font-size:14px;font-weight:600;color:var(--gray-700);margin-bottom:16px">Onboarding Checklist</h3>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="chk_offerLetter">
+                                <label for="chk_offerLetter">Offer Letter</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="chk_appointmentLetter">
+                                <label for="chk_appointmentLetter">Appointment Letter</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="chk_idCard">
+                                <label for="chk_idCard">ID Card</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="chk_nda">
+                                <label for="chk_nda">NDA Signed</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="chk_bgVerification">
+                                <label for="chk_bgVerification">Background Verification</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="chk_laptop">
+                                <label for="chk_laptop">Laptop Assigned</label>
+                            </div>
+
+
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="chk_desktop">
+                                <label for="chk_desktop">Desktop Assigned</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="chk_phoneProvided">
+                                <label for="chk_phoneProvided">Phone Provided</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="chk_simCard">
+                                <label for="chk_simCard">SIM Card</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="chk_emailCreated">
+                                <label for="chk_emailCreated">Official Email Created</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="chk_slack">
+                                <label for="chk_slack">Slack Added</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="chk_github">
+                                <label for="chk_github">GitHub/GitLab Added</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="chk_jira">
+                                <label for="chk_jira">Jira/Project Tool Added</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="chk_biometric">
+                                <label for="chk_biometric">Biometric Registered</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="chk_parking">
+                                <label for="chk_parking">Parking Allotted</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="chk_welcomeKit">
+                                <label for="chk_welcomeKit">Welcome Kit Given</label>
+                            </div>
+                        </div>
+                        <div class="form-grid" style="margin-top:16px">
+                            <div class="form-group">
+                                <label>Laptop Serial Number</label>
+                                <input type="text" id="laptopSerial">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notes Tab -->
+                    <div class="tab-content" id="tab-notes">
+                        <div class="form-group">
+                            <label>Additional Notes</label>
+                            <textarea id="additionalNotes" rows="6" placeholder="Any additional notes about the employee..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:24px;padding-top:16px;border-top:1px solid var(--gray-200)">
+                        <button type="button" class="btn btn-outline" onclick="resetForm()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Save Employee
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        <!-- View Employee Page -->
+        <div class="content-area page" id="page-view" style="display:none">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+                <div>
+                    <h1 class="page-title">Employee Profile</h1>
+                    <p class="page-subtitle">Detailed employee information</p>
+                </div>
+                <div style="display:flex;gap:8px">
+                    <button class="btn btn-outline" onclick="printEmployee()">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                    <button class="btn btn-primary" id="editFromView" onclick="editFromProfile()">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-outline" onclick="showPage('employees')">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+            </div>
+            <div id="profileContent"></div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 <a href="#">Code Origin.Ai Private Limited</a>. All rights reserved. | Employee Onboarding Management System v1.0</p>
+        </footer>
+    </main>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal" style="max-width:400px">
+            <div class="modal-body">
+                <div class="confirm-dialog">
+                    <div class="confirm-dialog-icon">
+                        <i class="fas fa-trash-alt"></i>
+                    </div>
+                    <h3>Delete Employee</h3>
+                    <p>Are you sure you want to delete this employee record? This action cannot be undone.</p>
+                    <div class="confirm-dialog-btns">
+                        <button class="btn btn-outline" onclick="closeDeleteModal()">Cancel</button>
+                        <button class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDelete()">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="header-actions">
-      <button class="btn btn-ghost" onclick="exportToExcel()">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-        Export .xlsx
-      </button>
-      <button class="btn btn-ghost" onclick="openForm()">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-        Add Employee
-      </button>
-    </div>
-  </header>`;
-}
 
-function renderDashboard() {
-  const db = getDB();
-  const active = db.filter(e => e.status === 'Active').length;
-  const prob = db.filter(e => e.status === 'Probation').length;
-  const joined = db.filter(e => { if(!e.doj) return false; const d=new Date(e.doj),n=new Date(); return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear(); }).length;
-  return renderStats(db.length, active, prob, joined) + renderTable(db);
-}
+    <script>
 
-function renderStats(total, active, prob, joined) {
-  return `<div class="stats-grid">
-    <div class="stat-card blue"><div class="stat-icon">&#x1f465;</div><div class="stat-value">${total}</div><div class="stat-label">Total Employees</div></div>
-    <div class="stat-card green"><div class="stat-icon">&#x2705;</div><div class="stat-value">${active}</div><div class="stat-label">Active</div></div>
-    <div class="stat-card orange"><div class="stat-icon">&#x23f3;</div><div class="stat-value">${prob}</div><div class="stat-label">On Probation</div></div>
-    <div class="stat-card purple"><div class="stat-icon">&#x1f4c5;</div><div class="stat-value">${joined}</div><div class="stat-label">Joined This Month</div></div>
-  </div>`;
-}
 
-function renderTable(db) {
-  let list = db;
-  if (search) { const s = search.toLowerCase(); list = list.filter(e => e.fullName.toLowerCase().includes(s)||e.empId.toLowerCase().includes(s)||(e.department||'').toLowerCase().includes(s)||(e.designation||'').toLowerCase().includes(s)); }
-  if (statusFilter !== 'all') list = list.filter(e => e.status === statusFilter);
+    // ==================== DATA MANAGEMENT ====================
+    const STORAGE_KEY = 'codeorigin_employees';
+    const THEME_KEY = 'codeorigin_theme';
+    let employees = [];
+    let currentPage = 1;
+    let filteredEmployees = [];
+    const PER_PAGE = 10;
+    let deleteTargetId = null;
+    let viewingEmployeeId = null;
 
-  const rows = list.length ? list.map(e => `<tr>
-    <td><strong style="color:var(--accent)">${e.empId}</strong></td>
-    <td><div class="emp-name">${e.fullName}</div><div class="emp-role">${e.designation||''}</div></td>
-    <td>${e.department||'-'}</td>
-    <td>${e.doj||'-'}</td>
-    <td>${e.phone||'-'}</td>
-    <td><span class="badge badge-${e.status.toLowerCase()}">${e.status}</span></td>
-    <td><div class="actions-cell">
-      <button class="btn-icon" title="View" onclick="viewEmp('${e.id}')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-      <button class="btn-icon" title="Edit" onclick="editEmp('${e.id}')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-      <button class="btn-icon danger" title="Delete" onclick="delEmp('${e.id}')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
-    </div></td>
-  </tr>`).join('') : `<tr><td colspan="7"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg><h3>No Employee Records</h3><p>Click "Add Employee" to start onboarding</p></div></td></tr>`;
+    // Load data from localStorage
+    function loadData() {
+        const data = localStorage.getItem(STORAGE_KEY);
+        employees = data ? JSON.parse(data) : [];
+        filteredEmployees = [...employees];
+    }
 
-  return `<div class="main-card">
-    <div class="card-top">
-      <h2>Employee Records</h2>
-      <div class="toolbar">
-        <input class="search-input" type="text" placeholder="Search name, ID, dept..." value="${search}" oninput="search=this.value;render()"/>
-        <select class="filter-select" onchange="statusFilter=this.value;render()">
-          <option value="all"${statusFilter==='all'?' selected':''}>All Status</option>
-          <option value="Active"${statusFilter==='Active'?' selected':''}>Active</option>
-          <option value="Probation"${statusFilter==='Probation'?' selected':''}>Probation</option>
-          <option value="Inactive"${statusFilter==='Inactive'?' selected':''}>Inactive</option>
-          <option value="Resigned"${statusFilter==='Resigned'?' selected':''}>Resigned</option>
-        </select>
-      </div>
-    </div>
-    <div class="table-wrap"><table>
-      <thead><tr><th>ID</th><th>Employee</th><th>Department</th><th>Joining Date</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table></div>
-  </div>`;
-}
+    // Save data to localStorage
+    function saveData() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(employees));
+    }
 
-function renderDetail() {
-  const e = getDB().find(x => x.id === viewId);
-  if (!e) { view='list'; render(); return ''; }
-  const ini = initials(e.fullName);
-  const f = (l,v) => `<div class="info-item"><div class="info-label">${l}</div><div class="info-value">${v||'N/A'}</div></div>`;
-  return `<div class="detail-back"><button class="btn btn-outline" onclick="view='list';render()"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back</button></div>
-  <div class="profile-card">
-    <div class="profile-avatar">${ini}</div>
-    <div class="profile-info"><h2>${e.fullName}</h2><p>${e.designation||'N/A'} &bull; ${e.department||'N/A'} &bull; ${e.empId}</p><p style="margin-top:6px"><span class="badge badge-${e.status.toLowerCase()}">${e.status}</span></p></div>
-    <div class="profile-actions">
-      <button class="btn btn-primary btn-sm" onclick="editEmp('${e.id}')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit</button>
-      <button class="btn btn-danger btn-sm" onclick="delEmp('${e.id}')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Delete</button>
-    </div>
-  </div>
-  <div class="info-card"><h3>Personal Information</h3><div class="info-grid">${f('Full Name',e.fullName)}${f('Date of Birth',e.dob)}${f('Gender',e.gender)}${f('Marital Status',e.maritalStatus)}${f('Blood Group',e.bloodGroup)}${f('Phone',e.phone)}${f('Official Email',e.email)}${f('Personal Email',e.personalEmail)}</div></div>
-  <div class="info-card"><h3>Address</h3><div class="info-grid">${f('Address',e.address)}${f('City',e.city)}${f('State',e.state)}${f('Pincode',e.pincode)}${f('Country',e.country)}</div></div>
-  <div class="info-card"><h3>Identity Documents</h3><div class="info-grid">${f('Aadhar Number',e.aadhar)}${f('PAN Number',e.pan)}${f('Passport',e.passport)}${f('Driving License',e.drivingLicense)}</div></div>
-  <div class="info-card"><h3>Employment Details</h3><div class="info-grid">${f('Department',e.department)}${f('Designation',e.designation)}${f('Date of Joining',e.doj)}${f('Employment Type',e.employmentType)}${f('Reporting Manager',e.reportingManager)}${f('Work Location',e.workLocation)}${f('Status',e.status)}${f('Probation End',e.probationEnd)}</div></div>
-  <div class="info-card"><h3>Previous Experience</h3><div class="info-grid">${f('Company',e.prevCompany)}${f('Designation',e.prevDesignation)}${f('Total Experience',e.totalExp?e.totalExp+' years':'')}</div></div>
-  <div class="info-card"><h3>Education</h3><div class="info-grid">${f('Qualification',e.qualification)}${f('University',e.university)}${f('Year of Passing',e.yearOfPassing)}</div></div>
-  <div class="info-card"><h3>Emergency Contact</h3><div class="info-grid">${f('Name',e.emergencyName)}${f('Relation',e.emergencyRelation)}${f('Phone',e.emergencyPhone)}</div></div>
-  <div class="info-card"><h3>Onboarding Checklist</h3><div class="info-grid">${f('Offer Letter',e.offerLetter?'Yes':'No')}${f('ID Card',e.idCard?'Yes':'No')}${f('NDA Signed',e.ndaSigned?'Yes':'No')}${f('Laptop Assigned',e.laptopAssigned?'Yes':'No')}${f('Laptop Serial',e.laptopSerial)}${f('Official Email',e.officialEmail)}${f('Slack/Teams',e.slackAdded?'Yes':'No')}</div></div>
-  ${e.notes?`<div class="info-card"><h3>Notes</h3><p style="color:var(--text-secondary);font-size:14px;">${e.notes}</p></div>`:''}`;
-}
+    // Generate next Employee ID
+    function generateEmployeeId() {
+        if (employees.length === 0) return 'CO-0001';
+        const ids = employees.map(e => {
+            const num = parseInt(e.employeeId.replace('CO-', ''));
+            return isNaN(num) ? 0 : num;
+        });
+        const maxId = Math.max(...ids);
+        return 'CO-' + String(maxId + 1).padStart(4, '0');
+    }
 
-function renderModal() {
-  return `<div class="modal-backdrop" id="modal">
-    <div class="modal">
-      <div class="modal-head"><h2 id="modalTitle">Add New Employee</h2><button class="modal-close" onclick="closeForm()">&times;</button></div>
-      <div class="modal-body"><form id="empForm" onsubmit="saveForm(event)">
-        <div class="form-section"><div class="form-section-title"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Personal Information</div>
-          <div class="form-row">
-            <div class="form-field"><label>Full Name *</label><input type="text" id="f_fullName" required/></div>
-            <div class="form-field"><label>Date of Birth</label><input type="date" id="f_dob"/></div>
-            <div class="form-field"><label>Gender</label><select id="f_gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div>
-            <div class="form-field"><label>Marital Status</label><select id="f_maritalStatus"><option value="">Select</option><option>Single</option><option>Married</option><option>Divorced</option><option>Widowed</option></select></div>
-            <div class="form-field"><label>Blood Group</label><select id="f_bloodGroup"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
-            <div class="form-field"><label>Phone *</label><input type="tel" id="f_phone" required/></div>
-            <div class="form-field"><label>Official Email</label><input type="email" id="f_email"/></div>
-            <div class="form-field"><label>Personal Email</label><input type="email" id="f_personalEmail"/></div>
-          </div>
-        </div>
-        <div class="form-section"><div class="form-section-title"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg> Address</div>
-          <div class="form-row">
-            <div class="form-field full"><label>Address</label><textarea id="f_address" rows="2"></textarea></div>
-            <div class="form-field"><label>City</label><input type="text" id="f_city"/></div>
-            <div class="form-field"><label>State</label><input type="text" id="f_state"/></div>
-            <div class="form-field"><label>Pincode</label><input type="text" id="f_pincode"/></div>
-            <div class="form-field"><label>Country</label><input type="text" id="f_country" value="India"/></div>
-          </div>
-        </div>
-        <div class="form-section"><div class="form-section-title"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/></svg> Identity &amp; Documents</div>
-          <div class="form-row">
-            <div class="form-field"><label>Aadhar Number</label><input type="text" id="f_aadhar" maxlength="12" placeholder="1234 5678 9012"/></div>
-            <div class="form-field"><label>PAN Number</label><input type="text" id="f_pan" maxlength="10" style="text-transform:uppercase;" placeholder="ABCDE1234F"/></div>
-            <div class="form-field"><label>Passport Number</label><input type="text" id="f_passport"/></div>
-            <div class="form-field"><label>Driving License</label><input type="text" id="f_drivingLicense"/></div>
-          </div>
-        </div>
-        <div class="form-section"><div class="form-section-title"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3v4M8 3v4"/></svg> Employment Details</div>
-          <div class="form-row">
-            <div class="form-field"><label>Department *</label><input type="text" id="f_department" required/></div>
-            <div class="form-field"><label>Designation *</label><input type="text" id="f_designation" required/></div>
-            <div class="form-field"><label>Date of Joining *</label><input type="date" id="f_doj" required/></div>
-            <div class="form-field"><label>Employment Type</label><select id="f_employmentType"><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Intern</option></select></div>
-            <div class="form-field"><label>Reporting Manager</label><input type="text" id="f_reportingManager"/></div>
-            <div class="form-field"><label>Work Location</label><input type="text" id="f_workLocation"/></div>
-            <div class="form-field"><label>Status</label><select id="f_status"><option>Active</option><option>Probation</option><option>Inactive</option><option>Resigned</option></select></div>
-            <div class="form-field"><label>Probation End Date</label><input type="date" id="f_probationEnd"/></div>
-          </div>
-        </div>
-        <div class="form-section"><div class="form-section-title"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/></svg> Previous Experience</div>
-          <div class="form-row">
-            <div class="form-field"><label>Previous Company</label><input type="text" id="f_prevCompany"/></div>
-            <div class="form-field"><label>Previous Designation</label><input type="text" id="f_prevDesignation"/></div>
-            <div class="form-field"><label>Total Experience (Years)</label><input type="number" id="f_totalExp" min="0" step="0.5"/></div>
-          </div>
-        </div>
-        <div class="form-section"><div class="form-section-title"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 3 3 6 3s6-1 6-3v-5"/></svg> Education</div>
-          <div class="form-row">
-            <div class="form-field"><label>Highest Qualification</label><input type="text" id="f_qualification"/></div>
-            <div class="form-field"><label>University / Institute</label><input type="text" id="f_university"/></div>
-            <div class="form-field"><label>Year of Passing</label><input type="number" id="f_yearOfPassing" min="1980" max="2030"/></div>
-          </div>
-        </div>
-        <div class="form-section"><div class="form-section-title"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg> Emergency Contact</div>
-          <div class="form-row">
-            <div class="form-field"><label>Contact Name</label><input type="text" id="f_emergencyName"/></div>
-            <div class="form-field"><label>Relation</label><input type="text" id="f_emergencyRelation"/></div>
-            <div class="form-field"><label>Phone</label><input type="tel" id="f_emergencyPhone"/></div>
-          </div>
-        </div>
-        <div class="form-section"><div class="form-section-title"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9,11 12,14 22,4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> Onboarding Checklist</div>
-          <div class="form-row">
-            <div class="form-field checkbox-field"><input type="checkbox" id="f_offerLetter"/><label for="f_offerLetter">Offer Letter Issued</label></div>
-            <div class="form-field checkbox-field"><input type="checkbox" id="f_idCard"/><label for="f_idCard">ID Card Issued</label></div>
-            <div class="form-field checkbox-field"><input type="checkbox" id="f_ndaSigned"/><label for="f_ndaSigned">NDA Signed</label></div>
-            <div class="form-field checkbox-field"><input type="checkbox" id="f_laptopAssigned"/><label for="f_laptopAssigned">Laptop Assigned</label></div>
-            <div class="form-field"><label>Laptop Serial No.</label><input type="text" id="f_laptopSerial"/></div>
-            <div class="form-field"><label>Official Email Provided</label><input type="email" id="f_officialEmail"/></div>
-            <div class="form-field checkbox-field"><input type="checkbox" id="f_slackAdded"/><label for="f_slackAdded">Slack / Teams Added</label></div>
-          </div>
-        </div>
-        <div class="form-section"><div class="form-section-title"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg> Notes</div>
-          <div class="form-row"><div class="form-field full"><textarea id="f_notes" rows="3" placeholder="Any additional notes..."></textarea></div></div>
-        </div>
-        <div class="modal-foot">
-          <button type="button" class="btn btn-outline" onclick="closeForm()">Cancel</button>
-          <button type="submit" class="btn btn-primary"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg> Save Employee</button>
-        </div>
-      </form></div>
-    </div>
-  </div>`;
-}
+    // ==================== DARK MODE ====================
+    function toggleDarkMode() {
+        const html = document.documentElement;
+        const isDark = html.getAttribute('data-theme') === 'dark';
+        if (isDark) {
+            html.removeAttribute('data-theme');
+            localStorage.setItem(THEME_KEY, 'light');
+            document.getElementById('darkModeIcon').className = 'fas fa-moon';
+        } else {
+            html.setAttribute('data-theme', 'dark');
+            localStorage.setItem(THEME_KEY, 'dark');
+            document.getElementById('darkModeIcon').className = 'fas fa-sun';
+        }
+    }
 
-// ======== FORM LOGIC ========
-function openForm(id) {
-  editId = id || null;
-  render();
-  document.getElementById('modal').classList.add('open');
-  document.getElementById('modalTitle').textContent = id ? 'Edit Employee' : 'Add New Employee';
-  if (id) { const e = getDB().find(x=>x.id===id); if(e) fillForm(e); }
-}
-function closeForm() { document.getElementById('modal').classList.remove('open'); editId = null; }
+    function loadTheme() {
+        const theme = localStorage.getItem(THEME_KEY);
+        if (theme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.getElementById('darkModeIcon').className = 'fas fa-sun';
+        }
+    }
 
-function fillForm(e) {
-  const fields = ['fullName','dob','gender','maritalStatus','bloodGroup','phone','email','personalEmail','address','city','state','pincode','country','aadhar','pan','passport','drivingLicense','department','designation','doj','employmentType','reportingManager','workLocation','status','probationEnd','prevCompany','prevDesignation','totalExp','qualification','university','yearOfPassing','emergencyName','emergencyRelation','emergencyPhone','laptopSerial','officialEmail','notes'];
-  fields.forEach(f => { const el=document.getElementById('f_'+f); if(el) el.value=e[f]||''; });
-  ['offerLetter','idCard','ndaSigned','laptopAssigned','slackAdded'].forEach(f => { const el=document.getElementById('f_'+f); if(el) el.checked=!!e[f]; });
-}
 
-function saveForm(ev) {
-  ev.preventDefault();
-  const db = getDB();
-  const d = {
-    id: editId || genId(), empId: '',
-    fullName: document.getElementById('f_fullName').value.trim(),
-    dob: document.getElementById('f_dob').value,
-    gender: document.getElementById('f_gender').value,
-    maritalStatus: document.getElementById('f_maritalStatus').value,
-    bloodGroup: document.getElementById('f_bloodGroup').value,
-    phone: document.getElementById('f_phone').value.trim(),
-    email: document.getElementById('f_email').value.trim(),
-    personalEmail: document.getElementById('f_personalEmail').value.trim(),
-    address: document.getElementById('f_address').value.trim(),
-    city: document.getElementById('f_city').value.trim(),
-    state: document.getElementById('f_state').value.trim(),
-    pincode: document.getElementById('f_pincode').value.trim(),
-    country: document.getElementById('f_country').value.trim(),
-    aadhar: document.getElementById('f_aadhar').value.trim(),
-    pan: document.getElementById('f_pan').value.trim().toUpperCase(),
-    passport: document.getElementById('f_passport').value.trim(),
-    drivingLicense: document.getElementById('f_drivingLicense').value.trim(),
-    department: document.getElementById('f_department').value.trim(),
-    designation: document.getElementById('f_designation').value.trim(),
-    doj: document.getElementById('f_doj').value,
-    employmentType: document.getElementById('f_employmentType').value,
-    reportingManager: document.getElementById('f_reportingManager').value.trim(),
-    workLocation: document.getElementById('f_workLocation').value.trim(),
-    status: document.getElementById('f_status').value,
-    probationEnd: document.getElementById('f_probationEnd').value,
-    prevCompany: document.getElementById('f_prevCompany').value.trim(),
-    prevDesignation: document.getElementById('f_prevDesignation').value.trim(),
-    totalExp: document.getElementById('f_totalExp').value,
-    qualification: document.getElementById('f_qualification').value.trim(),
-    university: document.getElementById('f_university').value.trim(),
-    yearOfPassing: document.getElementById('f_yearOfPassing').value,
-    emergencyName: document.getElementById('f_emergencyName').value.trim(),
-    emergencyRelation: document.getElementById('f_emergencyRelation').value.trim(),
-    emergencyPhone: document.getElementById('f_emergencyPhone').value.trim(),
-    offerLetter: document.getElementById('f_offerLetter').checked,
-    idCard: document.getElementById('f_idCard').checked,
-    ndaSigned: document.getElementById('f_ndaSigned').checked,
-    laptopAssigned: document.getElementById('f_laptopAssigned').checked,
-    laptopSerial: document.getElementById('f_laptopSerial').value.trim(),
-    officialEmail: document.getElementById('f_officialEmail').value.trim(),
-    slackAdded: document.getElementById('f_slackAdded').checked,
-    notes: document.getElementById('f_notes').value.trim()
-  };
-  if (editId) {
-    const idx = db.findIndex(x=>x.id===editId);
-    if (idx>-1) { d.empId = db[idx].empId; db[idx] = d; }
-  } else {
-    d.empId = 'CO-' + String(db.length+1).padStart(4,'0');
-    db.push(d);
-  }
-  saveDB(db);
-  closeForm();
-  view = 'list';
-  render();
-  showToast(editId ? 'Employee updated successfully!' : 'Employee added successfully!');
-}
+    // ==================== NAVIGATION ====================
+    function showPage(page) {
+        document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+        document.getElementById(`page-${page}`).style.display = 'block';
 
-function viewEmp(id) { viewId=id; view='detail'; render(); }
-function editEmp(id) { view='list'; render(); openForm(id); }
-function delEmp(id) {
-  if (!confirm('Are you sure you want to delete this employee record?')) return;
-  const db = getDB().filter(x=>x.id!==id);
-  saveDB(db);
-  if (view==='detail'&&viewId===id) view='list';
-  render();
-  showToast('Employee deleted','error');
-}
+        // Update sidebar active
+        document.querySelectorAll('.sidebar-nav-item').forEach(item => item.classList.remove('active'));
+        const navItems = document.querySelectorAll('.sidebar-nav-item');
+        if (page === 'dashboard') navItems[0].classList.add('active');
+        else if (page === 'employees') navItems[1].classList.add('active');
+        else if (page === 'add') navItems[2].classList.add('active');
 
-// ======== INIT ========
-render();
-</script>
+        // Update breadcrumb
+        const breadcrumb = document.getElementById('breadcrumb');
+        const pageNames = { dashboard: 'Dashboard', employees: 'Employees', add: 'Add Employee', view: 'Employee Profile' };
+        breadcrumb.innerHTML = `
+            <a href="#" onclick="showPage('dashboard')">Home</a>
+            <i class="fas fa-chevron-right" style="font-size:10px"></i>
+            <span>${pageNames[page] || page}</span>
+        `;
+
+        if (page === 'dashboard') updateDashboard();
+        if (page === 'employees') {
+            filterEmployees();
+            updateDepartmentFilter();
+        }
+        if (page === 'add' && !document.getElementById('editId').value) {
+            document.getElementById('formTitle').textContent = 'Add New Employee';
+            document.getElementById('formSubtitle').textContent = 'Fill in the details to onboard a new employee';
+        }
+    }
+
+    // ==================== DASHBOARD ====================
+    function updateDashboard() {
+        const total = employees.length;
+        const active = employees.filter(e => e.empStatus === 'Active').length;
+        const onLeave = employees.filter(e => e.empStatus === 'On Leave').length;
+
+        const now = new Date();
+        const thisMonth = employees.filter(e => {
+            if (!e.doj) return false;
+            const d = new Date(e.doj);
+            return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+        }).length;
+
+        animateCounter('statTotal', total);
+        animateCounter('statActive', active);
+        animateCounter('statLeave', onLeave);
+        animateCounter('statNew', thisMonth);
+
+        renderRecentTable();
+    }
+
+    function animateCounter(id, target) {
+        const el = document.getElementById(id);
+        let current = 0;
+        const increment = Math.ceil(target / 20);
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            el.textContent = current;
+        }, 30);
+    }
+
+    function renderRecentTable() {
+        const recent = [...employees].sort((a, b) => {
+            return new Date(b.doj || 0) - new Date(a.doj || 0);
+        }).slice(0, 5);
+
+        const container = document.getElementById('recentTableBody');
+
+        if (recent.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon"><i class="fas fa-users"></i></div>
+                    <h3>No Employees Yet</h3>
+                    <p>Start by adding your first employee to the system</p>
+                    <button class="btn btn-primary" onclick="showPage('add')"><i class="fas fa-plus"></i> Add Employee</button>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '<table class="data-table"><thead><tr>';
+        html += '<th>Employee</th><th>Department</th><th>Designation</th><th>Date of Joining</th><th>Status</th>';
+        html += '</tr></thead><tbody>';
+
+        recent.forEach(emp => {
+            html += `<tr>
+                <td><span class="emp-name">${emp.fullName}</span><br><span class="emp-id">${emp.employeeId}</span></td>
+                <td>${emp.department || '-'}</td>
+                <td>${emp.designation || '-'}</td>
+                <td>${emp.doj ? formatDate(emp.doj) : '-'}</td>
+                <td><span class="status-badge status-${getStatusClass(emp.empStatus)}">${emp.empStatus || 'Active'}</span></td>
+            </tr>`;
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+
+    // ==================== EMPLOYEE TABLE ====================
+    function filterEmployees() {
+        const search = (document.getElementById('searchInput').value || '').toLowerCase();
+        const statusFilter = document.getElementById('filterStatus').value;
+        const deptFilter = document.getElementById('filterDepartment').value;
+
+        filteredEmployees = employees.filter(emp => {
+            const matchSearch = !search ||
+                (emp.fullName || '').toLowerCase().includes(search) ||
+                (emp.employeeId || '').toLowerCase().includes(search) ||
+                (emp.department || '').toLowerCase().includes(search) ||
+                (emp.designation || '').toLowerCase().includes(search) ||
+                (emp.phone || '').includes(search) ||
+                (emp.officialEmail || '').toLowerCase().includes(search);
+
+            const matchStatus = !statusFilter || emp.empStatus === statusFilter;
+            const matchDept = !deptFilter || emp.department === deptFilter;
+
+            return matchSearch && matchStatus && matchDept;
+        });
+
+        currentPage = 1;
+        renderEmployeeTable();
+    }
+
+    function updateDepartmentFilter() {
+        const depts = [...new Set(employees.map(e => e.department).filter(Boolean))].sort();
+        const select = document.getElementById('filterDepartment');
+        select.innerHTML = '<option value="">All Departments</option>';
+        depts.forEach(d => {
+            select.innerHTML += `<option value="${d}">${d}</option>`;
+        });
+    }
+
+    function renderEmployeeTable() {
+        const container = document.getElementById('employeeTableBody');
+        const start = (currentPage - 1) * PER_PAGE;
+        const end = start + PER_PAGE;
+        const pageData = filteredEmployees.slice(start, end);
+
+        if (filteredEmployees.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon"><i class="fas fa-search"></i></div>
+                    <h3>No Employees Found</h3>
+                    <p>Try adjusting your search or filter criteria</p>
+                </div>
+            `;
+            document.getElementById('pagination').innerHTML = '';
+            return;
+        }
+
+        let html = '<table class="data-table"><thead><tr>';
+        html += '<th>Employee</th><th>Department</th><th>Designation</th><th>Phone</th><th>DOJ</th><th>Status</th><th>Actions</th>';
+        html += '</tr></thead><tbody>';
+
+        pageData.forEach(emp => {
+            html += `<tr>
+                <td>
+                    <span class="emp-name">${emp.fullName}</span><br>
+                    <span class="emp-id">${emp.employeeId}</span>
+                </td>
+                <td>${emp.department || '-'}</td>
+                <td>${emp.designation || '-'}</td>
+                <td>${emp.phone || '-'}</td>
+                <td>${emp.doj ? formatDate(emp.doj) : '-'}</td>
+                <td><span class="status-badge status-${getStatusClass(emp.empStatus)}">${emp.empStatus || 'Active'}</span></td>
+                <td>
+                    <div class="action-btns">
+                        <button class="btn-icon" title="View" onclick="viewEmployee('${emp.employeeId}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-icon" title="Edit" onclick="editEmployee('${emp.employeeId}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-icon" title="Delete" onclick="showDeleteModal('${emp.employeeId}')" style="color:var(--danger)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>`;
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+        renderPagination();
+    }
+
+
+    // ==================== PAGINATION ====================
+    function renderPagination() {
+        const totalPages = Math.ceil(filteredEmployees.length / PER_PAGE);
+        const paginationEl = document.getElementById('pagination');
+
+        if (totalPages <= 1) {
+            paginationEl.innerHTML = `<div class="pagination-info">Showing ${filteredEmployees.length} employee(s)</div><div></div>`;
+            return;
+        }
+
+        const start = (currentPage - 1) * PER_PAGE + 1;
+        const end = Math.min(currentPage * PER_PAGE, filteredEmployees.length);
+
+        let html = `<div class="pagination-info">Showing ${start}-${end} of ${filteredEmployees.length} employees</div>`;
+        html += '<div class="pagination-btns">';
+
+        html += `<button class="pagination-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+            <i class="fas fa-chevron-left"></i>
+        </button>`;
+
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                html += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+            } else if (i === currentPage - 2 || i === currentPage + 2) {
+                html += `<button class="pagination-btn" disabled>...</button>`;
+            }
+        }
+
+        html += `<button class="pagination-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+            <i class="fas fa-chevron-right"></i>
+        </button>`;
+
+        html += '</div>';
+        paginationEl.innerHTML = html;
+    }
+
+    function goToPage(page) {
+        const totalPages = Math.ceil(filteredEmployees.length / PER_PAGE);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        renderEmployeeTable();
+    }
+
+
+    // ==================== FORM TABS ====================
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.form-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    // ==================== SAVE EMPLOYEE ====================
+    function saveEmployee(e) {
+        e.preventDefault();
+
+        const fullName = document.getElementById('fullName').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const department = document.getElementById('department').value;
+        const designation = document.getElementById('designation').value.trim();
+        const doj = document.getElementById('doj').value;
+
+        // Validation
+        if (!fullName) { showToast('Please enter Full Name', 'error'); switchTab('personal'); return; }
+        if (!phone) { showToast('Please enter Phone Number', 'error'); switchTab('personal'); return; }
+        if (!department) { showToast('Please select Department', 'error'); switchTab('employment'); return; }
+        if (!designation) { showToast('Please enter Designation', 'error'); switchTab('employment'); return; }
+        if (!doj) { showToast('Please enter Date of Joining', 'error'); switchTab('employment'); return; }
+
+        const editId = document.getElementById('editId').value;
+        const isEdit = !!editId;
+
+        const empData = {
+            employeeId: isEdit ? editId : generateEmployeeId(),
+            fullName: fullName,
+            fatherName: document.getElementById('fatherName').value.trim(),
+            dob: document.getElementById('dob').value,
+            gender: document.getElementById('gender').value,
+            maritalStatus: document.getElementById('maritalStatus').value,
+            bloodGroup: document.getElementById('bloodGroup').value,
+            nationality: document.getElementById('nationality').value.trim(),
+            religion: document.getElementById('religion').value.trim(),
+            phone: phone,
+            altPhone: document.getElementById('altPhone').value.trim(),
+            personalEmail: document.getElementById('personalEmail').value.trim(),
+            officialEmail: document.getElementById('officialEmail').value.trim(),
+            profilePhoto: document.getElementById('profilePhoto').value.trim(),
+            // Address
+            currentAddress: document.getElementById('currentAddress').value.trim(),
+            permanentAddress: document.getElementById('permanentAddress').value.trim(),
+            city: document.getElementById('city').value.trim(),
+            state: document.getElementById('state').value.trim(),
+            pincode: document.getElementById('pincode').value.trim(),
+            country: document.getElementById('country').value.trim(),
+            // Identity
+            aadhar: document.getElementById('aadhar').value.trim(),
+            pan: document.getElementById('pan').value.trim().toUpperCase(),
+            passport: document.getElementById('passport').value.trim(),
+            passportExpiry: document.getElementById('passportExpiry').value,
+            drivingLicense: document.getElementById('drivingLicense').value.trim(),
+            voterId: document.getElementById('voterId').value.trim(),
+
+
+            // Employment
+            department: department,
+            designation: designation,
+            doj: doj,
+            employmentType: document.getElementById('employmentType').value,
+            shift: document.getElementById('shift').value,
+            reportingManager: document.getElementById('reportingManager').value.trim(),
+            workLocation: document.getElementById('workLocation').value.trim(),
+            officeBranch: document.getElementById('officeBranch').value.trim(),
+            empStatus: document.getElementById('empStatus').value,
+            probationEnd: document.getElementById('probationEnd').value,
+            confirmationDate: document.getElementById('confirmationDate').value,
+            ctc: document.getElementById('ctc').value.trim(),
+            // Experience
+            prevCompany: document.getElementById('prevCompany').value.trim(),
+            prevDesignation: document.getElementById('prevDesignation').value.trim(),
+            prevCtc: document.getElementById('prevCtc').value.trim(),
+            totalExperience: document.getElementById('totalExperience').value.trim(),
+            reasonLeaving: document.getElementById('reasonLeaving').value.trim(),
+            // Education
+            qualification: document.getElementById('qualification').value,
+            specialization: document.getElementById('specialization').value.trim(),
+            university: document.getElementById('university').value.trim(),
+            yearPassing: document.getElementById('yearPassing').value.trim(),
+            percentage: document.getElementById('percentage').value.trim(),
+            certifications: document.getElementById('certifications').value.trim(),
+            // Emergency
+            emergencyName: document.getElementById('emergencyName').value.trim(),
+            emergencyRelation: document.getElementById('emergencyRelation').value.trim(),
+            emergencyPhone: document.getElementById('emergencyPhone').value.trim(),
+            emergencyAltPhone: document.getElementById('emergencyAltPhone').value.trim(),
+            emergencyAddress: document.getElementById('emergencyAddress').value.trim(),
+            // Checklist
+            chk_offerLetter: document.getElementById('chk_offerLetter').checked,
+            chk_appointmentLetter: document.getElementById('chk_appointmentLetter').checked,
+            chk_idCard: document.getElementById('chk_idCard').checked,
+            chk_nda: document.getElementById('chk_nda').checked,
+            chk_bgVerification: document.getElementById('chk_bgVerification').checked,
+            chk_laptop: document.getElementById('chk_laptop').checked,
+            chk_desktop: document.getElementById('chk_desktop').checked,
+            chk_phoneProvided: document.getElementById('chk_phoneProvided').checked,
+            chk_simCard: document.getElementById('chk_simCard').checked,
+            chk_emailCreated: document.getElementById('chk_emailCreated').checked,
+            chk_slack: document.getElementById('chk_slack').checked,
+            chk_github: document.getElementById('chk_github').checked,
+            chk_jira: document.getElementById('chk_jira').checked,
+            chk_biometric: document.getElementById('chk_biometric').checked,
+            chk_parking: document.getElementById('chk_parking').checked,
+            chk_welcomeKit: document.getElementById('chk_welcomeKit').checked,
+            laptopSerial: document.getElementById('laptopSerial').value.trim(),
+            // Notes
+            additionalNotes: document.getElementById('additionalNotes').value.trim(),
+            // Metadata
+            createdAt: isEdit ? (employees.find(e => e.employeeId === editId)?.createdAt || new Date().toISOString()) : new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+
+        if (isEdit) {
+            const index = employees.findIndex(e => e.employeeId === editId);
+            if (index !== -1) {
+                employees[index] = empData;
+                showToast('Employee updated successfully!', 'success');
+            }
+        } else {
+            employees.push(empData);
+            showToast('Employee added successfully!', 'success');
+        }
+
+        saveData();
+        resetForm();
+        showPage('employees');
+    }
+
+
+    // ==================== EDIT EMPLOYEE ====================
+    function editEmployee(empId) {
+        const emp = employees.find(e => e.employeeId === empId);
+        if (!emp) return;
+
+        document.getElementById('editId').value = empId;
+        document.getElementById('formTitle').textContent = 'Edit Employee';
+        document.getElementById('formSubtitle').textContent = `Editing record for ${emp.fullName} (${empId})`;
+
+        // Personal
+        document.getElementById('fullName').value = emp.fullName || '';
+        document.getElementById('fatherName').value = emp.fatherName || '';
+        document.getElementById('dob').value = emp.dob || '';
+        document.getElementById('gender').value = emp.gender || '';
+        document.getElementById('maritalStatus').value = emp.maritalStatus || '';
+        document.getElementById('bloodGroup').value = emp.bloodGroup || '';
+        document.getElementById('nationality').value = emp.nationality || '';
+        document.getElementById('religion').value = emp.religion || '';
+        document.getElementById('phone').value = emp.phone || '';
+        document.getElementById('altPhone').value = emp.altPhone || '';
+        document.getElementById('personalEmail').value = emp.personalEmail || '';
+        document.getElementById('officialEmail').value = emp.officialEmail || '';
+        document.getElementById('profilePhoto').value = emp.profilePhoto || '';
+
+        // Address
+        document.getElementById('currentAddress').value = emp.currentAddress || '';
+        document.getElementById('permanentAddress').value = emp.permanentAddress || '';
+        document.getElementById('city').value = emp.city || '';
+        document.getElementById('state').value = emp.state || '';
+        document.getElementById('pincode').value = emp.pincode || '';
+        document.getElementById('country').value = emp.country || '';
+
+        // Identity
+        document.getElementById('aadhar').value = emp.aadhar || '';
+        document.getElementById('pan').value = emp.pan || '';
+        document.getElementById('passport').value = emp.passport || '';
+        document.getElementById('passportExpiry').value = emp.passportExpiry || '';
+        document.getElementById('drivingLicense').value = emp.drivingLicense || '';
+        document.getElementById('voterId').value = emp.voterId || '';
+
+        // Employment
+        document.getElementById('employeeId').value = emp.employeeId || '';
+        document.getElementById('department').value = emp.department || '';
+        document.getElementById('designation').value = emp.designation || '';
+        document.getElementById('doj').value = emp.doj || '';
+        document.getElementById('employmentType').value = emp.employmentType || 'Full-time';
+        document.getElementById('shift').value = emp.shift || 'General';
+        document.getElementById('reportingManager').value = emp.reportingManager || '';
+        document.getElementById('workLocation').value = emp.workLocation || '';
+        document.getElementById('officeBranch').value = emp.officeBranch || '';
+        document.getElementById('empStatus').value = emp.empStatus || 'Active';
+        document.getElementById('probationEnd').value = emp.probationEnd || '';
+        document.getElementById('confirmationDate').value = emp.confirmationDate || '';
+        document.getElementById('ctc').value = emp.ctc || '';
+
+
+        // Experience
+        document.getElementById('prevCompany').value = emp.prevCompany || '';
+        document.getElementById('prevDesignation').value = emp.prevDesignation || '';
+        document.getElementById('prevCtc').value = emp.prevCtc || '';
+        document.getElementById('totalExperience').value = emp.totalExperience || '';
+        document.getElementById('reasonLeaving').value = emp.reasonLeaving || '';
+
+        // Education
+        document.getElementById('qualification').value = emp.qualification || '';
+        document.getElementById('specialization').value = emp.specialization || '';
+        document.getElementById('university').value = emp.university || '';
+        document.getElementById('yearPassing').value = emp.yearPassing || '';
+        document.getElementById('percentage').value = emp.percentage || '';
+        document.getElementById('certifications').value = emp.certifications || '';
+
+        // Emergency
+        document.getElementById('emergencyName').value = emp.emergencyName || '';
+        document.getElementById('emergencyRelation').value = emp.emergencyRelation || '';
+        document.getElementById('emergencyPhone').value = emp.emergencyPhone || '';
+        document.getElementById('emergencyAltPhone').value = emp.emergencyAltPhone || '';
+        document.getElementById('emergencyAddress').value = emp.emergencyAddress || '';
+
+        // Checklist
+        document.getElementById('chk_offerLetter').checked = emp.chk_offerLetter || false;
+        document.getElementById('chk_appointmentLetter').checked = emp.chk_appointmentLetter || false;
+        document.getElementById('chk_idCard').checked = emp.chk_idCard || false;
+        document.getElementById('chk_nda').checked = emp.chk_nda || false;
+        document.getElementById('chk_bgVerification').checked = emp.chk_bgVerification || false;
+        document.getElementById('chk_laptop').checked = emp.chk_laptop || false;
+        document.getElementById('chk_desktop').checked = emp.chk_desktop || false;
+        document.getElementById('chk_phoneProvided').checked = emp.chk_phoneProvided || false;
+        document.getElementById('chk_simCard').checked = emp.chk_simCard || false;
+        document.getElementById('chk_emailCreated').checked = emp.chk_emailCreated || false;
+        document.getElementById('chk_slack').checked = emp.chk_slack || false;
+        document.getElementById('chk_github').checked = emp.chk_github || false;
+        document.getElementById('chk_jira').checked = emp.chk_jira || false;
+        document.getElementById('chk_biometric').checked = emp.chk_biometric || false;
+        document.getElementById('chk_parking').checked = emp.chk_parking || false;
+        document.getElementById('chk_welcomeKit').checked = emp.chk_welcomeKit || false;
+        document.getElementById('laptopSerial').value = emp.laptopSerial || '';
+
+        // Notes
+        document.getElementById('additionalNotes').value = emp.additionalNotes || '';
+
+        showPage('add');
+        switchTabByName('personal');
+    }
+
+    function switchTabByName(tabName) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.form-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+        const tabs = document.querySelectorAll('.form-tab');
+        const tabNames = ['personal','address','identity','employment','experience','education','emergency','checklist','notes'];
+        const idx = tabNames.indexOf(tabName);
+        if (idx !== -1 && tabs[idx]) tabs[idx].classList.add('active');
+    }
+
+
+    // ==================== VIEW EMPLOYEE ====================
+    function viewEmployee(empId) {
+        const emp = employees.find(e => e.employeeId === empId);
+        if (!emp) return;
+        viewingEmployeeId = empId;
+
+        const container = document.getElementById('profileContent');
+        const initials = (emp.fullName || 'E').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+
+        let html = `<div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-avatar">${emp.profilePhoto ? `<img src="${emp.profilePhoto}" style="width:100%;height:100%;border-radius:50%;object-fit:cover" onerror="this.parentElement.textContent='${initials}'">` : initials}</div>
+                <div class="profile-name">${emp.fullName}</div>
+                <div class="profile-designation">${emp.designation || ''} | ${emp.department || ''}</div>
+                <div style="margin-top:8px;font-size:13px;opacity:0.8">${emp.employeeId} | ${emp.empStatus || 'Active'}</div>
+            </div>
+            <div class="profile-body">`;
+
+        // Personal Information
+        html += `<div class="profile-section">
+            <div class="profile-section-title"><i class="fas fa-user" style="margin-right:8px;color:var(--accent)"></i>Personal Information</div>
+            <div class="profile-info-grid">
+                ${profileItem('Full Name', emp.fullName)}
+                ${profileItem("Father's Name", emp.fatherName)}
+                ${profileItem('Date of Birth', emp.dob ? formatDate(emp.dob) : '')}
+                ${profileItem('Gender', emp.gender)}
+                ${profileItem('Marital Status', emp.maritalStatus)}
+                ${profileItem('Blood Group', emp.bloodGroup)}
+                ${profileItem('Nationality', emp.nationality)}
+                ${profileItem('Religion', emp.religion)}
+                ${profileItem('Phone', emp.phone)}
+                ${profileItem('Alternate Phone', emp.altPhone)}
+                ${profileItem('Personal Email', emp.personalEmail)}
+                ${profileItem('Official Email', emp.officialEmail)}
+            </div>
+        </div>`;
+
+        // Address
+        html += `<div class="profile-section">
+            <div class="profile-section-title"><i class="fas fa-map-marker-alt" style="margin-right:8px;color:var(--accent)"></i>Address</div>
+            <div class="profile-info-grid">
+                ${profileItem('Current Address', emp.currentAddress)}
+                ${profileItem('Permanent Address', emp.permanentAddress)}
+                ${profileItem('City', emp.city)}
+                ${profileItem('State', emp.state)}
+                ${profileItem('Pincode', emp.pincode)}
+                ${profileItem('Country', emp.country)}
+            </div>
+        </div>`;
+
+        // Identity
+        html += `<div class="profile-section">
+            <div class="profile-section-title"><i class="fas fa-id-card" style="margin-right:8px;color:var(--accent)"></i>Identity Documents</div>
+            <div class="profile-info-grid">
+                ${profileItem('Aadhar Number', emp.aadhar)}
+                ${profileItem('PAN Number', emp.pan)}
+                ${profileItem('Passport Number', emp.passport)}
+                ${profileItem('Passport Expiry', emp.passportExpiry ? formatDate(emp.passportExpiry) : '')}
+                ${profileItem('Driving License', emp.drivingLicense)}
+                ${profileItem('Voter ID', emp.voterId)}
+            </div>
+        </div>`;
+
+
+        // Employment
+        html += `<div class="profile-section">
+            <div class="profile-section-title"><i class="fas fa-briefcase" style="margin-right:8px;color:var(--accent)"></i>Employment Details</div>
+            <div class="profile-info-grid">
+                ${profileItem('Employee ID', emp.employeeId)}
+                ${profileItem('Department', emp.department)}
+                ${profileItem('Designation', emp.designation)}
+                ${profileItem('Date of Joining', emp.doj ? formatDate(emp.doj) : '')}
+                ${profileItem('Employment Type', emp.employmentType)}
+                ${profileItem('Shift', emp.shift)}
+                ${profileItem('Reporting Manager', emp.reportingManager)}
+                ${profileItem('Work Location', emp.workLocation)}
+                ${profileItem('Office Branch', emp.officeBranch)}
+                ${profileItem('Status', emp.empStatus)}
+                ${profileItem('Probation End', emp.probationEnd ? formatDate(emp.probationEnd) : '')}
+                ${profileItem('Confirmation Date', emp.confirmationDate ? formatDate(emp.confirmationDate) : '')}
+                ${profileItem('CTC / Package', emp.ctc ? emp.ctc + ' LPA' : '')}
+            </div>
+        </div>`;
+
+        // Experience
+        html += `<div class="profile-section">
+            <div class="profile-section-title"><i class="fas fa-history" style="margin-right:8px;color:var(--accent)"></i>Previous Experience</div>
+            <div class="profile-info-grid">
+                ${profileItem('Previous Company', emp.prevCompany)}
+                ${profileItem('Previous Designation', emp.prevDesignation)}
+                ${profileItem('Previous CTC', emp.prevCtc ? emp.prevCtc + ' LPA' : '')}
+                ${profileItem('Total Experience', emp.totalExperience ? emp.totalExperience + ' Years' : '')}
+                ${profileItem('Reason for Leaving', emp.reasonLeaving)}
+            </div>
+        </div>`;
+
+        // Education
+        html += `<div class="profile-section">
+            <div class="profile-section-title"><i class="fas fa-graduation-cap" style="margin-right:8px;color:var(--accent)"></i>Education</div>
+            <div class="profile-info-grid">
+                ${profileItem('Qualification', emp.qualification)}
+                ${profileItem('Specialization', emp.specialization)}
+                ${profileItem('University', emp.university)}
+                ${profileItem('Year of Passing', emp.yearPassing)}
+                ${profileItem('Percentage/CGPA', emp.percentage)}
+                ${profileItem('Certifications', emp.certifications)}
+            </div>
+        </div>`;
+
+        // Emergency
+        html += `<div class="profile-section">
+            <div class="profile-section-title"><i class="fas fa-ambulance" style="margin-right:8px;color:var(--accent)"></i>Emergency Contact</div>
+            <div class="profile-info-grid">
+                ${profileItem('Contact Name', emp.emergencyName)}
+                ${profileItem('Relation', emp.emergencyRelation)}
+                ${profileItem('Phone', emp.emergencyPhone)}
+                ${profileItem('Alternate Phone', emp.emergencyAltPhone)}
+                ${profileItem('Address', emp.emergencyAddress)}
+            </div>
+        </div>`;
+
+
+        // Onboarding Checklist
+        const checklistItems = [
+            { key: 'chk_offerLetter', label: 'Offer Letter' },
+            { key: 'chk_appointmentLetter', label: 'Appointment Letter' },
+            { key: 'chk_idCard', label: 'ID Card' },
+            { key: 'chk_nda', label: 'NDA Signed' },
+            { key: 'chk_bgVerification', label: 'Background Verification' },
+            { key: 'chk_laptop', label: 'Laptop Assigned' },
+            { key: 'chk_desktop', label: 'Desktop Assigned' },
+            { key: 'chk_phoneProvided', label: 'Phone Provided' },
+            { key: 'chk_simCard', label: 'SIM Card' },
+            { key: 'chk_emailCreated', label: 'Official Email Created' },
+            { key: 'chk_slack', label: 'Slack Added' },
+            { key: 'chk_github', label: 'GitHub/GitLab Added' },
+            { key: 'chk_jira', label: 'Jira/Project Tool Added' },
+            { key: 'chk_biometric', label: 'Biometric Registered' },
+            { key: 'chk_parking', label: 'Parking Allotted' },
+            { key: 'chk_welcomeKit', label: 'Welcome Kit Given' }
+        ];
+
+        html += `<div class="profile-section">
+            <div class="profile-section-title"><i class="fas fa-clipboard-check" style="margin-right:8px;color:var(--accent)"></i>Onboarding Checklist</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px">`;
+
+        checklistItems.forEach(item => {
+            const checked = emp[item.key];
+            html += `<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;background:${checked ? 'rgba(16,185,129,0.05)' : 'var(--gray-50)'};border:1px solid ${checked ? 'rgba(16,185,129,0.2)' : 'var(--gray-200)'}">
+                <i class="fas ${checked ? 'fa-check-circle' : 'fa-times-circle'}" style="color:${checked ? 'var(--success)' : 'var(--gray-400)'}"></i>
+                <span style="font-size:12px;color:${checked ? 'var(--gray-800)' : 'var(--gray-500)'}">${item.label}</span>
+            </div>`;
+        });
+
+        html += '</div>';
+        if (emp.laptopSerial) {
+            html += `<div style="margin-top:12px;font-size:13px;color:var(--gray-600)"><strong>Laptop Serial:</strong> ${emp.laptopSerial}</div>`;
+        }
+        html += '</div>';
+
+        // Notes
+        if (emp.additionalNotes) {
+            html += `<div class="profile-section">
+                <div class="profile-section-title"><i class="fas fa-sticky-note" style="margin-right:8px;color:var(--accent)"></i>Notes</div>
+                <p style="font-size:14px;color:var(--gray-700);line-height:1.6;white-space:pre-wrap">${emp.additionalNotes}</p>
+            </div>`;
+        }
+
+        html += '</div></div>';
+        container.innerHTML = html;
+        showPage('view');
+    }
+
+    function profileItem(label, value) {
+        return `<div class="profile-info-item">
+            <div class="profile-info-label">${label}</div>
+            <div class="profile-info-value">${value || '-'}</div>
+        </div>`;
+    }
+
+    function editFromProfile() {
+        if (viewingEmployeeId) editEmployee(viewingEmployeeId);
+    }
+
+    function printEmployee() {
+        window.print();
+    }
+
+
+    // ==================== DELETE EMPLOYEE ====================
+    function showDeleteModal(empId) {
+        deleteTargetId = empId;
+        document.getElementById('deleteModal').classList.add('show');
+    }
+
+    function closeDeleteModal() {
+        deleteTargetId = null;
+        document.getElementById('deleteModal').classList.remove('show');
+    }
+
+    function confirmDelete() {
+        if (!deleteTargetId) return;
+        employees = employees.filter(e => e.employeeId !== deleteTargetId);
+        saveData();
+        filteredEmployees = [...employees];
+        closeDeleteModal();
+        showToast('Employee deleted successfully', 'success');
+        renderEmployeeTable();
+        updateDashboard();
+    }
+
+    // ==================== RESET FORM ====================
+    function resetForm() {
+        document.getElementById('employeeForm').reset();
+        document.getElementById('editId').value = '';
+        document.getElementById('employeeId').value = '';
+        document.getElementById('nationality').value = 'Indian';
+        document.getElementById('country').value = 'India';
+        document.getElementById('formTitle').textContent = 'Add New Employee';
+        document.getElementById('formSubtitle').textContent = 'Fill in the details to onboard a new employee';
+        switchTabByName('personal');
+    }
+
+    // ==================== EXCEL EXPORT ====================
+    function exportToExcel() {
+        if (employees.length === 0) {
+            showToast('No data to export', 'error');
+            return;
+        }
+
+        const exportData = employees.map(emp => ({
+            'Employee ID': emp.employeeId,
+            'Full Name': emp.fullName,
+            "Father's Name": emp.fatherName,
+            'Date of Birth': emp.dob,
+            'Gender': emp.gender,
+            'Marital Status': emp.maritalStatus,
+            'Blood Group': emp.bloodGroup,
+            'Nationality': emp.nationality,
+            'Religion': emp.religion,
+            'Phone': emp.phone,
+            'Alternate Phone': emp.altPhone,
+            'Personal Email': emp.personalEmail,
+            'Official Email': emp.officialEmail,
+            'Profile Photo URL': emp.profilePhoto,
+            'Current Address': emp.currentAddress,
+            'Permanent Address': emp.permanentAddress,
+            'City': emp.city,
+            'State': emp.state,
+            'Pincode': emp.pincode,
+            'Country': emp.country,
+            'Aadhar Number': emp.aadhar,
+            'PAN Number': emp.pan,
+            'Passport Number': emp.passport,
+            'Passport Expiry': emp.passportExpiry,
+            'Driving License': emp.drivingLicense,
+            'Voter ID': emp.voterId,
+            'Department': emp.department,
+            'Designation': emp.designation,
+            'Date of Joining': emp.doj,
+            'Employment Type': emp.employmentType,
+            'Shift': emp.shift,
+            'Reporting Manager': emp.reportingManager,
+            'Work Location': emp.workLocation,
+            'Office Branch': emp.officeBranch,
+            'Employee Status': emp.empStatus,
+            'Probation End Date': emp.probationEnd,
+            'Confirmation Date': emp.confirmationDate,
+            'CTC/Package': emp.ctc,
+            'Previous Company': emp.prevCompany,
+            'Previous Designation': emp.prevDesignation,
+            'Previous CTC': emp.prevCtc,
+            'Total Experience': emp.totalExperience,
+            'Reason for Leaving': emp.reasonLeaving,
+            'Qualification': emp.qualification,
+            'Specialization': emp.specialization,
+            'University': emp.university,
+            'Year of Passing': emp.yearPassing,
+            'Percentage/CGPA': emp.percentage,
+            'Certifications': emp.certifications,
+            'Emergency Contact Name': emp.emergencyName,
+            'Emergency Relation': emp.emergencyRelation,
+            'Emergency Phone': emp.emergencyPhone,
+            'Emergency Alt Phone': emp.emergencyAltPhone,
+            'Emergency Address': emp.emergencyAddress,
+
+
+            'Offer Letter': emp.chk_offerLetter ? 'Yes' : 'No',
+            'Appointment Letter': emp.chk_appointmentLetter ? 'Yes' : 'No',
+            'ID Card': emp.chk_idCard ? 'Yes' : 'No',
+            'NDA Signed': emp.chk_nda ? 'Yes' : 'No',
+            'Background Verification': emp.chk_bgVerification ? 'Yes' : 'No',
+            'Laptop Assigned': emp.chk_laptop ? 'Yes' : 'No',
+            'Desktop Assigned': emp.chk_desktop ? 'Yes' : 'No',
+            'Phone Provided': emp.chk_phoneProvided ? 'Yes' : 'No',
+            'SIM Card': emp.chk_simCard ? 'Yes' : 'No',
+            'Official Email Created': emp.chk_emailCreated ? 'Yes' : 'No',
+            'Slack Added': emp.chk_slack ? 'Yes' : 'No',
+            'GitHub/GitLab Added': emp.chk_github ? 'Yes' : 'No',
+            'Jira/Project Tool Added': emp.chk_jira ? 'Yes' : 'No',
+            'Biometric Registered': emp.chk_biometric ? 'Yes' : 'No',
+            'Parking Allotted': emp.chk_parking ? 'Yes' : 'No',
+            'Welcome Kit Given': emp.chk_welcomeKit ? 'Yes' : 'No',
+            'Laptop Serial Number': emp.laptopSerial,
+            'Additional Notes': emp.additionalNotes
+        }));
+
+        const ws = XLSX.utils.json_to_sheet(exportData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Employees');
+
+        // Auto-width columns
+        const colWidths = Object.keys(exportData[0]).map(key => ({
+            wch: Math.max(key.length, ...exportData.map(row => (row[key] || '').toString().length))
+        }));
+        ws['!cols'] = colWidths;
+
+        XLSX.writeFile(wb, `CodeOrigin_Employees_${new Date().toISOString().split('T')[0]}.xlsx`);
+        showToast('Excel file exported successfully!', 'success');
+    }
+
+
+    // ==================== EXCEL IMPORT ====================
+    function importFromExcel(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const sheet = workbook.Sheets[sheetName];
+                const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+                if (jsonData.length === 0) {
+                    showToast('No data found in the Excel file', 'error');
+                    return;
+                }
+
+                let imported = 0;
+                jsonData.forEach(row => {
+                    const emp = {
+                        employeeId: row['Employee ID'] || generateEmployeeId(),
+                        fullName: row['Full Name'] || '',
+                        fatherName: row["Father's Name"] || '',
+                        dob: row['Date of Birth'] || '',
+                        gender: row['Gender'] || '',
+                        maritalStatus: row['Marital Status'] || '',
+                        bloodGroup: row['Blood Group'] || '',
+                        nationality: row['Nationality'] || 'Indian',
+                        religion: row['Religion'] || '',
+                        phone: row['Phone'] || '',
+                        altPhone: row['Alternate Phone'] || '',
+                        personalEmail: row['Personal Email'] || '',
+                        officialEmail: row['Official Email'] || '',
+                        profilePhoto: row['Profile Photo URL'] || '',
+                        currentAddress: row['Current Address'] || '',
+                        permanentAddress: row['Permanent Address'] || '',
+                        city: row['City'] || '',
+                        state: row['State'] || '',
+                        pincode: row['Pincode'] || '',
+                        country: row['Country'] || 'India',
+                        aadhar: row['Aadhar Number'] || '',
+                        pan: row['PAN Number'] || '',
+                        passport: row['Passport Number'] || '',
+                        passportExpiry: row['Passport Expiry'] || '',
+                        drivingLicense: row['Driving License'] || '',
+                        voterId: row['Voter ID'] || '',
+                        department: row['Department'] || '',
+                        designation: row['Designation'] || '',
+                        doj: row['Date of Joining'] || '',
+                        employmentType: row['Employment Type'] || 'Full-time',
+                        shift: row['Shift'] || 'General',
+                        reportingManager: row['Reporting Manager'] || '',
+                        workLocation: row['Work Location'] || '',
+                        officeBranch: row['Office Branch'] || '',
+                        empStatus: row['Employee Status'] || 'Active',
+                        probationEnd: row['Probation End Date'] || '',
+                        confirmationDate: row['Confirmation Date'] || '',
+                        ctc: row['CTC/Package'] || '',
+                        prevCompany: row['Previous Company'] || '',
+                        prevDesignation: row['Previous Designation'] || '',
+                        prevCtc: row['Previous CTC'] || '',
+                        totalExperience: row['Total Experience'] || '',
+                        reasonLeaving: row['Reason for Leaving'] || '',
+                        qualification: row['Qualification'] || '',
+                        specialization: row['Specialization'] || '',
+                        university: row['University'] || '',
+                        yearPassing: row['Year of Passing'] || '',
+                        percentage: row['Percentage/CGPA'] || '',
+                        certifications: row['Certifications'] || '',
+                        emergencyName: row['Emergency Contact Name'] || '',
+                        emergencyRelation: row['Emergency Relation'] || '',
+                        emergencyPhone: row['Emergency Phone'] || '',
+                        emergencyAltPhone: row['Emergency Alt Phone'] || '',
+                        emergencyAddress: row['Emergency Address'] || '',
+
+
+                        chk_offerLetter: row['Offer Letter'] === 'Yes',
+                        chk_appointmentLetter: row['Appointment Letter'] === 'Yes',
+                        chk_idCard: row['ID Card'] === 'Yes',
+                        chk_nda: row['NDA Signed'] === 'Yes',
+                        chk_bgVerification: row['Background Verification'] === 'Yes',
+                        chk_laptop: row['Laptop Assigned'] === 'Yes',
+                        chk_desktop: row['Desktop Assigned'] === 'Yes',
+                        chk_phoneProvided: row['Phone Provided'] === 'Yes',
+                        chk_simCard: row['SIM Card'] === 'Yes',
+                        chk_emailCreated: row['Official Email Created'] === 'Yes',
+                        chk_slack: row['Slack Added'] === 'Yes',
+                        chk_github: row['GitHub/GitLab Added'] === 'Yes',
+                        chk_jira: row['Jira/Project Tool Added'] === 'Yes',
+                        chk_biometric: row['Biometric Registered'] === 'Yes',
+                        chk_parking: row['Parking Allotted'] === 'Yes',
+                        chk_welcomeKit: row['Welcome Kit Given'] === 'Yes',
+                        laptopSerial: row['Laptop Serial Number'] || '',
+                        additionalNotes: row['Additional Notes'] || '',
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    };
+
+                    // Check if employee already exists (by ID)
+                    const existingIdx = employees.findIndex(e => e.employeeId === emp.employeeId);
+                    if (existingIdx !== -1) {
+                        employees[existingIdx] = emp;
+                    } else {
+                        // Ensure unique ID
+                        if (employees.find(e => e.employeeId === emp.employeeId)) {
+                            emp.employeeId = generateEmployeeId();
+                        }
+                        employees.push(emp);
+                    }
+                    imported++;
+                });
+
+                saveData();
+                filteredEmployees = [...employees];
+                showToast(`Successfully imported ${imported} employee(s)`, 'success');
+                showPage('employees');
+            } catch (err) {
+                showToast('Error reading Excel file: ' + err.message, 'error');
+                console.error(err);
+            }
+        };
+        reader.readAsArrayBuffer(file);
+        event.target.value = ''; // Reset file input
+    }
+
+
+    // ==================== UTILITY FUNCTIONS ====================
+    function formatDate(dateStr) {
+        if (!dateStr) return '-';
+        try {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+        } catch {
+            return dateStr;
+        }
+    }
+
+    function getStatusClass(status) {
+        switch (status) {
+            case 'Active': return 'active';
+            case 'On Leave': return 'on-leave';
+            case 'Resigned': return 'resigned';
+            case 'Terminated': return 'terminated';
+            default: return 'active';
+        }
+    }
+
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i> ${message}`;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(100%)';
+            toast.style.transition = 'all 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // ==================== FORM VALIDATION ====================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add real-time validation for required fields
+        const requiredFields = ['fullName', 'phone', 'department', 'designation', 'doj'];
+        requiredFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('blur', function() {
+                    if (this.value.trim()) {
+                        this.classList.remove('invalid');
+                        this.classList.add('valid');
+                    } else {
+                        this.classList.remove('valid');
+                        this.classList.add('invalid');
+                    }
+                });
+                field.addEventListener('input', function() {
+                    if (this.classList.contains('invalid') && this.value.trim()) {
+                        this.classList.remove('invalid');
+                        this.classList.add('valid');
+                    }
+                });
+            }
+        });
+
+        // Email validation
+        const emailFields = ['personalEmail', 'officialEmail'];
+        emailFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('blur', function() {
+                    if (this.value && !isValidEmail(this.value)) {
+                        this.classList.add('invalid');
+                        this.classList.remove('valid');
+                    } else if (this.value) {
+                        this.classList.add('valid');
+                        this.classList.remove('invalid');
+                    } else {
+                        this.classList.remove('valid', 'invalid');
+                    }
+                });
+            }
+        });
+
+        // Phone validation
+        const phoneField = document.getElementById('phone');
+        if (phoneField) {
+            phoneField.addEventListener('blur', function() {
+                if (this.value && this.value.replace(/\D/g, '').length < 10) {
+                    this.classList.add('invalid');
+                    this.classList.remove('valid');
+                } else if (this.value) {
+                    this.classList.add('valid');
+                    this.classList.remove('invalid');
+                }
+            });
+        }
+    });
+
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+
+    // ==================== KEYBOARD SHORTCUTS ====================
+    document.addEventListener('keydown', function(e) {
+        // Escape to close modals
+        if (e.key === 'Escape') {
+            closeDeleteModal();
+        }
+    });
+
+    // Close modal on overlay click
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+        if (e.target === this) closeDeleteModal();
+    });
+
+    // ==================== INITIALIZE APP ====================
+    function init() {
+        loadTheme();
+        loadData();
+        updateDashboard();
+    }
+
+    init();
+    </script>
 </body>
 </html>
