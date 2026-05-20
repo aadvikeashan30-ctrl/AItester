@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KOF Chitradurga - Admin Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: rgba(17, 24, 39, 0.7);
+            --accent-green: #00d97e;
+            --accent-gold: #fbbf24;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: rgba(255,255,255,0.08);
+            --glass-bg: rgba(255,255,255,0.03);
+            --sidebar-width: 260px;
+            --danger: #ef4444;
+            --info: #3b82f6;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        /* LOGIN PAGE */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(-45deg, #0a0e1a, #1a1a2e, #16213e, #0f3460);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .login-box {
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 50px 40px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            animation: fadeInUp 0.8s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .login-box .logo { font-size: 3rem; margin-bottom: 10px; color: var(--accent-green); }
+        .login-box h2 { font-size: 1.5rem; margin-bottom: 5px; font-weight: 700; }
+        .login-box p { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 30px; }
+        .login-box .input-group { position: relative; margin-bottom: 20px; text-align: left; }
+        .login-box .input-group label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 6px; }
+        .login-box .input-group input {
+            width: 100%; padding: 14px 16px; border-radius: 10px;
+            border: 1px solid var(--border-color); background: var(--glass-bg);
+            color: var(--text-primary); font-family: 'Poppins'; font-size: 0.9rem;
+            transition: border-color 0.3s;
+        }
+        .login-box .input-group input:focus { outline: none; border-color: var(--accent-green); }
+        .login-btn {
+            width: 100%; padding: 14px; border: none; border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent-green), #059669);
+            color: #fff; font-family: 'Poppins'; font-size: 1rem; font-weight: 600;
+            cursor: pointer; transition: transform 0.2s, box-shadow 0.3s;
+        }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,217,126,0.3); }
+        .login-error { color: var(--danger); font-size: 0.8rem; margin-top: 10px; display: none; }
+
+        /* MAIN LAYOUT */
+        .admin-wrapper { display: flex; min-height: 100vh; }
+        .sidebar {
+            width: var(--sidebar-width); background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(20px); border-right: 1px solid var(--border-color);
+            padding: 20px 0; position: fixed; top: 0; left: 0; height: 100vh;
+            overflow-y: auto; z-index: 1000; transition: transform 0.3s ease;
+        }
+        .sidebar-header { padding: 10px 20px 30px; text-align: center; border-bottom: 1px solid var(--border-color); margin-bottom: 15px; }
+        .sidebar-header h3 { color: var(--accent-green); font-size: 1.1rem; }
+        .sidebar-header small { color: var(--text-secondary); font-size: 0.7rem; }
+        .nav-item {
+            display: flex; align-items: center; padding: 12px 24px; cursor: pointer;
+            color: var(--text-secondary); transition: all 0.3s; font-size: 0.85rem; gap: 12px;
+        }
+        .nav-item:hover { background: var(--glass-bg); color: var(--text-primary); }
+        .nav-item.active { color: var(--accent-green); background: rgba(0,217,126,0.08); border-right: 3px solid var(--accent-green); }
+        .nav-item i { width: 20px; text-align: center; font-size: 1rem; }
+        .nav-section-label { padding: 15px 24px 5px; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); opacity: 0.6; }
+
+        .main-content { margin-left: var(--sidebar-width); flex: 1; padding: 30px; min-height: 100vh; }
+        .topbar {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color);
+        }
+        .topbar h1 { font-size: 1.5rem; font-weight: 700; }
+        .topbar-right { display: flex; align-items: center; gap: 15px; }
+        .topbar-right .logout-btn {
+            padding: 8px 16px; border-radius: 8px; border: 1px solid var(--danger);
+            background: transparent; color: var(--danger); cursor: pointer; font-family: 'Poppins';
+            font-size: 0.8rem; transition: all 0.3s;
+        }
+        .topbar-right .logout-btn:hover { background: var(--danger); color: #fff; }
+        .hamburger { display: none; font-size: 1.5rem; cursor: pointer; color: var(--text-primary); }
+
+        /* CARDS */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card {
+            background: var(--bg-card); backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color); border-radius: 16px;
+            padding: 24px; transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .stat-card .stat-icon { font-size: 2rem; margin-bottom: 12px; }
+        .stat-card .stat-value { font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
+        .stat-card .stat-label { font-size: 0.8rem; color: var(--text-secondary); }
+
+        /* SECTION PANELS */
+        .section-panel { display: none; animation: fadeIn 0.4s ease; }
+        .section-panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* TABLES */
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .data-table th {
+            text-align: left; padding: 12px 16px; font-size: 0.75rem;
+            text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .data-table td { padding: 12px 16px; font-size: 0.85rem; border-bottom: 1px solid var(--border-color); }
+        .data-table tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+        .data-table tr:hover { background: rgba(0,217,126,0.04); }
+
+        /* BUTTONS */
+        .btn {
+            padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;
+            font-family: 'Poppins'; font-size: 0.8rem; font-weight: 500; transition: all 0.3s;
+        }
+        .btn-primary { background: var(--accent-green); color: #000; }
+        .btn-primary:hover { box-shadow: 0 4px 15px rgba(0,217,126,0.4); transform: translateY(-1px); }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-danger:hover { box-shadow: 0 4px 15px rgba(239,68,68,0.4); }
+        .btn-info { background: var(--info); color: #fff; }
+        .btn-info:hover { box-shadow: 0 4px 15px rgba(59,130,246,0.4); }
+        .btn-gold { background: var(--accent-gold); color: #000; }
+        .btn-gold:hover { box-shadow: 0 4px 15px rgba(251,191,36,0.4); }
+        .btn-sm { padding: 6px 12px; font-size: 0.75rem; }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 2000;
+            align-items: center; justify-content: center;
+        }
+        .modal-overlay.show { display: flex; animation: fadeIn 0.3s ease; }
+        .modal {
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 30px; width: 90%; max-width: 600px;
+            max-height: 85vh; overflow-y: auto;
+        }
+        .modal h3 { margin-bottom: 20px; font-size: 1.2rem; }
+        .modal .form-group { margin-bottom: 16px; }
+        .modal .form-group label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 6px; }
+        .modal .form-group input, .modal .form-group select, .modal .form-group textarea {
+            width: 100%; padding: 10px 14px; border-radius: 8px;
+            border: 1px solid var(--border-color); background: var(--glass-bg);
+            color: var(--text-primary); font-family: 'Poppins'; font-size: 0.85rem;
+        }
+        .modal .form-group input:focus, .modal .form-group select:focus, .modal .form-group textarea:focus {
+            outline: none; border-color: var(--accent-green);
+        }
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        /* TOAST */
+        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 3000; }
+        .toast {
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 14px 20px; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 10px; min-width: 280px;
+            animation: slideInRight 0.4s ease; backdrop-filter: blur(20px);
+        }
+        .toast.success { border-left: 4px solid var(--accent-green); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        .toast.info { border-left: 4px solid var(--info); }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+        .toast-close { margin-left: auto; cursor: pointer; color: var(--text-secondary); }
+
+        /* SEARCH */
+        .search-bar {
+            display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;
+        }
+        .search-bar input, .search-bar select {
+            padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-color);
+            background: var(--glass-bg); color: var(--text-primary); font-family: 'Poppins'; font-size: 0.85rem;
+        }
+        .search-bar input:focus, .search-bar select:focus { outline: none; border-color: var(--accent-green); }
+
+        /* BADGE */
+        .badge {
+            padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;
+        }
+        .badge-green { background: rgba(0,217,126,0.15); color: var(--accent-green); }
+        .badge-red { background: rgba(239,68,68,0.15); color: var(--danger); }
+        .badge-gold { background: rgba(251,191,36,0.15); color: var(--accent-gold); }
+        .badge-blue { background: rgba(59,130,246,0.15); color: var(--info); }
+
+        /* ACTIVITY FEED */
+        .activity-feed { margin-top: 20px; }
+        .activity-item {
+            display: flex; align-items: flex-start; gap: 12px; padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .activity-item .activity-icon {
+            width: 36px; height: 36px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0;
+        }
+        .activity-item .activity-text { font-size: 0.85rem; }
+        .activity-item .activity-time { font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px; }
+
+        /* ID CARD */
+        .id-card-preview {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 2px solid var(--accent-green); border-radius: 16px;
+            padding: 30px; max-width: 400px; margin: 20px auto; text-align: center;
+        }
+        .id-card-preview .emp-avatar {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: var(--accent-green); display: flex; align-items: center;
+            justify-content: center; margin: 0 auto 15px; font-size: 2rem; color: #000; font-weight: 700;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 20px; }
+            .hamburger { display: block; }
+            .form-row { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-green); border-radius: 3px; }
+
+        .quick-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 30px; }
+        .card-section {
+            background: var(--bg-card); backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color); border-radius: 16px; padding: 24px; margin-bottom: 20px;
+        }
+        .card-section h3 { margin-bottom: 15px; font-size: 1rem; }
+        .table-responsive { overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="login-container">
+        <div class="login-box">
+            <div class="logo"><i class="fas fa-shield-halved"></i></div>
+            <h2>Admin Portal</h2>
+            <p>KOF Chitradurga Cooperative Society</p>
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" id="loginUser" placeholder="Enter username" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="loginPass" placeholder="Enter password">
+            </div>
+            <button class="login-btn" onclick="handleLogin()"><i class="fas fa-right-to-bracket"></i> Login</button>
+            <div class="login-error" id="loginError">Invalid credentials. Please try again.</div>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div id="adminPanel" class="admin-wrapper" style="display:none;">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-leaf"></i> KOF Admin</h3>
+                <small>Chitradurga Cooperative</small>
+            </div>
+            <div class="nav-section-label">Main</div>
+            <div class="nav-item active" data-section="dashboard"><i class="fas fa-home"></i> Dashboard</div>
+            <div class="nav-section-label">Management</div>
+            <div class="nav-item" data-section="employees"><i class="fas fa-users"></i> Employees</div>
+            <div class="nav-item" data-section="payslips"><i class="fas fa-file-invoice-dollar"></i> Payslips</div>
+            <div class="nav-item" data-section="leaves"><i class="fas fa-calendar-check"></i> Leave Mgmt</div>
+            <div class="nav-item" data-section="orders"><i class="fas fa-truck"></i> Orders</div>
+            <div class="nav-section-label">Business</div>
+            <div class="nav-item" data-section="rates"><i class="fas fa-tags"></i> Rates/Pricing</div>
+            <div class="nav-item" data-section="tenders"><i class="fas fa-gavel"></i> Tenders</div>
+            <div class="nav-section-label">Settings</div>
+            <div class="nav-item" data-section="content"><i class="fas fa-globe"></i> Website Content</div>
+            <div class="nav-item" data-section="marketing"><i class="fas fa-bullhorn"></i> Digital Marketing</div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div class="topbar">
+                <div style="display:flex;align-items:center;gap:15px;">
+                    <div class="hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+                    <h1 id="pageTitle">Dashboard</h1>
+                </div>
+                <div class="topbar-right">
+                    <span style="font-size:0.85rem;color:var(--text-secondary)"><i class="fas fa-user-shield"></i> Admin</span>
+                    <button class="logout-btn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+
+
+            <!-- DASHBOARD SECTION -->
+            <div class="section-panel active" id="sec-dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color:var(--accent-green)"><i class="fas fa-users"></i></div>
+                        <div class="stat-value" id="statEmployees">0</div>
+                        <div class="stat-label">Total Employees</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color:var(--accent-gold)"><i class="fas fa-clock"></i></div>
+                        <div class="stat-value" id="statLeaves">0</div>
+                        <div class="stat-label">Pending Leaves</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color:var(--info)"><i class="fas fa-box"></i></div>
+                        <div class="stat-value" id="statOrders">0</div>
+                        <div class="stat-label">Active Orders</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color:#a78bfa"><i class="fas fa-indian-rupee-sign"></i></div>
+                        <div class="stat-value" id="statRevenue">₹0</div>
+                        <div class="stat-label">Monthly Revenue</div>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <button class="btn btn-primary" onclick="navigateTo('employees');openAddEmployee()"><i class="fas fa-user-plus"></i> Add Employee</button>
+                    <button class="btn btn-gold" onclick="navigateTo('payslips')"><i class="fas fa-file-invoice"></i> Generate Payslip</button>
+                    <button class="btn btn-info" onclick="navigateTo('orders')"><i class="fas fa-plus"></i> New Order</button>
+                    <button class="btn btn-primary" onclick="navigateTo('rates')"><i class="fas fa-tags"></i> Update Rates</button>
+                </div>
+                <div class="card-section">
+                    <h3><i class="fas fa-timeline"></i> Recent Activity</h3>
+                    <div class="activity-feed" id="activityFeed"></div>
+                </div>
+            </div>
+
+            <!-- EMPLOYEES SECTION -->
+            <div class="section-panel" id="sec-employees">
+                <div class="search-bar">
+                    <input type="text" id="empSearch" placeholder="Search employees..." oninput="renderEmployees()">
+                    <select id="empDeptFilter" onchange="renderEmployees()">
+                        <option value="">All Departments</option>
+                        <option value="Operations">Operations</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Procurement">Procurement</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Production">Production</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="openAddEmployee()"><i class="fas fa-user-plus"></i> Add Employee</button>
+                </div>
+                <div class="card-section">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>Emp ID</th><th>Name</th><th>Designation</th><th>Department</th><th>Phone</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody id="empTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAYSLIPS SECTION -->
+            <div class="section-panel" id="sec-payslips">
+                <div class="search-bar">
+                    <select id="payEmpFilter" onchange="renderPayslips()"><option value="">All Employees</option></select>
+                    <input type="month" id="payMonthFilter" onchange="renderPayslips()">
+                    <button class="btn btn-primary" onclick="openGeneratePayslip()"><i class="fas fa-file-invoice-dollar"></i> Generate Payslip</button>
+                </div>
+                <div class="card-section">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>Emp ID</th><th>Employee</th><th>Month</th><th>Basic</th><th>Gross</th><th>Deductions</th><th>Net Pay</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody id="payTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LEAVES SECTION -->
+            <div class="section-panel" id="sec-leaves">
+                <div class="search-bar">
+                    <select id="leaveStatusFilter" onchange="renderLeaves()">
+                        <option value="">All Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                    <button class="btn btn-info" onclick="openLeaveBalance()"><i class="fas fa-chart-pie"></i> Leave Balance</button>
+                </div>
+                <div class="card-section">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>Employee</th><th>Type</th><th>From</th><th>To</th><th>Reason</th><th>Status</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody id="leaveTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ORDERS SECTION -->
+            <div class="section-panel" id="sec-orders">
+                <div class="search-bar">
+                    <select id="orderStatusFilter" onchange="renderOrders()">
+                        <option value="">All Status</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Dispatched">Dispatched</option>
+                        <option value="In Transit">In Transit</option>
+                        <option value="Delivered">Delivered</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="openAddOrder()"><i class="fas fa-plus"></i> Create Order</button>
+                </div>
+                <div class="card-section">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>Order ID</th><th>Product</th><th>Qty</th><th>Distributor</th><th>Date</th><th>Status</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody id="orderTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RATES SECTION -->
+            <div class="section-panel" id="sec-rates">
+                <div class="card-section">
+                    <h3><i class="fas fa-tags"></i> Current Product Rates (₹ per Litre)</h3>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>Product</th><th>Commercial Rate</th><th>District Rate</th><th>MRP</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody id="rateTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-section" style="margin-top:20px;">
+                    <h3><i class="fas fa-history"></i> Rate Change History</h3>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead><tr><th>Date</th><th>Product</th><th>Field</th><th>Old Value</th><th>New Value</th></tr></thead>
+                            <tbody id="rateHistoryBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TENDERS SECTION -->
+            <div class="section-panel" id="sec-tenders">
+                <div class="search-bar">
+                    <button class="btn btn-primary" onclick="openAddTender()"><i class="fas fa-plus"></i> Add Tender</button>
+                </div>
+                <div class="card-section">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>Tender No</th><th>Title</th><th>EMD (₹)</th><th>Published</th><th>Deadline</th><th>Status</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody id="tenderTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WEBSITE CONTENT SECTION -->
+            <div class="section-panel" id="sec-content">
+                <div class="card-section">
+                    <h3><i class="fas fa-bullhorn"></i> Announcement / Notification</h3>
+                    <div class="form-group" style="margin-top:10px;">
+                        <textarea id="announcementText" rows="4" style="width:100%;padding:12px;border-radius:8px;border:1px solid var(--border-color);background:var(--glass-bg);color:var(--text-primary);font-family:'Poppins';font-size:0.85rem;"></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveAnnouncement()"><i class="fas fa-save"></i> Save Announcement</button>
+                </div>
+                <div class="card-section" style="margin-top:20px;">
+                    <h3><i class="fas fa-toggle-on"></i> Section Toggle</h3>
+                    <div id="sectionToggles" style="margin-top:15px;"></div>
+                </div>
+            </div>
+
+            <!-- MARKETING SECTION -->
+            <div class="section-panel" id="sec-marketing">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color:var(--accent-green)"><i class="fas fa-image"></i></div>
+                        <div class="stat-value" id="postsThisMonth">0</div>
+                        <div class="stat-label">Posts This Month (Target: 5)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color:var(--accent-gold)"><i class="fas fa-video"></i></div>
+                        <div class="stat-value" id="videosThisMonth">0</div>
+                        <div class="stat-label">Videos This Month (Target: 1)</div>
+                    </div>
+                </div>
+                <div class="card-section">
+                    <h3><i class="fas fa-calendar-alt"></i> Scheduled Posts</h3>
+                    <button class="btn btn-primary" onclick="openSchedulePost()" style="margin-bottom:15px;"><i class="fas fa-plus"></i> Schedule Post</button>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead><tr><th>Date</th><th>Platform</th><th>Type</th><th>Caption</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody id="marketingTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- MODAL OVERLAY -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalContent"></div>
+    </div>
+
+
+    <script>
+    // ========== INITIALIZATION & SAMPLE DATA ==========
+    function initSampleData() {
+        if (!localStorage.getItem('kof_employees')) {
+            localStorage.setItem('kof_employees', JSON.stringify([
+                {id:"KOF-EMP-001", name:"Ramesh Siddappa", designation:"Operations Manager", dept:"Operations", phone:"9876543210", email:"ramesh@kofcta.org", doj:"2018-03-15", salary:{basic:30000,da:12000,hra:4500}, username:"ramesh", password:"emp123"},
+                {id:"KOF-EMP-002", name:"Ashwini Kumar", designation:"Marketing Executive", dept:"Marketing", phone:"9876543211", email:"ashwini@kofcta.org", doj:"2020-06-01", salary:{basic:25000,da:10000,hra:3750}, username:"ashwini", password:"emp123"},
+                {id:"KOF-EMP-003", name:"Basavaraj M", designation:"Procurement Officer", dept:"Procurement", phone:"9876543212", email:"basavaraj@kofcta.org", doj:"2019-01-10", salary:{basic:28000,da:11200,hra:4200}, username:"basavaraj", password:"emp123"},
+                {id:"KOF-EMP-004", name:"Lakshmi Devi", designation:"Accounts Assistant", dept:"Finance", phone:"9876543213", email:"lakshmi@kofcta.org", doj:"2021-04-20", salary:{basic:22000,da:8800,hra:3300}, username:"lakshmi", password:"emp123"},
+                {id:"KOF-EMP-005", name:"Suresh Patil", designation:"Plant Supervisor", dept:"Production", phone:"9876543214", email:"suresh@kofcta.org", doj:"2017-08-05", salary:{basic:32000,da:12800,hra:4800}, username:"suresh", password:"emp123"}
+            ]));
+        }
+        if (!localStorage.getItem('kof_payslips')) {
+            localStorage.setItem('kof_payslips', JSON.stringify([
+                {id:"PAY-001", empId:"KOF-EMP-001", empName:"Ramesh Siddappa", month:"2025-01", basic:30000, da:12000, hra:4500, pf:3600, esi:735, pt:200, gross:46500, deductions:4535, net:41965},
+                {id:"PAY-002", empId:"KOF-EMP-002", empName:"Ashwini Kumar", month:"2025-01", basic:25000, da:10000, hra:3750, pf:3000, esi:612, pt:200, gross:38750, deductions:3812, net:34938},
+                {id:"PAY-003", empId:"KOF-EMP-003", empName:"Basavaraj M", month:"2025-01", basic:28000, da:11200, hra:4200, pf:3360, esi:686, pt:200, gross:43400, deductions:4246, net:39154}
+            ]));
+        }
+        if (!localStorage.getItem('kof_leaves')) {
+            localStorage.setItem('kof_leaves', JSON.stringify([
+                {id:"LV-001", empId:"KOF-EMP-001", empName:"Ramesh Siddappa", type:"CL", from:"2025-02-10", to:"2025-02-11", reason:"Personal work", status:"Pending", remark:""},
+                {id:"LV-002", empId:"KOF-EMP-004", empName:"Lakshmi Devi", type:"EL", from:"2025-02-15", to:"2025-02-20", reason:"Family function", status:"Pending", remark:""}
+            ]));
+        }
+        if (!localStorage.getItem('kof_orders')) {
+            localStorage.setItem('kof_orders', JSON.stringify([
+                {id:"ORD-001", product:"Groundnut Oil", qty:"500L", distributor:"Raj Traders", date:"2025-01-15", status:"Delivered"},
+                {id:"ORD-002", product:"Sunflower Oil", qty:"300L", distributor:"Sri Krishna Oils", date:"2025-01-20", status:"In Transit"},
+                {id:"ORD-003", product:"Sesame Oil", qty:"200L", distributor:"Patil Distributors", date:"2025-01-25", status:"Processing"},
+                {id:"ORD-004", product:"Coconut Oil", qty:"150L", distributor:"Mahalakshmi Stores", date:"2025-02-01", status:"Dispatched"}
+            ]));
+        }
+        if (!localStorage.getItem('kof_rates')) {
+            localStorage.setItem('kof_rates', JSON.stringify([
+                {product:"Groundnut Oil", commercial:180, district:190, mrp:220},
+                {product:"Sunflower Oil", commercial:150, district:160, mrp:195},
+                {product:"Sesame Oil", commercial:280, district:295, mrp:350},
+                {product:"Coconut Oil", commercial:200, district:210, mrp:260}
+            ]));
+        }
+        if (!localStorage.getItem('kof_rate_history')) {
+            localStorage.setItem('kof_rate_history', JSON.stringify([
+                {date:"2025-01-01", product:"Groundnut Oil", field:"MRP", oldVal:210, newVal:220},
+                {date:"2025-01-01", product:"Sunflower Oil", field:"Commercial", oldVal:145, newVal:150}
+            ]));
+        }
+        if (!localStorage.getItem('kof_tenders')) {
+            localStorage.setItem('kof_tenders', JSON.stringify([
+                {id:"TND-001", title:"Supply of Groundnut Seeds 2025", tenderNo:"KOF/TEND/2025/001", emd:50000, published:"2025-01-10", deadline:"2025-02-10", status:"Open"},
+                {id:"TND-002", title:"Annual Maintenance Contract - Plant", tenderNo:"KOF/TEND/2025/002", emd:25000, published:"2025-01-15", deadline:"2025-02-28", status:"Open"}
+            ]));
+        }
+        if (!localStorage.getItem('kof_settings')) {
+            localStorage.setItem('kof_settings', JSON.stringify({
+                announcement: "KOF Chitradurga welcomes you! New groundnut oil stock available.",
+                sections: {about:true, products:true, farmers:true, activities:true, contact:true, tenders:true}
+            }));
+        }
+        if (!localStorage.getItem('kof_marketing')) {
+            localStorage.setItem('kof_marketing', JSON.stringify([
+                {id:"MKT-001", date:"2025-02-05", platform:"Instagram", type:"Image", caption:"Fresh Groundnut Oil now available!", status:"Published"},
+                {id:"MKT-002", date:"2025-02-10", platform:"Facebook", type:"Video", caption:"Behind the scenes at KOF plant", status:"Scheduled"},
+                {id:"MKT-003", date:"2025-02-15", platform:"Instagram", type:"Image", caption:"Farmer spotlight - supporting local!", status:"Scheduled"}
+            ]));
+        }
+        if (!localStorage.getItem('kof_leave_balance')) {
+            const emps = JSON.parse(localStorage.getItem('kof_employees'));
+            const balances = {};
+            emps.forEach(e => { balances[e.id] = {CL:15, EL:12, SL:10}; });
+            localStorage.setItem('kof_leave_balance', JSON.stringify(balances));
+        }
+        if (!localStorage.getItem('kof_activity')) {
+            localStorage.setItem('kof_activity', JSON.stringify([
+                {icon:"fa-user-plus", color:"var(--accent-green)", text:"New employee Suresh Patil added", time:"2 hours ago"},
+                {icon:"fa-file-invoice", color:"var(--accent-gold)", text:"Payslips generated for January 2025", time:"5 hours ago"},
+                {icon:"fa-truck", color:"var(--info)", text:"Order ORD-002 dispatched to Sri Krishna Oils", time:"1 day ago"},
+                {icon:"fa-tags", color:"#a78bfa", text:"Groundnut Oil MRP updated to ₹220", time:"2 days ago"}
+            ]));
+        }
+    }
+
+
+    // ========== LOGIN / LOGOUT / SESSION ==========
+    function handleLogin() {
+        const user = document.getElementById('loginUser').value.trim();
+        const pass = document.getElementById('loginPass').value.trim();
+        if (user === 'admin' && pass === 'kof@2026') {
+            localStorage.setItem('kof_admin_session', 'true');
+            showAdminPanel();
+        } else {
+            document.getElementById('loginError').style.display = 'block';
+            setTimeout(() => document.getElementById('loginError').style.display = 'none', 3000);
+        }
+    }
+    function handleLogout() {
+        localStorage.removeItem('kof_admin_session');
+        document.getElementById('adminPanel').style.display = 'none';
+        document.getElementById('loginPage').style.display = 'flex';
+    }
+    function showAdminPanel() {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'flex';
+        loadDashboard();
+        renderEmployees();
+        renderPayslips();
+        renderLeaves();
+        renderOrders();
+        renderRates();
+        renderTenders();
+        renderMarketing();
+        loadSettings();
+    }
+    function checkSession() {
+        initSampleData();
+        if (localStorage.getItem('kof_admin_session') === 'true') {
+            showAdminPanel();
+        }
+    }
+
+    // ========== NAVIGATION ==========
+    function navigateTo(section) {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.querySelectorAll('.section-panel').forEach(s => s.classList.remove('active'));
+        const navItem = document.querySelector(`.nav-item[data-section="${section}"]`);
+        if (navItem) navItem.classList.add('active');
+        const secPanel = document.getElementById(`sec-${section}`);
+        if (secPanel) secPanel.classList.add('active');
+        const titles = {dashboard:'Dashboard',employees:'Employee Management',payslips:'Payslip Management',leaves:'Leave Management',orders:'Order Management',rates:'Rate / Price Management',tenders:'Tender Management',content:'Website Content',marketing:'Digital Marketing'};
+        document.getElementById('pageTitle').textContent = titles[section] || 'Dashboard';
+        // Close sidebar on mobile
+        document.getElementById('sidebar').classList.remove('open');
+    }
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => navigateTo(item.dataset.section));
+    });
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    // ========== TOAST NOTIFICATIONS ==========
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toastContainer');
+        const icons = {success:'fa-check-circle', error:'fa-exclamation-circle', info:'fa-info-circle'};
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<i class="fas ${icons[type]}" style="color:var(--${type === 'success' ? 'accent-green' : type === 'error' ? 'danger' : 'info'})"></i>
+            <span style="font-size:0.85rem;">${message}</span>
+            <span class="toast-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></span>`;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    }
+
+    // ========== MODAL ==========
+    function openModal(html) {
+        document.getElementById('modalContent').innerHTML = html;
+        document.getElementById('modalOverlay').classList.add('show');
+    }
+    function closeModal() {
+        document.getElementById('modalOverlay').classList.remove('show');
+    }
+    document.getElementById('modalOverlay').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+
+    // ========== DASHBOARD ==========
+    function loadDashboard() {
+        const emps = JSON.parse(localStorage.getItem('kof_employees')) || [];
+        const leaves = JSON.parse(localStorage.getItem('kof_leaves')) || [];
+        const orders = JSON.parse(localStorage.getItem('kof_orders')) || [];
+        document.getElementById('statEmployees').textContent = emps.length;
+        document.getElementById('statLeaves').textContent = leaves.filter(l => l.status === 'Pending').length;
+        document.getElementById('statOrders').textContent = orders.filter(o => o.status !== 'Delivered').length;
+        // Calculate rough monthly revenue from orders
+        const revenue = orders.filter(o => o.status === 'Delivered').length * 75000;
+        document.getElementById('statRevenue').textContent = '₹' + revenue.toLocaleString('en-IN');
+        // Activity feed
+        const activities = JSON.parse(localStorage.getItem('kof_activity')) || [];
+        const feedEl = document.getElementById('activityFeed');
+        feedEl.innerHTML = activities.map(a => `
+            <div class="activity-item">
+                <div class="activity-icon" style="background:${a.color}22;color:${a.color}"><i class="fas ${a.icon}"></i></div>
+                <div><div class="activity-text">${a.text}</div><div class="activity-time">${a.time}</div></div>
+            </div>
+        `).join('');
+    }
+    function addActivity(icon, color, text) {
+        const activities = JSON.parse(localStorage.getItem('kof_activity')) || [];
+        activities.unshift({icon, color, text, time: 'Just now'});
+        if (activities.length > 20) activities.pop();
+        localStorage.setItem('kof_activity', JSON.stringify(activities));
+    }
+
+
+    // ========== EMPLOYEE MANAGEMENT ==========
+    function getNextEmpId() {
+        const emps = JSON.parse(localStorage.getItem('kof_employees')) || [];
+        if (emps.length === 0) return 'KOF-EMP-001';
+        const nums = emps.map(e => parseInt(e.id.split('-')[2]));
+        const next = Math.max(...nums) + 1;
+        return `KOF-EMP-${String(next).padStart(3,'0')}`;
+    }
+    function renderEmployees() {
+        const emps = JSON.parse(localStorage.getItem('kof_employees')) || [];
+        const search = document.getElementById('empSearch').value.toLowerCase();
+        const dept = document.getElementById('empDeptFilter').value;
+        const filtered = emps.filter(e => {
+            const matchSearch = e.name.toLowerCase().includes(search) || e.id.toLowerCase().includes(search) || e.designation.toLowerCase().includes(search);
+            const matchDept = !dept || e.dept === dept;
+            return matchSearch && matchDept;
+        });
+        document.getElementById('empTableBody').innerHTML = filtered.map(e => `
+            <tr>
+                <td><span class="badge badge-green">${e.id}</span></td>
+                <td>${e.name}</td>
+                <td>${e.designation}</td>
+                <td>${e.dept}</td>
+                <td>${e.phone}</td>
+                <td>
+                    <button class="btn btn-info btn-sm" onclick="openEditEmployee('${e.id}')"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-gold btn-sm" onclick="showIdCard('${e.id}')"><i class="fas fa-id-card"></i></button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteEmployee('${e.id}')"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+        `).join('');
+        // Update payslip employee dropdown
+        const paySelect = document.getElementById('payEmpFilter');
+        const currentVal = paySelect.value;
+        paySelect.innerHTML = '<option value="">All Employees</option>' + emps.map(e => `<option value="${e.id}">${e.name} (${e.id})</option>`).join('');
+        paySelect.value = currentVal;
+    }
+    function openAddEmployee() {
+        const nextId = getNextEmpId();
+        openModal(`
+            <h3><i class="fas fa-user-plus"></i> Add New Employee</h3>
+            <div class="form-row">
+                <div class="form-group"><label>Employee ID</label><input type="text" id="fEmpId" value="${nextId}" readonly></div>
+                <div class="form-group"><label>Full Name *</label><input type="text" id="fEmpName" required></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Designation *</label><input type="text" id="fEmpDesig"></div>
+                <div class="form-group"><label>Department *</label>
+                    <select id="fEmpDept"><option>Operations</option><option>Marketing</option><option>Procurement</option><option>Finance</option><option>Production</option><option>HR</option><option>IT</option></select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Phone *</label><input type="tel" id="fEmpPhone"></div>
+                <div class="form-group"><label>Email</label><input type="email" id="fEmpEmail"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Date of Joining *</label><input type="date" id="fEmpDoj"></div>
+                <div class="form-group"><label>Basic Salary *</label><input type="number" id="fEmpBasic"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>DA</label><input type="number" id="fEmpDA"></div>
+                <div class="form-group"><label>HRA</label><input type="number" id="fEmpHRA"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Portal Username *</label><input type="text" id="fEmpUser"></div>
+                <div class="form-group"><label>Portal Password *</label><input type="text" id="fEmpPass"></div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-danger" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveNewEmployee()"><i class="fas fa-save"></i> Save Employee</button>
+            </div>
+        `);
+    }
+    function saveNewEmployee() {
+        const name = document.getElementById('fEmpName').value.trim();
+        const desig = document.getElementById('fEmpDesig').value.trim();
+        const dept = document.getElementById('fEmpDept').value;
+        const phone = document.getElementById('fEmpPhone').value.trim();
+        const email = document.getElementById('fEmpEmail').value.trim();
+        const doj = document.getElementById('fEmpDoj').value;
+        const basic = parseInt(document.getElementById('fEmpBasic').value) || 0;
+        const da = parseInt(document.getElementById('fEmpDA').value) || 0;
+        const hra = parseInt(document.getElementById('fEmpHRA').value) || 0;
+        const username = document.getElementById('fEmpUser').value.trim();
+        const password = document.getElementById('fEmpPass').value.trim();
+        if (!name || !desig || !phone || !doj || !basic || !username || !password) {
+            showToast('Please fill all required fields!', 'error'); return;
+        }
+        const emps = JSON.parse(localStorage.getItem('kof_employees')) || [];
+        const newEmp = { id: document.getElementById('fEmpId').value, name, designation:desig, dept, phone, email, doj, salary:{basic,da,hra}, username, password };
+        emps.push(newEmp);
+        localStorage.setItem('kof_employees', JSON.stringify(emps));
+        // Add leave balance for new employee
+        const balances = JSON.parse(localStorage.getItem('kof_leave_balance')) || {};
+        balances[newEmp.id] = {CL:15, EL:12, SL:10};
+        localStorage.setItem('kof_leave_balance', JSON.stringify(balances));
+        addActivity('fa-user-plus', 'var(--accent-green)', `New employee ${name} added (${newEmp.id})`);
+        closeModal();
+        renderEmployees();
+        loadDashboard();
+        showToast(`Employee ${name} added successfully!`);
+    }
+    function openEditEmployee(empId) {
+        const emps = JSON.parse(localStorage.getItem('kof_employees')) || [];
+        const e = emps.find(x => x.id === empId);
+        if (!e) return;
+        openModal(`
+            <h3><i class="fas fa-edit"></i> Edit Employee - ${e.id}</h3>
+            <div class="form-row">
+                <div class="form-group"><label>Employee ID</label><input type="text" value="${e.id}" readonly></div>
+                <div class="form-group"><label>Full Name *</label><input type="text" id="eEmpName" value="${e.name}"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Designation *</label><input type="text" id="eEmpDesig" value="${e.designation}"></div>
+                <div class="form-group"><label>Department *</label>
+                    <select id="eEmpDept">
+                        <option ${e.dept==='Operations'?'selected':''}>Operations</option>
+                        <option ${e.dept==='Marketing'?'selected':''}>Marketing</option>
+                        <option ${e.dept==='Procurement'?'selected':''}>Procurement</option>
+                        <option ${e.dept==='Finance'?'selected':''}>Finance</option>
+                        <option ${e.dept==='Production'?'selected':''}>Production</option>
+                        <option ${e.dept==='HR'?'selected':''}>HR</option>
+                        <option ${e.dept==='IT'?'selected':''}>IT</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Phone *</label><input type="tel" id="eEmpPhone" value="${e.phone}"></div>
+                <div class="form-group"><label>Email</label><input type="email" id="eEmpEmail" value="${e.email}"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Date of Joining</label><input type="date" id="eEmpDoj" value="${e.doj}"></div>
+                <div class="form-group"><label>Basic Salary *</label><input type="number" id="eEmpBasic" value="${e.salary.basic}"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>DA</label><input type="number" id="eEmpDA" value="${e.salary.da}"></div>
+                <div class="form-group"><label>HRA</label><input type="number" id="eEmpHRA" value="${e.salary.hra}"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Portal Username</label><input type="text" id="eEmpUser" value="${e.username}"></div>
+                <div class="form-group"><label>Portal Password</label><input type="text" id="eEmpPass" value="${e.password}"></div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-danger" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEditEmployee('${e.id}')"><i class="fas fa-save"></i> Update</button>
+            </div>
+        `);
+    }
+    function saveEditEmployee(empId) {
+        const emps = JSON.parse(localStorage.getItem('kof_employees')) || [];
+        const idx = emps.findIndex(x => x.id === empId);
+        if (idx === -1) return;
+        emps[idx].name = document.getElementById('eEmpName').value.trim();
+        emps[idx].designation = document.getElementById('eEmpDesig').value.trim();
+        emps[idx].dept = document.getElementById('eEmpDept').value;
+        emps[idx].phone = document.getElementById('eEmpPhone').value.trim();
+        emps[idx].email = document.getElementById('eEmpEmail').value.trim();
+        emps[idx].doj = document.getElementById('eEmpDoj').value;
+        emps[idx].salary.basic = parseInt(document.getElementById('eEmpBasic').value) || 0;
+        emps[idx].salary.da = parseInt(document.getElementById('eEmpDA').value) || 0;
+        emps[idx].salary.hra = parseInt(document.getElementById('eEmpHRA').value) || 0;
+        emps[idx].username = document.getElementById('eEmpUser').value.trim();
+        emps[idx].password = document.getElementById('eEmpPass').value.trim();
+        localStorage.setItem('kof_employees', JSON.stringify(emps));
+        closeModal(); renderEmployees(); showToast(`Employee ${emps[idx].name} updated!`);
+    }
+    function deleteEmployee(empId) {
+        if (!confirm(`Are you sure you want to delete employee ${empId}? This cannot be undone.`)) return;
+        let emps = JSON.parse(localStorage.getItem('kof_employees')) || [];
+        const emp = emps.find(e => e.id === empId);
+        emps = emps.filter(e => e.id !== empId);
+        localStorage.setItem('kof_employees', JSON.stringify(emps));
+        addActivity('fa-user-minus', 'var(--danger)', `Employee ${emp ? emp.name : empId} deleted`);
+        renderEmployees(); loadDashboard(); showToast('Employee deleted!', 'error');
+    }
+    function showIdCard(empId) {
+        const emps = JSON.parse(localStorage.getItem('kof_employees')) || [];
+        const e = emps.find(x => x.id === empId);
+        if (!e) return;
+        const initials = e.name.split(' ').map(w => w[0]).join('').toUpperCase();
+        openModal(`
+            <h3><i class="fas fa-id-card"></i> Employee ID Card</h3>
+            <div class="id-card-preview">
+                <div style="font-size:0.7rem;color:var(--accent-green);margin-bottom:10px;">KOF CHITRADURGA COOPERATIVE</div>
+                <div class="emp-avatar">${initials}</div>
+                <h3 style="margin-bottom:4px;">${e.name}</h3>
+                <p style="color:var(--text-secondary);font-size:0.85rem;">${e.designation}</p>
+                <div style="margin-top:15px;text-align:left;font-size:0.8rem;">
+                    <p><strong>ID:</strong> ${e.id}</p>
+                    <p><strong>Dept:</strong> ${e.dept}</p>
+                    <p><strong>Phone:</strong> ${e.phone}</p>
+                    <p><strong>Email:</strong> ${e.email}</p>
+                    <p><strong>DOJ:</strong> ${e.doj}</p>
+                </div>
+                <div style="margin-top:15px;padding-top:10px;border-top:1px solid var(--border-color);font-size:0.65rem;color:var(--text-secondary);">
+                    Karnataka Oilseed Federation, Chitradurga
+                </div>
+            </div>
+            <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal()">Close</button></div>
+        `);
+    }
+
+
+    // ========== PAYSLIP MANAGEMENT ==========
+    function renderPayslips() {
+        const payslips = JSON.parse(localStorage.getItem('kof_payslips')) || [];
+        const empFilter = document.getElementById('payEmpFilter').value;
+        const monthFilter = document.getElementById('payMonthFilter').value;
+        const filtered = payslips.filter(p => {
+            const matchEmp = !empFilter || p.empId === empFilter;
+            const matchMonth = !monthFilter || p.month === monthFilter;
+            return matchEmp && matchMonth;
+        });
+        document.getElementById('payTableBody').innerHTML = filtered.map(p => `
+            <tr>
+                <td><span class="badge badge-green">${p.empId}</span></td>
+                <td>${p.empName}</td>
+                <td>${p.month}</td>
+                <td>₹${p.basic.toLocaleString()}</td>
+                <td>₹${p.gross.toLocaleString()}</td>
+                <td>₹${p.deductions.toLocaleString()}</td>
+                <td><strong>₹${p.net.toLocaleString()}</strong></td>
+                <td><button class="btn btn-info btn-sm" onclick="viewPayslip('${p.id}')"><i class="fas fa-eye"></i></button></td>
+            </tr>
+        `).join('');
+    }
+    function openGeneratePayslip() {
+        const emps = JSON.parse(localStorage.getItem('kof_employees')) || [];
+        const empOptions = emps.map(e => `<option value="${e.id}">${e.name} (${e.id})</option>`).join('');
+        openModal(`
+            <h3><i class="fas fa-file-invoice-dollar"></i> Generate Payslip</h3>
+            <div class="form-row">
+                <div class="form-group"><label>Select Employee *</label><select id="pEmpSelect" onchange="calcPayslip()">${empOptions}</select></div>
+                <div class="form-group"><label>Month/Year *</label><input type="month" id="pMonth" onchange="calcPayslip()"></div>
+            </div>
+            <div class="card-section" style="margin-top:10px;">
+                <h3>Salary Breakdown</h3>
+                <div class="form-row">
+                    <div class="form-group"><label>Basic</label><input type="number" id="pBasic" readonly></div>
+                    <div class="form-group"><label>DA</label><input type="number" id="pDA" readonly></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>HRA</label><input type="number" id="pHRA" readonly></div>
+                    <div class="form-group"><label>Gross</label><input type="number" id="pGross" readonly></div>
+                </div>
+                <h3 style="margin-top:15px;">Deductions</h3>
+                <div class="form-row">
+                    <div class="form-group"><label>PF (12% of Basic)</label><input type="number" id="pPF" readonly></div>
+                    <div class="form-group"><label>ESI (0.75% of Gross)</label><input type="number" id="pESI" readonly></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>PT</label><input type="number" id="pPT" value="200" readonly></div>
+                    <div class="form-group"><label><strong>Net Pay</strong></label><input type="number" id="pNet" readonly style="font-weight:700;color:var(--accent-green);"></div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-danger" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="savePayslip()"><i class="fas fa-save"></i> Generate & Save</button>
+            </div>
+        `);
+        calcPayslip();
+    }
+    function calcPayslip() {
+        const emps = JSON.parse(localStorage.getItem('kof_employees')) || [];
+        const empId = document.getElementById('pEmpSelect').value;
+        const emp = emps.find(e => e.id === empId);
+        if (!emp) return;
+        const basic = emp.salary.basic;
+        const da = emp.salary.da;
+        const hra = emp.salary.hra;
+        const gross = basic + da + hra;
+        const pf = Math.round(basic * 0.12);
+        const esi = Math.round(gross * 0.0075);
+        const pt = 200;
+        const net = gross - pf - esi - pt;
+        document.getElementById('pBasic').value = basic;
+        document.getElementById('pDA').value = da;
+        document.getElementById('pHRA').value = hra;
+        document.getElementById('pGross').value = gross;
+        document.getElementById('pPF').value = pf;
+        document.getElementById('pESI').value = esi;
+        document.getElementById('pPT').value = pt;
+        document.getElementById('pNet').value = net;
+    }
+    function savePayslip() {
+        const empId = document.getElementById('pEmpSelect').value;
+        const month = document.getElementById('pMonth').value;
+        if (!month) { showToast('Please select a month!', 'error'); return; }
+        const emps = JSON.parse(localStorage.getItem('kof_employees')) || [];
+        const emp = emps.find(e => e.id === empId);
+        const payslips = JSON.parse(localStorage.getItem('kof_payslips')) || [];
+        // Check duplicate
+        if (payslips.find(p => p.empId === empId && p.month === month)) {
+            showToast('Payslip already exists for this employee & month!', 'error'); return;
+        }
+        const basic = parseInt(document.getElementById('pBasic').value);
+        const da = parseInt(document.getElementById('pDA').value);
+        const hra = parseInt(document.getElementById('pHRA').value);
+        const gross = parseInt(document.getElementById('pGross').value);
+        const pf = parseInt(document.getElementById('pPF').value);
+        const esi = parseInt(document.getElementById('pESI').value);
+        const pt = parseInt(document.getElementById('pPT').value);
+        const net = parseInt(document.getElementById('pNet').value);
+        const newPay = { id: `PAY-${String(payslips.length + 1).padStart(3,'0')}`, empId, empName: emp.name, month, basic, da, hra, pf, esi, pt, gross, deductions: pf+esi+pt, net };
+        payslips.push(newPay);
+        localStorage.setItem('kof_payslips', JSON.stringify(payslips));
+        addActivity('fa-file-invoice-dollar', 'var(--accent-gold)', `Payslip generated for ${emp.name} (${month})`);
+        closeModal(); renderPayslips(); loadDashboard(); showToast(`Payslip generated for ${emp.name}!`);
+    }
+    function viewPayslip(payId) {
+        const payslips = JSON.parse(localStorage.getItem('kof_payslips')) || [];
+        const p = payslips.find(x => x.id === payId);
+        if (!p) return;
+        openModal(`
+            <h3><i class="fas fa-file-invoice"></i> Payslip - ${p.empName}</h3>
+            <div class="card-section" id="payslipPrint">
+                <div style="text-align:center;margin-bottom:20px;">
+                    <h2 style="color:var(--accent-green);font-size:1.1rem;">KOF CHITRADURGA COOPERATIVE</h2>
+                    <p style="font-size:0.75rem;color:var(--text-secondary);">Salary Slip for ${p.month}</p>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:0.85rem;">
+                    <p><strong>Employee:</strong> ${p.empName}</p>
+                    <p><strong>Emp ID:</strong> ${p.empId}</p>
+                </div>
+                <hr style="border-color:var(--border-color);margin:15px 0;">
+                <h4 style="font-size:0.85rem;margin-bottom:10px;">Earnings</h4>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.8rem;">
+                    <p>Basic Salary</p><p style="text-align:right">₹${p.basic.toLocaleString()}</p>
+                    <p>Dearness Allowance</p><p style="text-align:right">₹${p.da.toLocaleString()}</p>
+                    <p>House Rent Allowance</p><p style="text-align:right">₹${p.hra.toLocaleString()}</p>
+                    <p><strong>Gross Salary</strong></p><p style="text-align:right"><strong>₹${p.gross.toLocaleString()}</strong></p>
+                </div>
+                <hr style="border-color:var(--border-color);margin:15px 0;">
+                <h4 style="font-size:0.85rem;margin-bottom:10px;">Deductions</h4>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.8rem;">
+                    <p>Provident Fund (PF)</p><p style="text-align:right">₹${p.pf.toLocaleString()}</p>
+                    <p>ESI</p><p style="text-align:right">₹${p.esi.toLocaleString()}</p>
+                    <p>Professional Tax</p><p style="text-align:right">₹${p.pt.toLocaleString()}</p>
+                    <p><strong>Total Deductions</strong></p><p style="text-align:right"><strong>₹${p.deductions.toLocaleString()}</strong></p>
+                </div>
+                <hr style="border-color:var(--border-color);margin:15px 0;">
+                <div style="text-align:center;padding:10px;background:rgba(0,217,126,0.1);border-radius:10px;">
+                    <p style="font-size:0.8rem;color:var(--text-secondary);">Net Pay</p>
+                    <p style="font-size:1.5rem;font-weight:700;color:var(--accent-green);">₹${p.net.toLocaleString()}</p>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-info" onclick="printPayslip()"><i class="fas fa-print"></i> Print</button>
+                <button class="btn btn-primary" onclick="closeModal()">Close</button>
+            </div>
+        `);
+    }
+    function printPayslip() {
+        const content = document.getElementById('payslipPrint').innerHTML;
+        const win = window.open('','','width=800,height=600');
+        win.document.write(`<html><head><title>Payslip</title><style>body{font-family:'Poppins',sans-serif;padding:30px;}h2,h3,h4{margin:0;}p{margin:4px 0;}</style></head><body>${content}</body></html>`);
+        win.document.close(); win.print();
+    }
+
+
+    // ========== LEAVE MANAGEMENT ==========
+    function renderLeaves() {
+        const leaves = JSON.parse(localStorage.getItem('kof_leaves')) || [];
+        const statusFilter = document.getElementById('leaveStatusFilter').value;
+        const filtered = leaves.filter(l => !statusFilter || l.status === statusFilter);
+        document.getElementById('leaveTableBody').innerHTML = filtered.map(l => {
+            const statusBadge = l.status === 'Approved' ? 'badge-green' : l.status === 'Rejected' ? 'badge-red' : 'badge-gold';
+            const actions = l.status === 'Pending' ? `
+                <button class="btn btn-primary btn-sm" onclick="updateLeave('${l.id}','Approved')"><i class="fas fa-check"></i></button>
+                <button class="btn btn-danger btn-sm" onclick="updateLeave('${l.id}','Rejected')"><i class="fas fa-times"></i></button>
+            ` : `<span class="badge ${statusBadge}">${l.status}</span>`;
+            return `<tr>
+                <td>${l.empName}</td>
+                <td><span class="badge badge-blue">${l.type}</span></td>
+                <td>${l.from}</td>
+                <td>${l.to}</td>
+                <td>${l.reason}</td>
+                <td><span class="badge ${statusBadge}">${l.status}</span></td>
+                <td>${l.status === 'Pending' ? actions : (l.remark || '-')}</td>
+            </tr>`;
+        }).join('');
+    }
+    function updateLeave(leaveId, newStatus) {
+        const remark = prompt(`Enter remark for ${newStatus.toLowerCase()}:`);
+        if (remark === null) return;
+        const leaves = JSON.parse(localStorage.getItem('kof_leaves')) || [];
+        const idx = leaves.findIndex(l => l.id === leaveId);
+        if (idx === -1) return;
+        leaves[idx].status = newStatus;
+        leaves[idx].remark = remark;
+        // Update leave balance if approved
+        if (newStatus === 'Approved') {
+            const balances = JSON.parse(localStorage.getItem('kof_leave_balance')) || {};
+            const empBal = balances[leaves[idx].empId];
+            if (empBal) {
+                const from = new Date(leaves[idx].from);
+                const to = new Date(leaves[idx].to);
+                const days = Math.ceil((to - from) / (1000*60*60*24)) + 1;
+                empBal[leaves[idx].type] = Math.max(0, (empBal[leaves[idx].type] || 0) - days);
+                localStorage.setItem('kof_leave_balance', JSON.stringify(balances));
+            }
+        }
+        localStorage.setItem('kof_leaves', JSON.stringify(leaves));
+        addActivity('fa-calendar-check', newStatus === 'Approved' ? 'var(--accent-green)' : 'var(--danger)', `Leave ${newStatus.toLowerCase()} for ${leaves[idx].empName}`);
+        renderLeaves(); loadDashboard();
+        showToast(`Leave ${newStatus.toLowerCase()} for ${leaves[idx].empName}!`, newStatus === 'Approved' ? 'success' : 'info');
+    }
+    function openLeaveBalance() {
+        const emps = JSON.parse(localStorage.getItem('kof_employees')) || [];
+        const balances = JSON.parse(localStorage.getItem('kof_leave_balance')) || {};
+        let rows = emps.map(e => {
+            const b = balances[e.id] || {CL:15, EL:12, SL:10};
+            return `<tr><td>${e.name}</td><td>${e.id}</td><td>${b.CL}</td><td>${b.EL}</td><td>${b.SL}</td><td>${b.CL+b.EL+b.SL}</td></tr>`;
+        }).join('');
+        openModal(`
+            <h3><i class="fas fa-chart-pie"></i> Leave Balance (Per Year: CL:15, EL:12, SL:10)</h3>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead><tr><th>Employee</th><th>ID</th><th>CL</th><th>EL</th><th>SL</th><th>Total</th></tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>
+            <div class="modal-actions"><button class="btn btn-primary" onclick="closeModal()">Close</button></div>
+        `);
+    }
+
+    // ========== ORDER MANAGEMENT ==========
+    function renderOrders() {
+        const orders = JSON.parse(localStorage.getItem('kof_orders')) || [];
+        const statusFilter = document.getElementById('orderStatusFilter').value;
+        const filtered = orders.filter(o => !statusFilter || o.status === statusFilter);
+        document.getElementById('orderTableBody').innerHTML = filtered.map(o => {
+            const statusColors = {'Processing':'badge-gold','Dispatched':'badge-blue','In Transit':'badge-blue','Delivered':'badge-green'};
+            return `<tr>
+                <td><span class="badge badge-green">${o.id}</span></td>
+                <td>${o.product}</td>
+                <td>${o.qty}</td>
+                <td>${o.distributor}</td>
+                <td>${o.date}</td>
+                <td><span class="badge ${statusColors[o.status] || 'badge-gold'}">${o.status}</span></td>
+                <td>
+                    ${o.status !== 'Delivered' ? `<button class="btn btn-primary btn-sm" onclick="updateOrderStatus('${o.id}')"><i class="fas fa-arrow-right"></i></button>` : ''}
+                    <button class="btn btn-danger btn-sm" onclick="deleteOrder('${o.id}')"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>`;
+        }).join('');
+    }
+    function openAddOrder() {
+        openModal(`
+            <h3><i class="fas fa-plus"></i> Create New Order</h3>
+            <div class="form-row">
+                <div class="form-group"><label>Product *</label>
+                    <select id="oProduct"><option>Groundnut Oil</option><option>Sunflower Oil</option><option>Sesame Oil</option><option>Coconut Oil</option></select>
+                </div>
+                <div class="form-group"><label>Quantity *</label><input type="text" id="oQty" placeholder="e.g., 500L"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Distributor *</label><input type="text" id="oDistributor"></div>
+                <div class="form-group"><label>Date *</label><input type="date" id="oDate"></div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-danger" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveOrder()"><i class="fas fa-save"></i> Create Order</button>
+            </div>
+        `);
+    }
+    function saveOrder() {
+        const product = document.getElementById('oProduct').value;
+        const qty = document.getElementById('oQty').value.trim();
+        const distributor = document.getElementById('oDistributor').value.trim();
+        const date = document.getElementById('oDate').value;
+        if (!qty || !distributor || !date) { showToast('Please fill all fields!', 'error'); return; }
+        const orders = JSON.parse(localStorage.getItem('kof_orders')) || [];
+        const newOrder = { id: `ORD-${String(orders.length + 1).padStart(3,'0')}`, product, qty, distributor, date, status:'Processing' };
+        orders.push(newOrder);
+        localStorage.setItem('kof_orders', JSON.stringify(orders));
+        addActivity('fa-box', 'var(--info)', `New order ${newOrder.id} created for ${product}`);
+        closeModal(); renderOrders(); loadDashboard(); showToast('Order created successfully!');
+    }
+    function updateOrderStatus(orderId) {
+        const orders = JSON.parse(localStorage.getItem('kof_orders')) || [];
+        const idx = orders.findIndex(o => o.id === orderId);
+        if (idx === -1) return;
+        const flow = ['Processing', 'Dispatched', 'In Transit', 'Delivered'];
+        const currentIdx = flow.indexOf(orders[idx].status);
+        if (currentIdx < flow.length - 1) {
+            orders[idx].status = flow[currentIdx + 1];
+            localStorage.setItem('kof_orders', JSON.stringify(orders));
+            addActivity('fa-truck', 'var(--info)', `Order ${orderId} status: ${orders[idx].status}`);
+            renderOrders(); loadDashboard(); showToast(`Order ${orderId} → ${orders[idx].status}`);
+        }
+    }
+    function deleteOrder(orderId) {
+        if (!confirm(`Delete order ${orderId}?`)) return;
+        let orders = JSON.parse(localStorage.getItem('kof_orders')) || [];
+        orders = orders.filter(o => o.id !== orderId);
+        localStorage.setItem('kof_orders', JSON.stringify(orders));
+        renderOrders(); loadDashboard(); showToast('Order deleted!', 'error');
+    }
+
+
+    // ========== RATE / PRICE MANAGEMENT ==========
+    function renderRates() {
+        const rates = JSON.parse(localStorage.getItem('kof_rates')) || [];
+        document.getElementById('rateTableBody').innerHTML = rates.map(r => `
+            <tr>
+                <td><strong>${r.product}</strong></td>
+                <td>₹${r.commercial}</td>
+                <td>₹${r.district}</td>
+                <td>₹${r.mrp}</td>
+                <td><button class="btn btn-info btn-sm" onclick="openEditRate('${r.product}')"><i class="fas fa-edit"></i></button></td>
+            </tr>
+        `).join('');
+        // Rate history
+        const history = JSON.parse(localStorage.getItem('kof_rate_history')) || [];
+        document.getElementById('rateHistoryBody').innerHTML = history.slice(0, 20).map(h => `
+            <tr><td>${h.date}</td><td>${h.product}</td><td>${h.field}</td><td>₹${h.oldVal}</td><td>₹${h.newVal}</td></tr>
+        `).join('');
+    }
+    function openEditRate(product) {
+        const rates = JSON.parse(localStorage.getItem('kof_rates')) || [];
+        const r = rates.find(x => x.product === product);
+        if (!r) return;
+        openModal(`
+            <h3><i class="fas fa-tags"></i> Update Rate - ${r.product}</h3>
+            <div class="form-group"><label>Commercial Rate (₹/L)</label><input type="number" id="rCommercial" value="${r.commercial}"></div>
+            <div class="form-group"><label>District Rate (₹/L)</label><input type="number" id="rDistrict" value="${r.district}"></div>
+            <div class="form-group"><label>MRP (₹/L)</label><input type="number" id="rMRP" value="${r.mrp}"></div>
+            <div class="modal-actions">
+                <button class="btn btn-danger" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveRate('${product}')"><i class="fas fa-save"></i> Update Rate</button>
+            </div>
+        `);
+    }
+    function saveRate(product) {
+        const rates = JSON.parse(localStorage.getItem('kof_rates')) || [];
+        const idx = rates.findIndex(r => r.product === product);
+        if (idx === -1) return;
+        const history = JSON.parse(localStorage.getItem('kof_rate_history')) || [];
+        const today = new Date().toISOString().split('T')[0];
+        const newCommercial = parseInt(document.getElementById('rCommercial').value);
+        const newDistrict = parseInt(document.getElementById('rDistrict').value);
+        const newMRP = parseInt(document.getElementById('rMRP').value);
+        if (rates[idx].commercial !== newCommercial) history.unshift({date:today, product, field:'Commercial', oldVal:rates[idx].commercial, newVal:newCommercial});
+        if (rates[idx].district !== newDistrict) history.unshift({date:today, product, field:'District', oldVal:rates[idx].district, newVal:newDistrict});
+        if (rates[idx].mrp !== newMRP) history.unshift({date:today, product, field:'MRP', oldVal:rates[idx].mrp, newVal:newMRP});
+        rates[idx].commercial = newCommercial;
+        rates[idx].district = newDistrict;
+        rates[idx].mrp = newMRP;
+        localStorage.setItem('kof_rates', JSON.stringify(rates));
+        localStorage.setItem('kof_rate_history', JSON.stringify(history));
+        addActivity('fa-tags', '#a78bfa', `${product} rates updated`);
+        closeModal(); renderRates(); showToast(`${product} rates updated!`);
+    }
+
+    // ========== TENDER MANAGEMENT ==========
+    function renderTenders() {
+        const tenders = JSON.parse(localStorage.getItem('kof_tenders')) || [];
+        document.getElementById('tenderTableBody').innerHTML = tenders.map(t => {
+            const statusBadge = t.status === 'Open' ? 'badge-green' : t.status === 'Closed' ? 'badge-red' : 'badge-gold';
+            return `<tr>
+                <td>${t.tenderNo}</td>
+                <td>${t.title}</td>
+                <td>₹${t.emd.toLocaleString()}</td>
+                <td>${t.published}</td>
+                <td>${t.deadline}</td>
+                <td><span class="badge ${statusBadge}">${t.status}</span></td>
+                <td>
+                    <button class="btn btn-info btn-sm" onclick="openEditTender('${t.id}')"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteTender('${t.id}')"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>`;
+        }).join('');
+    }
+    function openAddTender() {
+        openModal(`
+            <h3><i class="fas fa-plus"></i> Add New Tender</h3>
+            <div class="form-group"><label>Title *</label><input type="text" id="tTitle"></div>
+            <div class="form-row">
+                <div class="form-group"><label>Tender No *</label><input type="text" id="tNo" placeholder="KOF/TEND/2025/XXX"></div>
+                <div class="form-group"><label>EMD Amount (₹) *</label><input type="number" id="tEMD"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Published Date *</label><input type="date" id="tPublished"></div>
+                <div class="form-group"><label>Deadline *</label><input type="date" id="tDeadline"></div>
+            </div>
+            <div class="form-group"><label>Status</label>
+                <select id="tStatus"><option>Open</option><option>Closed</option><option>Cancelled</option></select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-danger" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveTender()"><i class="fas fa-save"></i> Save Tender</button>
+            </div>
+        `);
+    }
+    function saveTender() {
+        const title = document.getElementById('tTitle').value.trim();
+        const tenderNo = document.getElementById('tNo').value.trim();
+        const emd = parseInt(document.getElementById('tEMD').value) || 0;
+        const published = document.getElementById('tPublished').value;
+        const deadline = document.getElementById('tDeadline').value;
+        const status = document.getElementById('tStatus').value;
+        if (!title || !tenderNo || !published || !deadline) { showToast('Please fill all required fields!', 'error'); return; }
+        const tenders = JSON.parse(localStorage.getItem('kof_tenders')) || [];
+        tenders.push({ id:`TND-${String(tenders.length+1).padStart(3,'0')}`, title, tenderNo, emd, published, deadline, status });
+        localStorage.setItem('kof_tenders', JSON.stringify(tenders));
+        addActivity('fa-gavel', 'var(--accent-gold)', `New tender added: ${title}`);
+        closeModal(); renderTenders(); showToast('Tender added successfully!');
+    }
+    function openEditTender(tenderId) {
+        const tenders = JSON.parse(localStorage.getItem('kof_tenders')) || [];
+        const t = tenders.find(x => x.id === tenderId);
+        if (!t) return;
+        openModal(`
+            <h3><i class="fas fa-edit"></i> Edit Tender - ${t.tenderNo}</h3>
+            <div class="form-group"><label>Title *</label><input type="text" id="etTitle" value="${t.title}"></div>
+            <div class="form-row">
+                <div class="form-group"><label>Tender No *</label><input type="text" id="etNo" value="${t.tenderNo}"></div>
+                <div class="form-group"><label>EMD Amount (₹) *</label><input type="number" id="etEMD" value="${t.emd}"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Published Date</label><input type="date" id="etPublished" value="${t.published}"></div>
+                <div class="form-group"><label>Deadline</label><input type="date" id="etDeadline" value="${t.deadline}"></div>
+            </div>
+            <div class="form-group"><label>Status</label>
+                <select id="etStatus"><option ${t.status==='Open'?'selected':''}>Open</option><option ${t.status==='Closed'?'selected':''}>Closed</option><option ${t.status==='Cancelled'?'selected':''}>Cancelled</option></select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-danger" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEditTender('${t.id}')"><i class="fas fa-save"></i> Update</button>
+            </div>
+        `);
+    }
+    function saveEditTender(tenderId) {
+        const tenders = JSON.parse(localStorage.getItem('kof_tenders')) || [];
+        const idx = tenders.findIndex(t => t.id === tenderId);
+        if (idx === -1) return;
+        tenders[idx].title = document.getElementById('etTitle').value.trim();
+        tenders[idx].tenderNo = document.getElementById('etNo').value.trim();
+        tenders[idx].emd = parseInt(document.getElementById('etEMD').value) || 0;
+        tenders[idx].published = document.getElementById('etPublished').value;
+        tenders[idx].deadline = document.getElementById('etDeadline').value;
+        tenders[idx].status = document.getElementById('etStatus').value;
+        localStorage.setItem('kof_tenders', JSON.stringify(tenders));
+        closeModal(); renderTenders(); showToast('Tender updated!');
+    }
+    function deleteTender(tenderId) {
+        if (!confirm('Delete this tender?')) return;
+        let tenders = JSON.parse(localStorage.getItem('kof_tenders')) || [];
+        tenders = tenders.filter(t => t.id !== tenderId);
+        localStorage.setItem('kof_tenders', JSON.stringify(tenders));
+        renderTenders(); showToast('Tender deleted!', 'error');
+    }
+
+
+    // ========== WEBSITE CONTENT MANAGEMENT ==========
+    function loadSettings() {
+        const settings = JSON.parse(localStorage.getItem('kof_settings')) || {announcement:'', sections:{about:true,products:true,farmers:true,activities:true,contact:true,tenders:true}};
+        document.getElementById('announcementText').value = settings.announcement || '';
+        const togglesDiv = document.getElementById('sectionToggles');
+        const sectionNames = {about:'About Section', products:'Products Section', farmers:'Farmers Section', activities:'Activities Section', contact:'Contact Section', tenders:'Tenders Section'};
+        togglesDiv.innerHTML = Object.entries(sectionNames).map(([key, label]) => `
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border-color);">
+                <span style="font-size:0.85rem;">${label}</span>
+                <label style="position:relative;display:inline-block;width:50px;height:26px;">
+                    <input type="checkbox" ${settings.sections[key] ? 'checked' : ''} onchange="toggleSection('${key}', this.checked)" style="opacity:0;width:0;height:0;">
+                    <span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:${settings.sections[key] ? 'var(--accent-green)' : '#374151'};border-radius:13px;transition:0.3s;"></span>
+                    <span style="position:absolute;content:'';height:20px;width:20px;left:${settings.sections[key] ? '26px' : '3px'};bottom:3px;background:white;border-radius:50%;transition:0.3s;"></span>
+                </label>
+            </div>
+        `).join('');
+    }
+    function saveAnnouncement() {
+        const settings = JSON.parse(localStorage.getItem('kof_settings')) || {};
+        settings.announcement = document.getElementById('announcementText').value;
+        localStorage.setItem('kof_settings', JSON.stringify(settings));
+        addActivity('fa-bullhorn', 'var(--accent-gold)', 'Announcement updated');
+        showToast('Announcement saved!');
+    }
+    function toggleSection(key, value) {
+        const settings = JSON.parse(localStorage.getItem('kof_settings')) || {};
+        if (!settings.sections) settings.sections = {};
+        settings.sections[key] = value;
+        localStorage.setItem('kof_settings', JSON.stringify(settings));
+        loadSettings();
+        showToast(`Section ${key} ${value ? 'enabled' : 'disabled'}`, 'info');
+    }
+
+    // ========== DIGITAL MARKETING ==========
+    function renderMarketing() {
+        const posts = JSON.parse(localStorage.getItem('kof_marketing')) || [];
+        const now = new Date();
+        const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+        const monthPosts = posts.filter(p => p.date.startsWith(thisMonth) || p.status === 'Published');
+        document.getElementById('postsThisMonth').textContent = monthPosts.filter(p => p.type === 'Image').length;
+        document.getElementById('videosThisMonth').textContent = monthPosts.filter(p => p.type === 'Video').length;
+        document.getElementById('marketingTableBody').innerHTML = posts.map(p => {
+            const statusBadge = p.status === 'Published' ? 'badge-green' : 'badge-gold';
+            return `<tr>
+                <td>${p.date}</td>
+                <td>${p.platform}</td>
+                <td>${p.type}</td>
+                <td>${p.caption}</td>
+                <td><span class="badge ${statusBadge}">${p.status}</span></td>
+                <td>
+                    <button class="btn btn-danger btn-sm" onclick="deletePost('${p.id}')"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>`;
+        }).join('');
+    }
+    function openSchedulePost() {
+        openModal(`
+            <h3><i class="fas fa-calendar-plus"></i> Schedule New Post</h3>
+            <div class="form-row">
+                <div class="form-group"><label>Date *</label><input type="date" id="mDate"></div>
+                <div class="form-group"><label>Platform *</label>
+                    <select id="mPlatform"><option>Instagram</option><option>Facebook</option><option>Twitter</option><option>YouTube</option></select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Type *</label>
+                    <select id="mType"><option>Image</option><option>Video</option><option>Reel</option><option>Story</option></select>
+                </div>
+                <div class="form-group"><label>Status</label>
+                    <select id="mStatus"><option>Scheduled</option><option>Published</option><option>Draft</option></select>
+                </div>
+            </div>
+            <div class="form-group"><label>Caption *</label><textarea id="mCaption" rows="3" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border-color);background:var(--glass-bg);color:var(--text-primary);font-family:'Poppins';"></textarea></div>
+            <div class="modal-actions">
+                <button class="btn btn-danger" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="savePost()"><i class="fas fa-save"></i> Schedule</button>
+            </div>
+        `);
+    }
+    function savePost() {
+        const date = document.getElementById('mDate').value;
+        const platform = document.getElementById('mPlatform').value;
+        const type = document.getElementById('mType').value;
+        const caption = document.getElementById('mCaption').value.trim();
+        const status = document.getElementById('mStatus').value;
+        if (!date || !caption) { showToast('Please fill all required fields!', 'error'); return; }
+        const posts = JSON.parse(localStorage.getItem('kof_marketing')) || [];
+        posts.push({ id:`MKT-${String(posts.length+1).padStart(3,'0')}`, date, platform, type, caption, status });
+        localStorage.setItem('kof_marketing', JSON.stringify(posts));
+        addActivity('fa-bullhorn', 'var(--accent-green)', `New ${type.toLowerCase()} post scheduled for ${platform}`);
+        closeModal(); renderMarketing(); showToast('Post scheduled!');
+    }
+    function deletePost(postId) {
+        if (!confirm('Delete this post?')) return;
+        let posts = JSON.parse(localStorage.getItem('kof_marketing')) || [];
+        posts = posts.filter(p => p.id !== postId);
+        localStorage.setItem('kof_marketing', JSON.stringify(posts));
+        renderMarketing(); showToast('Post deleted!', 'error');
+    }
+
+    // ========== KEYBOARD SHORTCUT (Enter to login) ==========
+    document.getElementById('loginPass').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') handleLogin();
+    });
+    document.getElementById('loginUser').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') handleLogin();
+    });
+
+    // ========== INIT ==========
+    window.addEventListener('DOMContentLoaded', checkSession);
+    </script>
+</body>
+</html>
