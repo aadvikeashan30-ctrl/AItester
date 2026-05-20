@@ -1,883 +1,1000 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Sentinel — AI Employee Monitoring & Productivity</title>
-<style>
-  /* ---------- design tokens ---------- */
-  :root {
-    --bg: #0f1117;
-    --bg-2: #151823;
-    --panel: #1b1f2c;
-    --panel-2: #232838;
-    --border: #2a3044;
-    --text: #e7e9f1;
-    --muted: #8b91a7;
-    --accent: #7c5cff;
-    --accent-2: #5ad1c8;
-    --good: #3ddc97;
-    --warn: #ffb454;
-    --bad: #ff5c7a;
-    --idle: #8b91a7;
-    --shadow: 0 10px 40px rgba(0,0,0,0.35);
-    --radius: 14px;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard | KOF Chitradurga</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+:root {
+    --primary: #2d7a3a;
+    --primary-dark: #1e5c28;
+    --primary-light: #4caf50;
+    --secondary: #f4a61c;
+    --secondary-dark: #d4900f;
+    --accent: #1a6b4a;
+    --dark: #1a1a2e;
+    --dark-light: #2d2d44;
+    --dark-sidebar: #0f1923;
+    --gold: #f4a61c;
+    --gold-light: #ffd700;
+    --font-primary: 'Poppins', sans-serif;
+    --font-display: 'Playfair Display', serif;
     --radius-sm: 8px;
-  }
-  * { box-sizing: border-box; }
-  html, body {
-    margin: 0; padding: 0;
-    background: radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,0.18), transparent 60%),
-                radial-gradient(900px 500px at -10% 110%, rgba(90,209,200,0.12), transparent 60%),
-                var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+    font-family: var(--font-primary);
+    background: linear-gradient(135deg, #0a1628 0%, #1a2a3a 50%, #0d1f2d 100%);
+    color: #e0e0e0;
     min-height: 100vh;
-  }
-  a { color: var(--accent-2); text-decoration: none; }
-  button { font-family: inherit; }
+    overflow-x: hidden;
+}
 
-  /* ---------- layout ---------- */
-  .app {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    min-height: 100vh;
-  }
-  aside.side {
-    border-right: 1px solid var(--border);
-    background: rgba(21,24,35,0.7);
-    backdrop-filter: blur(10px);
-    padding: 22px 18px;
+
+/* === SIDEBAR === */
+.sidebar {
+    position: fixed; top: 0; left: 0;
+    width: 280px; height: 100vh;
+    background: linear-gradient(180deg, #0a1520 0%, #0f1f30 50%, #0a1520 100%);
+    border-right: 1px solid rgba(255,255,255,0.06);
+    z-index: 1000; display: flex; flex-direction: column;
+    transition: var(--transition); overflow-y: auto;
+}
+.sidebar.collapsed { width: 70px; }
+.sidebar-header {
+    padding: 1.5rem; display: flex; align-items: center; gap: 0.8rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.sidebar-logo {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; color: #fff; flex-shrink: 0;
+}
+.sidebar-brand { transition: opacity 0.3s; }
+.sidebar.collapsed .sidebar-brand { opacity: 0; width: 0; overflow: hidden; }
+.sidebar-brand h3 { font-size: 1rem; color: #fff; font-weight: 700; white-space: nowrap; }
+.sidebar-brand span { font-size: 0.7rem; color: rgba(255,255,255,0.4); white-space: nowrap; }
+.sidebar-nav { padding: 1rem 0.8rem; flex: 1; }
+.nav-section-title {
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.3); padding: 0.8rem 0.8rem 0.4rem; font-weight: 600;
+}
+.sidebar.collapsed .nav-section-title { display: none; }
+.nav-item {
+    display: flex; align-items: center; gap: 0.8rem;
+    padding: 0.7rem 0.8rem; border-radius: var(--radius-sm);
+    color: rgba(255,255,255,0.6); text-decoration: none; cursor: pointer;
+    transition: var(--transition); margin-bottom: 2px; font-size: 0.88rem;
+    position: relative; white-space: nowrap;
+}
+.nav-item:hover { background: rgba(76,175,80,0.1); color: #fff; }
+.nav-item.active {
+    background: linear-gradient(135deg, rgba(45,122,58,0.3), rgba(76,175,80,0.15));
+    color: #fff; border: 1px solid rgba(76,175,80,0.2);
+}
+.nav-item.active::before {
+    content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+    width: 3px; height: 60%; background: var(--primary-light); border-radius: 0 3px 3px 0;
+}
+.nav-item i { width: 20px; text-align: center; font-size: 0.95rem; flex-shrink: 0; }
+.nav-item span { transition: opacity 0.3s; }
+.sidebar.collapsed .nav-item span { opacity: 0; width: 0; overflow: hidden; }
+.sidebar-footer { padding: 1rem; border-top: 1px solid rgba(255,255,255,0.06); }
+.sidebar-user {
+    display: flex; align-items: center; gap: 0.7rem; padding: 0.7rem;
+    border-radius: var(--radius-md); background: rgba(255,255,255,0.03);
+}
+.user-avatar {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--gold), var(--secondary-dark));
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; color: #fff; font-weight: 600; flex-shrink: 0;
+}
+.user-info { transition: opacity 0.3s; }
+.sidebar.collapsed .user-info { opacity: 0; width: 0; overflow: hidden; }
+.user-info h4 { font-size: 0.8rem; color: #fff; font-weight: 500; }
+.user-info p { font-size: 0.65rem; color: rgba(255,255,255,0.4); }
+
+
+/* === MAIN CONTENT & TOPBAR === */
+.main-content { margin-left: 280px; min-height: 100vh; transition: var(--transition); }
+.sidebar.collapsed ~ .main-content { margin-left: 70px; }
+.topbar {
     position: sticky; top: 0;
-    height: 100vh;
-  }
-  .brand {
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 28px;
-  }
-  .brand .logo {
-    width: 34px; height: 34px; border-radius: 9px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    display: grid; place-items: center; color: #0f1117; font-weight: 800;
-  }
-  .brand h1 { font-size: 16px; margin: 0; letter-spacing: 0.2px; }
-  .brand small { color: var(--muted); display: block; font-size: 11px; }
+    background: rgba(10,22,40,0.8); backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 0.8rem 2rem; display: flex; align-items: center; justify-content: space-between; z-index: 500;
+}
+.topbar-left { display: flex; align-items: center; gap: 1rem; }
+.sidebar-toggle {
+    width: 36px; height: 36px; background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm);
+    color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: var(--transition);
+}
+.sidebar-toggle:hover { background: rgba(76,175,80,0.2); }
+.topbar-title h2 { font-size: 1.1rem; color: #fff; font-weight: 600; }
+.topbar-title p { font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+.topbar-right { display: flex; align-items: center; gap: 0.8rem; }
+.topbar-btn {
+    width: 36px; height: 36px; background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm);
+    color: rgba(255,255,255,0.7); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: var(--transition); position: relative;
+}
+.topbar-btn:hover { background: rgba(76,175,80,0.2); color: #fff; }
+.notif-badge {
+    position: absolute; top: -3px; right: -3px; width: 16px; height: 16px;
+    background: #e74c3c; border-radius: 50%; font-size: 0.6rem; color: #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 700;
+}
+.back-link {
+    color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.8rem;
+    display: flex; align-items: center; gap: 0.4rem; transition: var(--transition);
+}
+.back-link:hover { color: var(--primary-light); }
+.dashboard-content { padding: 2rem; }
 
-  nav.nav { display: flex; flex-direction: column; gap: 2px; }
-  nav.nav button {
-    background: transparent; border: 0; color: var(--muted);
-    padding: 10px 12px; border-radius: var(--radius-sm);
-    text-align: left; cursor: pointer; display: flex; gap: 10px; align-items: center;
-    font-size: 13px;
-  }
-  nav.nav button.active, nav.nav button:hover { background: var(--panel-2); color: var(--text); }
-  nav.nav .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
-  nav.nav button.active .dot { background: var(--accent); }
 
-  .side-foot {
-    position: absolute; bottom: 18px; left: 18px; right: 18px;
-    border-top: 1px solid var(--border); padding-top: 14px; color: var(--muted); font-size: 11px;
-  }
+/* === STATS & QUICK ACTIONS === */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem; margin-bottom: 2rem; }
+.stat-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-lg); padding: 1.5rem; backdrop-filter: blur(10px);
+    transition: var(--transition); position: relative; overflow: hidden;
+}
+.stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--primary), var(--primary-light)); }
+.stat-card:nth-child(2)::before { background: linear-gradient(90deg, var(--gold), #ffd700); }
+.stat-card:nth-child(3)::before { background: linear-gradient(90deg, #6c63ff, #9b59b6); }
+.stat-card:nth-child(4)::before { background: linear-gradient(90deg, #e74c3c, #ff6b6b); }
+.stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 40px rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.15); }
+.stat-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.stat-icon { width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+.stat-icon.green { background: rgba(76,175,80,0.15); color: var(--primary-light); }
+.stat-icon.gold { background: rgba(244,166,28,0.15); color: var(--gold); }
+.stat-icon.purple { background: rgba(108,99,255,0.15); color: #6c63ff; }
+.stat-icon.red { background: rgba(231,76,60,0.15); color: #e74c3c; }
+.stat-trend { font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 20px; font-weight: 500; }
+.stat-trend.up { background: rgba(76,175,80,0.15); color: #4caf50; }
+.stat-trend.down { background: rgba(231,76,60,0.15); color: #e74c3c; }
+.stat-value { font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 0.2rem; }
+.stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+.quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.8rem; margin-bottom: 2rem; }
+.quick-action-btn {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-md); padding: 1rem; text-align: center;
+    cursor: pointer; transition: var(--transition); color: #fff;
+}
+.quick-action-btn:hover { background: rgba(76,175,80,0.1); border-color: rgba(76,175,80,0.3); transform: translateY(-2px); }
+.quick-action-btn i { font-size: 1.4rem; margin-bottom: 0.5rem; display: block; color: var(--primary-light); }
+.quick-action-btn span { font-size: 0.78rem; color: rgba(255,255,255,0.7); }
 
-  main.main { padding: 22px 28px 60px; min-width: 0; }
 
-  /* ---------- header ---------- */
-  .topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 22px; gap: 16px; flex-wrap: wrap;
-  }
-  .topbar h2 { margin: 0; font-size: 22px; letter-spacing: 0.2px; }
-  .topbar .sub { color: var(--muted); font-size: 13px; }
-  .topbar-right { display: flex; align-items: center; gap: 10px; }
-  .pill {
-    background: var(--panel); border: 1px solid var(--border);
-    padding: 7px 11px; border-radius: 999px; font-size: 12px; color: var(--muted);
-    display: inline-flex; align-items: center; gap: 7px;
-  }
-  .pill .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 0 rgba(61,220,151,.6); animation: pulse 1.6s infinite; }
-  @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(61,220,151,.55); }
-    70% { box-shadow: 0 0 0 8px rgba(61,220,151,0); }
-    100% { box-shadow: 0 0 0 0 rgba(61,220,151,0); }
-  }
-  .btn {
-    background: var(--accent); color: #0f1117; font-weight: 600;
-    border: 0; padding: 9px 14px; border-radius: var(--radius-sm); cursor: pointer; font-size: 13px;
-  }
-  .btn.ghost { background: var(--panel); color: var(--text); border: 1px solid var(--border); }
+/* === PANELS & CARDS === */
+.section-panel { display: none; animation: fadeIn 0.4s ease; }
+.section-panel.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.8rem; }
+.panel-header h3 { font-size: 1.3rem; color: #fff; font-weight: 600; font-family: var(--font-display); }
+.panel-btn {
+    padding: 0.5rem 1.2rem; background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border: none; border-radius: var(--radius-sm); color: #fff; font-size: 0.8rem;
+    font-weight: 500; cursor: pointer; font-family: var(--font-primary); transition: var(--transition);
+}
+.panel-btn:hover { transform: translateY(-1px); box-shadow: 0 5px 20px rgba(45,122,58,0.3); }
+.panel-btn.secondary { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); }
+.glass-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-lg); padding: 1.5rem; backdrop-filter: blur(10px); margin-bottom: 1.2rem;
+}
+.glass-card h4 { color: #fff; font-size: 1rem; margin-bottom: 0.8rem; }
+.glass-card p { color: rgba(255,255,255,0.6); font-size: 0.85rem; line-height: 1.6; }
+/* TABLE */
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.data-table th {
+    text-align: left; padding: 0.8rem 1rem; background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.6); font-weight: 500; font-size: 0.75rem;
+    text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.data-table td { padding: 0.8rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04); color: rgba(255,255,255,0.8); }
+.data-table tr:hover td { background: rgba(255,255,255,0.02); }
+.badge { padding: 0.25rem 0.6rem; border-radius: 20px; font-size: 0.7rem; font-weight: 500; display: inline-block; }
+.badge-success { background: rgba(76,175,80,0.15); color: #4caf50; }
+.badge-warning { background: rgba(244,166,28,0.15); color: var(--gold); }
+.badge-danger { background: rgba(231,76,60,0.15); color: #e74c3c; }
+.badge-info { background: rgba(52,152,219,0.15); color: #3498db; }
+/* FORMS */
+.form-group { margin-bottom: 1rem; }
+.form-label { display: block; font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-bottom: 0.4rem; font-weight: 500; }
+.form-input, .form-select, .form-textarea {
+    width: 100%; padding: 0.7rem 1rem; background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm);
+    color: #fff; font-family: var(--font-primary); font-size: 0.88rem; transition: var(--transition); outline: none;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--primary-light); box-shadow: 0 0 15px rgba(76,175,80,0.15); }
+.form-select { appearance: none; cursor: pointer; }
+.form-textarea { resize: vertical; min-height: 100px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
-  /* ---------- KPI tiles ---------- */
-  .kpis {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px;
-  }
-  .kpi {
-    background: linear-gradient(180deg, var(--panel) 0%, var(--bg-2) 100%);
-    border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 16px 18px; box-shadow: var(--shadow);
-    position: relative; overflow: hidden;
-  }
-  .kpi h4 { margin: 0; font-size: 12px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.6px; }
-  .kpi .val { font-size: 26px; font-weight: 700; margin-top: 8px; }
-  .kpi .delta { font-size: 12px; color: var(--good); margin-top: 4px; }
-  .kpi .delta.bad { color: var(--bad); }
-  .kpi .icon {
-    position: absolute; right: 14px; top: 14px; opacity: 0.85;
-    width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
-    background: rgba(124,92,255,0.15); color: var(--accent);
-    font-size: 14px; font-weight: 700;
-  }
-  .kpi.green .icon { background: rgba(61,220,151,0.15); color: var(--good); }
-  .kpi.amber .icon { background: rgba(255,180,84,0.15); color: var(--warn); }
-  .kpi.red .icon { background: rgba(255,92,122,0.15); color: var(--bad); }
 
-  /* ---------- grid ---------- */
-  .grid {
-    display: grid; grid-template-columns: 2fr 1fr; gap: 14px;
-  }
-  .card {
-    background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 16px 18px; box-shadow: var(--shadow);
-  }
-  .card h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: 0.3px; }
-  .card .card-head {
-    display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 10px;
-  }
-  .filters { display: flex; gap: 6px; flex-wrap: wrap; }
-  .filter {
-    background: var(--bg-2); border: 1px solid var(--border); color: var(--muted);
-    padding: 5px 9px; border-radius: 999px; font-size: 11.5px; cursor: pointer;
-  }
-  .filter.active { background: var(--accent); color: #0f1117; border-color: var(--accent); font-weight: 600; }
+/* === NOTIFICATIONS === */
+.notifications-panel {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-lg); padding: 1.2rem; margin-bottom: 2rem;
+}
+.notifications-panel h4 { color: #fff; font-size: 0.95rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+.notif-item { display: flex; align-items: flex-start; gap: 0.8rem; padding: 0.7rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.notif-item:last-child { border-bottom: none; }
+.notif-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 0.4rem; flex-shrink: 0; }
+.notif-dot.green { background: var(--primary-light); }
+.notif-dot.gold { background: var(--gold); }
+.notif-dot.red { background: #e74c3c; }
+.notif-text { font-size: 0.82rem; color: rgba(255,255,255,0.7); }
+.notif-time { font-size: 0.7rem; color: rgba(255,255,255,0.3); margin-top: 0.2rem; }
+/* GALLERY */
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
+.gallery-item {
+    aspect-ratio: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: var(--transition); overflow: hidden; position: relative;
+}
+.gallery-item:hover { border-color: rgba(76,175,80,0.3); transform: scale(1.02); }
+.gallery-item i { font-size: 2rem; color: rgba(255,255,255,0.2); }
+.gallery-item .gallery-overlay {
+    position: absolute; bottom: 0; left: 0; right: 0; padding: 0.6rem;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8)); font-size: 0.7rem; color: rgba(255,255,255,0.8);
+}
+/* RATE CARDS */
+.rate-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-md); padding: 1.2rem; text-align: center; transition: var(--transition);
+}
+.rate-card:hover { border-color: rgba(76,175,80,0.3); }
+.rate-card h5 { color: #fff; font-size: 0.9rem; margin-bottom: 0.5rem; }
+.rate-price { font-size: 1.6rem; font-weight: 700; color: var(--gold); margin-bottom: 0.3rem; }
+.rate-unit { font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+.rate-change { font-size: 0.75rem; margin-top: 0.5rem; padding: 0.2rem 0.5rem; border-radius: 12px; display: inline-block; }
 
-  /* ---------- employees table ---------- */
-  .table-wrap { overflow-x: auto; }
-  table.emp { width: 100%; border-collapse: collapse; }
-  table.emp thead th {
-    text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px;
-    color: var(--muted); font-weight: 500; padding: 8px 8px; border-bottom: 1px solid var(--border);
-  }
-  table.emp tbody tr {
-    cursor: pointer; transition: background 120ms ease;
-  }
-  table.emp tbody tr:hover { background: var(--panel-2); }
-  table.emp tbody td {
-    padding: 11px 8px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle;
-  }
-  .who { display: flex; align-items: center; gap: 10px; }
-  .avatar {
-    width: 32px; height: 32px; border-radius: 50%;
-    display: grid; place-items: center; font-weight: 700; color: #0f1117;
-    background: linear-gradient(135deg, #ffd28a, #ff9b8a);
-    font-size: 12px; flex: 0 0 auto;
-  }
-  .who .meta b { display: block; font-weight: 600; }
-  .who .meta span { color: var(--muted); font-size: 11.5px; }
 
-  .status {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--bg-2); border: 1px solid var(--border);
-    border-radius: 999px; padding: 3px 9px; font-size: 11.5px; color: var(--muted);
-  }
-  .status .d { width: 7px; height: 7px; border-radius: 50%; background: var(--idle); }
-  .status.active .d { background: var(--good); }
-  .status.idle .d   { background: var(--warn); }
-  .status.offline .d{ background: var(--idle); }
-  .status.focus .d  { background: var(--accent-2); }
+/* === LOGIN MODAL === */
+.login-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(5,10,20,0.95); backdrop-filter: blur(20px);
+    z-index: 10000; display: flex; align-items: center; justify-content: center;
+    opacity: 1; transition: opacity 0.5s ease;
+}
+.login-overlay.hidden { opacity: 0; pointer-events: none; }
+.login-card {
+    background: rgba(20,35,55,0.9); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-xl); padding: 3rem; width: 420px; max-width: 90vw;
+    backdrop-filter: blur(40px); box-shadow: 0 25px 80px rgba(0,0,0,0.5), 0 0 60px rgba(45,122,58,0.1);
+    text-align: center; animation: loginSlideUp 0.6s ease;
+}
+@keyframes loginSlideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.login-logo {
+    width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem; font-size: 2rem; color: #fff; box-shadow: 0 10px 40px rgba(45,122,58,0.4);
+}
+.login-card h2 { font-family: var(--font-display); color: #fff; margin-bottom: 0.5rem; font-size: 1.6rem; }
+.login-card p.login-subtitle { color: rgba(255,255,255,0.5); margin-bottom: 2rem; font-size: 0.9rem; }
+.login-input-group { position: relative; margin-bottom: 1.2rem; }
+.login-input-group i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.4); font-size: 0.9rem; }
+.login-input {
+    width: 100%; padding: 0.9rem 1rem 0.9rem 2.8rem; background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md);
+    color: #fff; font-family: var(--font-primary); font-size: 0.95rem; transition: var(--transition); outline: none;
+}
+.login-input:focus { border-color: var(--primary-light); box-shadow: 0 0 20px rgba(76,175,80,0.2); background: rgba(255,255,255,0.08); }
+.login-input::placeholder { color: rgba(255,255,255,0.3); }
+.login-btn {
+    width: 100%; padding: 0.9rem; background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border: none; border-radius: var(--radius-md); color: #fff; font-family: var(--font-primary);
+    font-size: 1rem; font-weight: 600; cursor: pointer; transition: var(--transition); margin-top: 0.5rem;
+}
+.login-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(45,122,58,0.4); }
+.login-footer { margin-top: 1.5rem; font-size: 0.8rem; color: rgba(255,255,255,0.4); }
+.login-footer a { color: var(--gold); text-decoration: none; }
+/* MODAL */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+    z-index: 9000; display: none; align-items: center; justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal-content {
+    background: rgba(15,25,40,0.95); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-xl); padding: 2rem; width: 500px; max-width: 90vw;
+    max-height: 80vh; overflow-y: auto;
+}
+.modal-content h3 { color: #fff; margin-bottom: 1.5rem; font-family: var(--font-display); }
+.modal-close {
+    float: right; background: none; border: none; color: rgba(255,255,255,0.5);
+    font-size: 1.3rem; cursor: pointer;
+}
+.modal-close:hover { color: #fff; }
 
-  .score-cell { min-width: 110px; }
-  .bar {
-    width: 100%; height: 6px; background: var(--bg-2); border-radius: 99px; overflow: hidden;
-    margin-top: 4px;
-  }
-  .bar > i {
-    display: block; height: 100%; border-radius: 99px;
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-  }
-  .bar.good > i { background: linear-gradient(90deg, #3ddc97, #5ad1c8); }
-  .bar.warn > i { background: linear-gradient(90deg, #ffb454, #ff8a8a); }
-  .bar.bad  > i { background: linear-gradient(90deg, #ff5c7a, #b13b87); }
-  .num { font-variant-numeric: tabular-nums; }
 
-  .risk {
-    font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; letter-spacing: 0.4px;
-  }
-  .risk.low  { background: rgba(61,220,151,0.15); color: var(--good); }
-  .risk.med  { background: rgba(255,180,84,0.15); color: var(--warn); }
-  .risk.high { background: rgba(255,92,122,0.18); color: var(--bad); }
-
-  /* ---------- leaderboard ---------- */
-  .leader { display: flex; flex-direction: column; gap: 10px; }
-  .leader-row { display: grid; grid-template-columns: 22px 1fr auto; gap: 10px; align-items: center; }
-  .leader-row .rank { font-weight: 700; color: var(--muted); }
-  .leader-row .rank.r1 { color: #ffd28a; }
-  .leader-row .rank.r2 { color: #cdd2e6; }
-  .leader-row .rank.r3 { color: #d99a73; }
-  .leader-row .name { display: flex; align-items: center; gap: 8px; min-width: 0; }
-  .leader-row .name b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .leader-row .pts { font-variant-numeric: tabular-nums; font-weight: 700; }
-
-  /* ---------- alerts ---------- */
-  .alerts { display: flex; flex-direction: column; gap: 10px; max-height: 360px; overflow-y: auto; }
-  .alert {
-    border: 1px solid var(--border); border-left: 3px solid var(--warn);
-    background: var(--bg-2); border-radius: var(--radius-sm);
-    padding: 10px 12px; font-size: 12.5px;
-  }
-  .alert.high { border-left-color: var(--bad); }
-  .alert.low  { border-left-color: var(--accent-2); }
-  .alert .a-head { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
-  .alert .a-head b { font-weight: 600; }
-  .alert .a-head time { color: var(--muted); font-size: 11px; }
-  .alert .a-body { color: var(--muted); }
-
-  /* ---------- chart ---------- */
-  .chart {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-    gap: 10px; padding: 10px 4px 0;
-    align-items: end;
-    height: 160px;
-  }
-  .chart .bar-col {
-    display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%;
-  }
-  .chart .bar-col .stack {
-    width: 26px; flex: 1; display: flex; flex-direction: column-reverse;
-    border-radius: 6px; overflow: hidden; background: var(--bg-2);
-  }
-  .chart .bar-col .stack > span {
-    width: 100%; display: block;
-  }
-  .chart .bar-col .stack .s1 { background: linear-gradient(180deg, var(--accent), #4a3bd6); }
-  .chart .bar-col .stack .s2 { background: linear-gradient(180deg, var(--accent-2), #2f8e87); }
-  .chart .bar-col label { color: var(--muted); font-size: 11px; }
-  .legend { display: flex; gap: 14px; color: var(--muted); font-size: 11.5px; margin-top: 6px; }
-  .legend .sw { width: 10px; height: 10px; border-radius: 3px; display: inline-block; vertical-align: middle; margin-right: 6px; }
-
-  /* ---------- drawer ---------- */
-  .drawer-overlay {
-    position: fixed; inset: 0; background: rgba(8,9,15,0.55);
-    backdrop-filter: blur(4px); opacity: 0; pointer-events: none;
-    transition: opacity 180ms ease; z-index: 50;
-  }
-  .drawer-overlay.open { opacity: 1; pointer-events: auto; }
-  .drawer {
-    position: fixed; top: 0; right: 0; height: 100vh; width: min(560px, 92vw);
-    background: var(--bg-2); border-left: 1px solid var(--border);
-    transform: translateX(100%); transition: transform 220ms cubic-bezier(.2,.8,.2,1);
-    z-index: 51; overflow-y: auto;
-    box-shadow: -20px 0 60px rgba(0,0,0,0.35);
-  }
-  .drawer.open { transform: translateX(0); }
-  .drawer-head {
-    padding: 18px 22px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 14px; position: sticky; top: 0;
-    background: var(--bg-2); z-index: 1;
-  }
-  .drawer-head .avatar { width: 44px; height: 44px; font-size: 14px; }
-  .drawer-head h3 { margin: 0; font-size: 16px; }
-  .drawer-head .role { color: var(--muted); font-size: 12px; }
-  .drawer-close {
-    margin-left: auto; background: var(--panel); border: 1px solid var(--border);
-    color: var(--text); width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 16px;
-  }
-  .drawer-body { padding: 18px 22px; }
-  .drawer-body section { margin-bottom: 22px; }
-  .drawer-body h4 {
-    margin: 0 0 8px; font-size: 11px; color: var(--muted);
-    text-transform: uppercase; letter-spacing: 0.6px; font-weight: 500;
-  }
-  .score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .score-grid .item {
-    background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
-    padding: 10px 12px;
-  }
-  .score-grid .item .label { color: var(--muted); font-size: 11.5px; }
-  .score-grid .item .val { font-size: 18px; font-weight: 700; margin-top: 2px; }
-  .summary, .reco {
-    background: var(--panel); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 14px; color: #d6d9e6; font-size: 13px;
-  }
-  .reco { border-left: 3px solid var(--accent); }
-  .strengths, .weaknesses { list-style: none; padding: 0; margin: 0; }
-  .strengths li, .weaknesses li {
-    padding: 7px 10px; background: var(--panel); border: 1px solid var(--border);
-    border-radius: 8px; margin-bottom: 6px; font-size: 12.5px;
-  }
-  .strengths li::before { content: "+ "; color: var(--good); font-weight: 700; }
-  .weaknesses li::before { content: "− "; color: var(--bad); font-weight: 700; }
-
-  .trend-row { display: flex; align-items: center; gap: 10px; }
-  .trend-svg { flex: 1; height: 60px; }
-
-  /* ---------- responsive ---------- */
-  @media (max-width: 1100px) {
-    .grid { grid-template-columns: 1fr; }
-    .kpis { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 760px) {
-    .app { grid-template-columns: 1fr; }
-    aside.side { display: none; }
-  }
-
-  /* scrollbar */
-  ::-webkit-scrollbar { width: 10px; height: 10px; }
-  ::-webkit-scrollbar-thumb { background: #2a3044; border-radius: 8px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-</style>
+/* === RESPONSIVE === */
+@media (max-width: 1024px) {
+    .sidebar { width: 70px; }
+    .sidebar .sidebar-brand, .sidebar .nav-section-title, .sidebar .nav-item span, .sidebar .user-info { display: none; }
+    .main-content { margin-left: 70px; }
+    .form-row { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); width: 280px; }
+    .sidebar.mobile-open { transform: translateX(0); }
+    .sidebar.mobile-open .sidebar-brand, .sidebar.mobile-open .nav-section-title,
+    .sidebar.mobile-open .nav-item span, .sidebar.mobile-open .user-info { display: block; }
+    .main-content { margin-left: 0; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .quick-actions { grid-template-columns: repeat(3, 1fr); }
+    .dashboard-content { padding: 1rem; }
+    .topbar { padding: 0.8rem 1rem; }
+}
+@media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .quick-actions { grid-template-columns: 1fr 1fr; }
+    .login-card { padding: 2rem 1.5rem; }
+}
+    </style>
 </head>
 <body>
-<div class="app">
 
-  <!-- ============ SIDEBAR ============ -->
-  <aside class="side">
-    <div class="brand">
-      <div class="logo">S</div>
-      <div>
-        <h1>Sentinel</h1>
-        <small>AI Productivity Co-Pilot</small>
-      </div>
-    </div>
-
-    <nav class="nav">
-      <button class="active"><span class="dot"></span> Live Monitor</button>
-      <button><span class="dot"></span> Employees</button>
-      <button><span class="dot"></span> Reports</button>
-      <button><span class="dot"></span> Projects</button>
-      <button><span class="dot"></span> Alerts</button>
-      <button><span class="dot"></span> Settings</button>
-    </nav>
-
-    <div class="side-foot">
-      Privacy-first &middot; Consent-based<br/>
-      Mock data &middot; Demo build
-    </div>
-  </aside>
-
-  <!-- ============ MAIN ============ -->
-  <main class="main">
-
-    <!-- topbar -->
-    <div class="topbar">
-      <div>
-        <h2>Live Monitoring Dashboard</h2>
-        <div class="sub" id="dateline">—</div>
-      </div>
-      <div class="topbar-right">
-        <span class="pill"><span class="live-dot"></span> Live</span>
-        <span class="pill" id="clock">—</span>
-        <button class="btn ghost" id="refreshBtn">Refresh</button>
-        <button class="btn" id="reportBtn">Generate Daily Report</button>
-      </div>
-    </div>
-
-    <!-- KPIs -->
-    <div class="kpis" id="kpis"></div>
-
-    <!-- chart + leaderboard row -->
-    <div class="grid" style="margin-bottom: 14px;">
-      <div class="card">
-        <div class="card-head">
-          <h3>Productivity vs Focus — today</h3>
-          <div class="legend">
-            <span><i class="sw" style="background:linear-gradient(180deg,var(--accent),#4a3bd6)"></i>Productivity</span>
-            <span><i class="sw" style="background:linear-gradient(180deg,var(--accent-2),#2f8e87)"></i>Focus</span>
-          </div>
+<!-- LOGIN OVERLAY -->
+<div class="login-overlay" id="loginOverlay">
+    <div class="login-card">
+        <div class="login-logo"><i class="fas fa-leaf"></i></div>
+        <h2>KOF Employee Portal</h2>
+        <p class="login-subtitle">Karnataka Co-operative Oilseeds Growers Federation</p>
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="login-input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" class="login-input" id="loginUser" placeholder="Employee ID / Username" required>
+            </div>
+            <div class="login-input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" class="login-input" id="loginPass" placeholder="Password" required>
+            </div>
+            <button type="submit" class="login-btn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+        </form>
+        <div class="login-footer">
+            <p>Forgot credentials? <a href="#">Contact Admin</a></p>
+            <p style="margin-top:0.5rem;"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to Website</a></p>
         </div>
-        <div class="chart" id="chart"></div>
-      </div>
-
-      <div class="card">
-        <h3>Team Leaderboard</h3>
-        <div class="leader" id="leader"></div>
-      </div>
     </div>
-
-    <!-- employees + alerts -->
-    <div class="grid">
-      <div class="card">
-        <div class="card-head">
-          <h3>Employees</h3>
-          <div class="filters" id="filters">
-            <button class="filter active" data-f="all">All</button>
-            <button class="filter" data-f="active">Active</button>
-            <button class="filter" data-f="focus">In focus</button>
-            <button class="filter" data-f="idle">Idle</button>
-            <button class="filter" data-f="offline">Offline</button>
-            <button class="filter" data-f="risk">At risk</button>
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table class="emp">
-            <thead>
-              <tr>
-                <th>Employee</th>
-                <th>Status</th>
-                <th>Current task</th>
-                <th>Productivity</th>
-                <th>Focus</th>
-                <th>Risk</th>
-              </tr>
-            </thead>
-            <tbody id="empBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>Smart Alerts</h3>
-        <div class="alerts" id="alerts"></div>
-      </div>
-    </div>
-  </main>
 </div>
 
-<!-- ============ DRAWER ============ -->
-<div class="drawer-overlay" id="overlay"></div>
-<aside class="drawer" id="drawer" aria-hidden="true">
-  <div class="drawer-head">
-    <div class="avatar" id="dAvatar">--</div>
-    <div>
-      <h3 id="dName">—</h3>
-      <div class="role" id="dRole">—</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-logo"><i class="fas fa-leaf"></i></div>
+        <div class="sidebar-brand">
+            <h3>KOF Chitradurga</h3>
+            <span>Employee Portal</span>
+        </div>
     </div>
-    <button class="drawer-close" id="dClose" aria-label="Close">×</button>
-  </div>
-  <div class="drawer-body">
-
-    <section>
-      <h4>AI Manager Report &middot; <span id="dDate"></span></h4>
-      <div class="summary" id="dSummary"></div>
-    </section>
-
-    <section>
-      <h4>Scores</h4>
-      <div class="score-grid" id="dScores"></div>
-    </section>
-
-    <section>
-      <h4>Honesty &amp; Risk</h4>
-      <div class="score-grid">
-        <div class="item">
-          <div class="label">Honesty Probability</div>
-          <div class="val num" id="dHonesty">—</div>
+    <nav class="sidebar-nav">
+        <div class="nav-section-title">Main</div>
+        <a class="nav-item active" data-section="dashboard" onclick="switchSection('dashboard')">
+            <i class="fas fa-th-large"></i><span>Dashboard</span>
+        </a>
+        <a class="nav-item" data-section="profile" onclick="switchSection('profile')">
+            <i class="fas fa-user-circle"></i><span>My Profile</span>
+        </a>
+        <a class="nav-item" data-section="salary" onclick="switchSection('salary')">
+            <i class="fas fa-file-invoice-dollar"></i><span>Salary Slips</span>
+        </a>
+        <a class="nav-item" data-section="leave" onclick="switchSection('leave')">
+            <i class="fas fa-calendar-check"></i><span>Leave Management</span>
+        </a>
+        <div class="nav-section-title">Operations</div>
+        <a class="nav-item" data-section="orders" onclick="switchSection('orders')">
+            <i class="fas fa-truck"></i><span>Order Tracking</span>
+        </a>
+        <a class="nav-item" data-section="rates" onclick="switchSection('rates')">
+            <i class="fas fa-tags"></i><span>Rates & Pricing</span>
+        </a>
+        <a class="nav-item" data-section="distributors" onclick="switchSection('distributors')">
+            <i class="fas fa-map-marker-alt"></i><span>Distributor Locator</span>
+        </a>
+        <a class="nav-item" data-section="tenders" onclick="switchSection('tenders')">
+            <i class="fas fa-gavel"></i><span>Tender Notices</span>
+        </a>
+        <div class="nav-section-title">Resources</div>
+        <a class="nav-item" data-section="service" onclick="switchSection('service')">
+            <i class="fas fa-book"></i><span>Service Rules</span>
+        </a>
+        <a class="nav-item" data-section="gallery" onclick="switchSection('gallery')">
+            <i class="fas fa-images"></i><span>Photo Gallery</span>
+        </a>
+        <a class="nav-item" data-section="marketing" onclick="switchSection('marketing')">
+            <i class="fas fa-bullhorn"></i><span>Digital Marketing</span>
+        </a>
+        <div class="nav-section-title">Admin</div>
+        <a class="nav-item" data-section="admin" onclick="switchSection('admin')">
+            <i class="fas fa-cogs"></i><span>Admin Panel</span>
+        </a>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <div class="user-avatar">RS</div>
+            <div class="user-info">
+                <h4>Ramesh S.</h4>
+                <p>Manager - Operations</p>
+            </div>
         </div>
-        <div class="item">
-          <div class="label">Risk Level</div>
-          <div class="val" id="dRisk">—</div>
-        </div>
-      </div>
-    </section>
-
-    <section>
-      <h4>14-day Productivity Trend</h4>
-      <div class="trend-row">
-        <svg class="trend-svg" id="dTrend" viewBox="0 0 280 60" preserveAspectRatio="none"></svg>
-      </div>
-    </section>
-
-    <section>
-      <h4>Strengths</h4>
-      <ul class="strengths" id="dStrengths"></ul>
-    </section>
-
-    <section>
-      <h4>Weaknesses</h4>
-      <ul class="weaknesses" id="dWeak"></ul>
-    </section>
-
-    <section>
-      <h4>AI Recommendation</h4>
-      <div class="reco" id="dReco"></div>
-    </section>
-
-  </div>
+    </div>
 </aside>
 
+
+<!-- MAIN CONTENT -->
+<div class="main-content" id="mainContent">
+    <div class="topbar">
+        <div class="topbar-left">
+            <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+            <div class="topbar-title">
+                <h2>Employee Dashboard</h2>
+                <p>Welcome back, Ramesh</p>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <a href="index.html" class="back-link"><i class="fas fa-external-link-alt"></i> Main Site</a>
+            <button class="topbar-btn"><i class="fas fa-search"></i></button>
+            <button class="topbar-btn"><i class="fas fa-bell"></i><span class="notif-badge">3</span></button>
+            <button class="topbar-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </div>
+    <div class="dashboard-content">
+
+
+<!-- DASHBOARD HOME -->
+<div class="section-panel active" id="sec-dashboard">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <div class="stat-icon green"><i class="fas fa-users"></i></div>
+                <span class="stat-trend up"><i class="fas fa-arrow-up"></i> Active</span>
+            </div>
+            <div class="stat-value">22</div>
+            <div class="stat-label">Total Employees</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <div class="stat-icon gold"><i class="fas fa-box"></i></div>
+                <span class="stat-trend up"><i class="fas fa-arrow-up"></i> +12%</span>
+            </div>
+            <div class="stat-value">148</div>
+            <div class="stat-label">Orders This Month</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <div class="stat-icon purple"><i class="fas fa-rupee-sign"></i></div>
+                <span class="stat-trend up"><i class="fas fa-arrow-up"></i> +8%</span>
+            </div>
+            <div class="stat-value">&#8377;24.5L</div>
+            <div class="stat-label">Monthly Revenue</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <div class="stat-icon red"><i class="fas fa-chart-line"></i></div>
+                <span class="stat-trend down"><i class="fas fa-arrow-down"></i> -2%</span>
+            </div>
+            <div class="stat-value">87%</div>
+            <div class="stat-label">Target Achievement</div>
+        </div>
+    </div>
+    <div class="quick-actions">
+        <div class="quick-action-btn" onclick="switchSection('salary')"><i class="fas fa-download"></i><span>Download Salary Slip</span></div>
+        <div class="quick-action-btn" onclick="switchSection('leave')"><i class="fas fa-paper-plane"></i><span>Apply Leave</span></div>
+        <div class="quick-action-btn" onclick="switchSection('orders')"><i class="fas fa-truck"></i><span>Track Orders</span></div>
+        <div class="quick-action-btn" onclick="switchSection('rates')"><i class="fas fa-tags"></i><span>Check Rates</span></div>
+        <div class="quick-action-btn" onclick="switchSection('tenders')"><i class="fas fa-gavel"></i><span>View Tenders</span></div>
+        <div class="quick-action-btn" onclick="switchSection('marketing')"><i class="fas fa-share-alt"></i><span>Social Media</span></div>
+    </div>
+    <div class="notifications-panel">
+        <h4><i class="fas fa-bell"></i> Recent Notifications</h4>
+        <div class="notif-item"><div class="notif-dot green"></div><div><div class="notif-text">Salary for December 2025 has been credited to your account.</div><div class="notif-time">2 hours ago</div></div></div>
+        <div class="notif-item"><div class="notif-dot gold"></div><div><div class="notif-text">New tender notice published - Supply of packaging materials.</div><div class="notif-time">5 hours ago</div></div></div>
+        <div class="notif-item"><div class="notif-dot red"></div><div><div class="notif-text">Your leave application for Jan 15-17 has been approved.</div><div class="notif-time">1 day ago</div></div></div>
+        <div class="notif-item"><div class="notif-dot green"></div><div><div class="notif-text">Groundnut oil rate revised - Commercial: &#8377;185/L, District: &#8377;178/L</div><div class="notif-time">2 days ago</div></div></div>
+    </div>
+</div>
+
+
+<!-- PROFILE SECTION -->
+<div class="section-panel" id="sec-profile">
+    <div class="panel-header"><h3>Employee Profile</h3><button class="panel-btn secondary"><i class="fas fa-edit"></i> Edit Profile</button></div>
+    <div class="glass-card" style="display:flex;gap:2rem;flex-wrap:wrap;align-items:center;">
+        <div style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--gold));display:flex;align-items:center;justify-content:center;font-size:2.2rem;color:#fff;font-weight:700;flex-shrink:0;">RS</div>
+        <div style="flex:1;min-width:200px;">
+            <h4 style="color:#fff;font-size:1.3rem;margin-bottom:0.3rem;">Ramesh Siddappa</h4>
+            <p style="color:var(--gold);font-size:0.85rem;margin-bottom:1rem;">Manager - Operations Division</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.8rem;">
+                <div><span style="font-size:0.7rem;color:rgba(255,255,255,0.4);display:block;">Employee ID</span><span style="color:#fff;font-size:0.9rem;">KOF-EMP-007</span></div>
+                <div><span style="font-size:0.7rem;color:rgba(255,255,255,0.4);display:block;">Designation</span><span style="color:#fff;font-size:0.9rem;">Operations Manager</span></div>
+                <div><span style="font-size:0.7rem;color:rgba(255,255,255,0.4);display:block;">Email</span><span style="color:#fff;font-size:0.9rem;">ramesh.s@kofchitradurga.org</span></div>
+                <div><span style="font-size:0.7rem;color:rgba(255,255,255,0.4);display:block;">Department</span><span style="color:#fff;font-size:0.9rem;">Production & Operations</span></div>
+                <div><span style="font-size:0.7rem;color:rgba(255,255,255,0.4);display:block;">Date of Joining</span><span style="color:#fff;font-size:0.9rem;">15 March 2018</span></div>
+                <div><span style="font-size:0.7rem;color:rgba(255,255,255,0.4);display:block;">Phone</span><span style="color:#fff;font-size:0.9rem;">+91 98765 43210</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- SALARY SECTION -->
+<div class="section-panel" id="sec-salary">
+    <div class="panel-header"><h3>Salary Slips</h3><button class="panel-btn"><i class="fas fa-download"></i> Download Latest</button></div>
+    <div class="glass-card" style="overflow-x:auto;">
+        <table class="data-table">
+            <thead><tr><th>Month</th><th>Gross</th><th>Deductions</th><th>Net Pay</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+                <tr><td>December 2025</td><td>&#8377;52,000</td><td>&#8377;8,450</td><td><strong style="color:#fff;">&#8377;43,550</strong></td><td><span class="badge badge-success">Paid</span></td><td><button class="panel-btn" style="padding:0.3rem 0.7rem;font-size:0.7rem;"><i class="fas fa-download"></i> PDF</button></td></tr>
+                <tr><td>November 2025</td><td>&#8377;52,000</td><td>&#8377;8,450</td><td><strong style="color:#fff;">&#8377;43,550</strong></td><td><span class="badge badge-success">Paid</span></td><td><button class="panel-btn" style="padding:0.3rem 0.7rem;font-size:0.7rem;"><i class="fas fa-download"></i> PDF</button></td></tr>
+                <tr><td>October 2025</td><td>&#8377;52,000</td><td>&#8377;8,450</td><td><strong style="color:#fff;">&#8377;43,550</strong></td><td><span class="badge badge-success">Paid</span></td><td><button class="panel-btn" style="padding:0.3rem 0.7rem;font-size:0.7rem;"><i class="fas fa-download"></i> PDF</button></td></tr>
+                <tr><td>September 2025</td><td>&#8377;50,000</td><td>&#8377;7,950</td><td><strong style="color:#fff;">&#8377;42,050</strong></td><td><span class="badge badge-success">Paid</span></td><td><button class="panel-btn" style="padding:0.3rem 0.7rem;font-size:0.7rem;"><i class="fas fa-download"></i> PDF</button></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- LEAVE MANAGEMENT -->
+<div class="section-panel" id="sec-leave">
+    <div class="panel-header"><h3>Leave Management</h3><button class="panel-btn" onclick="document.getElementById('leaveModal').classList.add('show')"><i class="fas fa-plus"></i> Apply Leave</button></div>
+    <div class="stats-grid" style="margin-bottom:1.5rem;">
+        <div class="stat-card"><div class="stat-value" style="color:var(--primary-light);">12</div><div class="stat-label">Casual Leave Balance</div></div>
+        <div class="stat-card"><div class="stat-value" style="color:var(--gold);">8</div><div class="stat-label">Earned Leave Balance</div></div>
+        <div class="stat-card"><div class="stat-value" style="color:#6c63ff;">5</div><div class="stat-label">Sick Leave Balance</div></div>
+        <div class="stat-card"><div class="stat-value" style="color:#e74c3c;">3</div><div class="stat-label">Leave Taken (This Month)</div></div>
+    </div>
+    <div class="glass-card" style="overflow-x:auto;">
+        <h4>Leave History</h4>
+        <table class="data-table">
+            <thead><tr><th>Date</th><th>Type</th><th>Days</th><th>Reason</th><th>Status</th></tr></thead>
+            <tbody>
+                <tr><td>Jan 15-17, 2026</td><td>Casual Leave</td><td>3</td><td>Family function</td><td><span class="badge badge-success">Approved</span></td></tr>
+                <tr><td>Dec 24-25, 2025</td><td>Earned Leave</td><td>2</td><td>Festival holidays</td><td><span class="badge badge-success">Approved</span></td></tr>
+                <tr><td>Nov 10, 2025</td><td>Sick Leave</td><td>1</td><td>Medical appointment</td><td><span class="badge badge-success">Approved</span></td></tr>
+                <tr><td>Oct 5-6, 2025</td><td>Casual Leave</td><td>2</td><td>Personal work</td><td><span class="badge badge-warning">Pending</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- ORDER TRACKING -->
+<div class="section-panel" id="sec-orders">
+    <div class="panel-header"><h3>Order Tracking</h3><button class="panel-btn"><i class="fas fa-plus"></i> New Order</button></div>
+    <div class="glass-card" style="overflow-x:auto;">
+        <table class="data-table">
+            <thead><tr><th>Order ID</th><th>Product</th><th>Qty</th><th>Distributor</th><th>Date</th><th>Status</th></tr></thead>
+            <tbody>
+                <tr><td>#KOF-2601</td><td>Groundnut Oil (1L)</td><td>500</td><td>Sri Krishna Traders</td><td>Jan 10, 2026</td><td><span class="badge badge-info">In Transit</span></td></tr>
+                <tr><td>#KOF-2598</td><td>Sunflower Oil (5L)</td><td>200</td><td>Mahalakshmi Stores</td><td>Jan 8, 2026</td><td><span class="badge badge-success">Delivered</span></td></tr>
+                <tr><td>#KOF-2595</td><td>Groundnut Oil (15kg)</td><td>100</td><td>District Depot - Davangere</td><td>Jan 5, 2026</td><td><span class="badge badge-success">Delivered</span></td></tr>
+                <tr><td>#KOF-2590</td><td>Sunflower Oil (1L)</td><td>800</td><td>Raghavendra Enterprises</td><td>Jan 3, 2026</td><td><span class="badge badge-warning">Processing</span></td></tr>
+                <tr><td>#KOF-2587</td><td>Groundnut Oil (5L)</td><td>300</td><td>Karnataka Oil Mart</td><td>Dec 28, 2025</td><td><span class="badge badge-success">Delivered</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- RATES & PRICING -->
+<div class="section-panel" id="sec-rates">
+    <div class="panel-header"><h3>Oil Product Rates</h3><button class="panel-btn secondary"><i class="fas fa-sync"></i> Last Updated: Today</button></div>
+    <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin-bottom:1.5rem;">Dynamic rate variation for Commercial and District pricing</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-bottom:1.5rem;">
+        <div class="rate-card">
+            <h5><i class="fas fa-oil-can" style="color:var(--gold);margin-right:0.3rem;"></i> Groundnut Oil</h5>
+            <div style="display:flex;justify-content:space-around;margin-top:0.8rem;">
+                <div><div class="rate-unit">Commercial</div><div class="rate-price">&#8377;185<span style="font-size:0.7rem;color:rgba(255,255,255,0.5)">/L</span></div><span class="rate-change" style="background:rgba(76,175,80,0.15);color:#4caf50;">+&#8377;5 <i class="fas fa-arrow-up"></i></span></div>
+                <div><div class="rate-unit">District</div><div class="rate-price">&#8377;178<span style="font-size:0.7rem;color:rgba(255,255,255,0.5)">/L</span></div><span class="rate-change" style="background:rgba(76,175,80,0.15);color:#4caf50;">+&#8377;3 <i class="fas fa-arrow-up"></i></span></div>
+            </div>
+        </div>
+        <div class="rate-card">
+            <h5><i class="fas fa-sun" style="color:var(--gold);margin-right:0.3rem;"></i> Sunflower Oil</h5>
+            <div style="display:flex;justify-content:space-around;margin-top:0.8rem;">
+                <div><div class="rate-unit">Commercial</div><div class="rate-price">&#8377;165<span style="font-size:0.7rem;color:rgba(255,255,255,0.5)">/L</span></div><span class="rate-change" style="background:rgba(231,76,60,0.15);color:#e74c3c;">-&#8377;2 <i class="fas fa-arrow-down"></i></span></div>
+                <div><div class="rate-unit">District</div><div class="rate-price">&#8377;158<span style="font-size:0.7rem;color:rgba(255,255,255,0.5)">/L</span></div><span class="rate-change" style="background:rgba(231,76,60,0.15);color:#e74c3c;">-&#8377;2 <i class="fas fa-arrow-down"></i></span></div>
+            </div>
+        </div>
+        <div class="rate-card">
+            <h5><i class="fas fa-seedling" style="color:var(--gold);margin-right:0.3rem;"></i> Sesame Oil</h5>
+            <div style="display:flex;justify-content:space-around;margin-top:0.8rem;">
+                <div><div class="rate-unit">Commercial</div><div class="rate-price">&#8377;320<span style="font-size:0.7rem;color:rgba(255,255,255,0.5)">/L</span></div><span class="rate-change" style="background:rgba(76,175,80,0.15);color:#4caf50;">+&#8377;10 <i class="fas fa-arrow-up"></i></span></div>
+                <div><div class="rate-unit">District</div><div class="rate-price">&#8377;305<span style="font-size:0.7rem;color:rgba(255,255,255,0.5)">/L</span></div><span class="rate-change" style="background:rgba(76,175,80,0.15);color:#4caf50;">+&#8377;8 <i class="fas fa-arrow-up"></i></span></div>
+            </div>
+        </div>
+        <div class="rate-card">
+            <h5><i class="fas fa-tint" style="color:var(--gold);margin-right:0.3rem;"></i> Coconut Oil</h5>
+            <div style="display:flex;justify-content:space-around;margin-top:0.8rem;">
+                <div><div class="rate-unit">Commercial</div><div class="rate-price">&#8377;210<span style="font-size:0.7rem;color:rgba(255,255,255,0.5)">/L</span></div><span class="rate-change" style="background:rgba(244,166,28,0.15);color:var(--gold);">No Change</span></div>
+                <div><div class="rate-unit">District</div><div class="rate-price">&#8377;198<span style="font-size:0.7rem;color:rgba(255,255,255,0.5)">/L</span></div><span class="rate-change" style="background:rgba(244,166,28,0.15);color:var(--gold);">No Change</span></div>
+            </div>
+        </div>
+    </div>
+    <div class="glass-card" style="overflow-x:auto;">
+        <h4>Bulk Pricing (15kg Tin)</h4>
+        <table class="data-table">
+            <thead><tr><th>Product</th><th>Commercial Rate</th><th>District Rate</th><th>MRP</th><th>Margin</th></tr></thead>
+            <tbody>
+                <tr><td>Groundnut Oil 15kg</td><td>&#8377;2,650</td><td>&#8377;2,550</td><td>&#8377;2,850</td><td><span class="badge badge-success">7.5%</span></td></tr>
+                <tr><td>Sunflower Oil 15kg</td><td>&#8377;2,350</td><td>&#8377;2,250</td><td>&#8377;2,550</td><td><span class="badge badge-success">8.5%</span></td></tr>
+                <tr><td>Sesame Oil 5kg</td><td>&#8377;1,550</td><td>&#8377;1,480</td><td>&#8377;1,700</td><td><span class="badge badge-warning">9.7%</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- DISTRIBUTOR LOCATOR -->
+<div class="section-panel" id="sec-distributors">
+    <div class="panel-header"><h3>Distributor Locator</h3><button class="panel-btn"><i class="fas fa-plus"></i> Add Distributor</button></div>
+    <div class="glass-card">
+        <p style="margin-bottom:1rem;">Showing distributors within <strong style="color:var(--gold);">50km radius</strong> of Chitradurga district center.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;">
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius-md);padding:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                    <h4 style="font-size:0.9rem;color:#fff;">Sri Krishna Traders</h4>
+                    <span class="badge badge-success">Active</span>
+                </div>
+                <p style="font-size:0.8rem;color:rgba(255,255,255,0.5);"><i class="fas fa-map-pin"></i> Chitradurga Town - 2.5km</p>
+                <p style="font-size:0.8rem;color:rgba(255,255,255,0.5);"><i class="fas fa-phone"></i> +91 98765 11111</p>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius-md);padding:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                    <h4 style="font-size:0.9rem;color:#fff;">Mahalakshmi Stores</h4>
+                    <span class="badge badge-success">Active</span>
+                </div>
+                <p style="font-size:0.8rem;color:rgba(255,255,255,0.5);"><i class="fas fa-map-pin"></i> Holalkere - 28km</p>
+                <p style="font-size:0.8rem;color:rgba(255,255,255,0.5);"><i class="fas fa-phone"></i> +91 98765 22222</p>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius-md);padding:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                    <h4 style="font-size:0.9rem;color:#fff;">Raghavendra Enterprises</h4>
+                    <span class="badge badge-success">Active</span>
+                </div>
+                <p style="font-size:0.8rem;color:rgba(255,255,255,0.5);"><i class="fas fa-map-pin"></i> Challakere - 35km</p>
+                <p style="font-size:0.8rem;color:rgba(255,255,255,0.5);"><i class="fas fa-phone"></i> +91 98765 33333</p>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius-md);padding:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                    <h4 style="font-size:0.9rem;color:#fff;">Karnataka Oil Mart</h4>
+                    <span class="badge badge-warning">Under Review</span>
+                </div>
+                <p style="font-size:0.8rem;color:rgba(255,255,255,0.5);"><i class="fas fa-map-pin"></i> Hiriyur - 42km</p>
+                <p style="font-size:0.8rem;color:rgba(255,255,255,0.5);"><i class="fas fa-phone"></i> +91 98765 44444</p>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius-md);padding:1rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                    <h4 style="font-size:0.9rem;color:#fff;">District Depot - Davangere</h4>
+                    <span class="badge badge-success">Active</span>
+                </div>
+                <p style="font-size:0.8rem;color:rgba(255,255,255,0.5);"><i class="fas fa-map-pin"></i> Davangere - 48km</p>
+                <p style="font-size:0.8rem;color:rgba(255,255,255,0.5);"><i class="fas fa-phone"></i> +91 98765 55555</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- TENDER NOTICES -->
+<div class="section-panel" id="sec-tenders">
+    <div class="panel-header"><h3>Tender Notices</h3><button class="panel-btn"><i class="fas fa-plus"></i> Post New Tender</button></div>
+    <div class="glass-card">
+        <div style="border-left:3px solid var(--primary-light);padding-left:1rem;margin-bottom:1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+                <h4 style="font-size:0.95rem;">Supply of HDPE Packaging Material</h4>
+                <span class="badge badge-success">Open</span>
+            </div>
+            <p style="font-size:0.8rem;margin:0.3rem 0;">Tender No: KOF/TND/2026/001 | EMD: &#8377;25,000</p>
+            <p style="font-size:0.75rem;color:rgba(255,255,255,0.4);">Published: Jan 5, 2026 | Deadline: Jan 25, 2026</p>
+        </div>
+        <div style="border-left:3px solid var(--gold);padding-left:1rem;margin-bottom:1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+                <h4 style="font-size:0.95rem;">Annual Maintenance Contract - Oil Expeller Machines</h4>
+                <span class="badge badge-warning">Closing Soon</span>
+            </div>
+            <p style="font-size:0.8rem;margin:0.3rem 0;">Tender No: KOF/TND/2025/048 | EMD: &#8377;50,000</p>
+            <p style="font-size:0.75rem;color:rgba(255,255,255,0.4);">Published: Dec 20, 2025 | Deadline: Jan 12, 2026</p>
+        </div>
+        <div style="border-left:3px solid #6c63ff;padding-left:1rem;margin-bottom:1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+                <h4 style="font-size:0.95rem;">Transportation Services for Oil Distribution</h4>
+                <span class="badge badge-info">Under Evaluation</span>
+            </div>
+            <p style="font-size:0.8rem;margin:0.3rem 0;">Tender No: KOF/TND/2025/045 | EMD: &#8377;1,00,000</p>
+            <p style="font-size:0.75rem;color:rgba(255,255,255,0.4);">Published: Dec 1, 2025 | Deadline: Dec 28, 2025</p>
+        </div>
+        <div style="border-left:3px solid rgba(255,255,255,0.2);padding-left:1rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+                <h4 style="font-size:0.95rem;">Construction of New Storage Godown - Phase 2</h4>
+                <span class="badge badge-danger">Closed</span>
+            </div>
+            <p style="font-size:0.8rem;margin:0.3rem 0;">Tender No: KOF/TND/2025/040 | EMD: &#8377;2,00,000</p>
+            <p style="font-size:0.75rem;color:rgba(255,255,255,0.4);">Published: Nov 15, 2025 | Deadline: Dec 10, 2025</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- SERVICE RULES -->
+<div class="section-panel" id="sec-service">
+    <div class="panel-header"><h3>Service Rules & Regulations</h3><button class="panel-btn secondary"><i class="fas fa-download"></i> Download Manual</button></div>
+    <div class="glass-card">
+        <h4><i class="fas fa-clock" style="color:var(--primary-light);margin-right:0.5rem;"></i> Working Hours</h4>
+        <p>Monday to Saturday: 9:30 AM - 5:30 PM | Lunch Break: 1:00 PM - 1:45 PM</p>
+        <p>Second Saturday & all Sundays are holidays.</p>
+    </div>
+    <div class="glass-card">
+        <h4><i class="fas fa-calendar-alt" style="color:var(--gold);margin-right:0.5rem;"></i> Leave Policy</h4>
+        <p>Casual Leave: 15 days/year | Earned Leave: 12 days/year | Sick Leave: 10 days/year</p>
+        <p>Maternity Leave: 180 days | Paternity Leave: 15 days</p>
+        <p style="margin-top:0.5rem;">Leave must be applied 3 days in advance (except emergency). Max 3 consecutive CL days.</p>
+    </div>
+    <div class="glass-card">
+        <h4><i class="fas fa-user-tie" style="color:#6c63ff;margin-right:0.5rem;"></i> Conduct & Discipline</h4>
+        <p>All employees must maintain decorum and follow Karnataka Co-operative Societies Act guidelines.</p>
+        <p>Unauthorized absence for more than 5 days will result in show-cause notice.</p>
+    </div>
+    <div class="glass-card">
+        <h4><i class="fas fa-hand-holding-usd" style="color:#e74c3c;margin-right:0.5rem;"></i> Allowances & Benefits</h4>
+        <p>DA: As per Karnataka State Govt. norms | HRA: 15% of Basic | TA: &#8377;1,500/month</p>
+        <p>PF: 12% (Employee + Employer) | Gratuity: After 5 years of service</p>
+    </div>
+    <div class="glass-card">
+        <h4><i class="fas fa-award" style="color:var(--gold);margin-right:0.5rem;"></i> Promotions</h4>
+        <p>Based on seniority and merit. Performance review conducted annually in March.</p>
+        <p>Minimum 3 years in current post for eligibility. DPC recommendations required.</p>
+    </div>
+</div>
+
+
+<!-- PHOTO GALLERY -->
+<div class="section-panel" id="sec-gallery">
+    <div class="panel-header"><h3>Photo Gallery / Database</h3><button class="panel-btn"><i class="fas fa-upload"></i> Upload Photos</button></div>
+    <div class="gallery-grid">
+        <div class="gallery-item"><i class="fas fa-industry"></i><div class="gallery-overlay">Oil Processing Unit</div></div>
+        <div class="gallery-item"><i class="fas fa-users"></i><div class="gallery-overlay">Annual Meeting 2025</div></div>
+        <div class="gallery-item"><i class="fas fa-tractor"></i><div class="gallery-overlay">Farmer Training Camp</div></div>
+        <div class="gallery-item"><i class="fas fa-store"></i><div class="gallery-overlay">New Depot Opening</div></div>
+        <div class="gallery-item"><i class="fas fa-award"></i><div class="gallery-overlay">AGMARK Certification</div></div>
+        <div class="gallery-item"><i class="fas fa-handshake"></i><div class="gallery-overlay">MOU Signing Ceremony</div></div>
+        <div class="gallery-item"><i class="fas fa-truck-loading"></i><div class="gallery-overlay">Distribution Network</div></div>
+        <div class="gallery-item"><i class="fas fa-flask"></i><div class="gallery-overlay">Quality Testing Lab</div></div>
+        <div class="gallery-item"><i class="fas fa-building"></i><div class="gallery-overlay">Head Office</div></div>
+        <div class="gallery-item"><i class="fas fa-seedling"></i><div class="gallery-overlay">Oilseed Plantation</div></div>
+        <div class="gallery-item"><i class="fas fa-people-carry"></i><div class="gallery-overlay">Community Outreach</div></div>
+        <div class="gallery-item"><i class="fas fa-plus" style="color:var(--primary-light);"></i><div class="gallery-overlay">Add New Photo</div></div>
+    </div>
+</div>
+
+
+<!-- DIGITAL MARKETING -->
+<div class="section-panel" id="sec-marketing">
+    <div class="panel-header"><h3>Digital Marketing Hub</h3><button class="panel-btn"><i class="fas fa-plus"></i> Schedule Post</button></div>
+    <div class="stats-grid" style="margin-bottom:1.5rem;">
+        <div class="stat-card"><div class="stat-value" style="color:var(--primary-light);">3/5</div><div class="stat-label">Posts This Month (Target: 5)</div></div>
+        <div class="stat-card"><div class="stat-value" style="color:var(--gold);">0/1</div><div class="stat-label">Videos This Month (Target: 1)</div></div>
+        <div class="stat-card"><div class="stat-value" style="color:#6c63ff;">1,245</div><div class="stat-label">Total Followers</div></div>
+        <div class="stat-card"><div class="stat-value" style="color:#e74c3c;">68%</div><div class="stat-label">Engagement Rate</div></div>
+    </div>
+    <div class="glass-card">
+        <h4><i class="fas fa-calendar" style="color:var(--primary-light);margin-right:0.5rem;"></i> Social Media Schedule</h4>
+        <p style="margin-bottom:1rem;">Monthly Target: <strong style="color:var(--gold);">5 Posts + 1 Video</strong> across all platforms</p>
+        <table class="data-table">
+            <thead><tr><th>Date</th><th>Platform</th><th>Content Type</th><th>Topic</th><th>Status</th></tr></thead>
+            <tbody>
+                <tr><td>Jan 5, 2026</td><td><i class="fab fa-facebook" style="color:#4267B2;"></i> Facebook</td><td>Image Post</td><td>New Year Offer - Groundnut Oil</td><td><span class="badge badge-success">Published</span></td></tr>
+                <tr><td>Jan 10, 2026</td><td><i class="fab fa-instagram" style="color:#E4405F;"></i> Instagram</td><td>Carousel</td><td>Benefits of Cold-Pressed Oil</td><td><span class="badge badge-success">Published</span></td></tr>
+                <tr><td>Jan 15, 2026</td><td><i class="fab fa-twitter" style="color:#1DA1F2;"></i> Twitter</td><td>Text + Image</td><td>Farmer Success Story</td><td><span class="badge badge-success">Published</span></td></tr>
+                <tr><td>Jan 20, 2026</td><td><i class="fab fa-facebook" style="color:#4267B2;"></i> Facebook</td><td>Image Post</td><td>Republic Day Celebration</td><td><span class="badge badge-warning">Scheduled</span></td></tr>
+                <tr><td>Jan 25, 2026</td><td><i class="fab fa-youtube" style="color:#FF0000;"></i> YouTube</td><td>Video</td><td>Factory Tour - Oil Production Process</td><td><span class="badge badge-info">In Production</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="glass-card">
+        <h4><i class="fas fa-chart-bar" style="color:var(--gold);margin-right:0.5rem;"></i> Performance Summary</h4>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-top:1rem;">
+            <div style="text-align:center;"><div style="font-size:1.4rem;font-weight:700;color:var(--primary-light);">2,450</div><div style="font-size:0.75rem;color:rgba(255,255,255,0.5);">Post Reach (Avg)</div></div>
+            <div style="text-align:center;"><div style="font-size:1.4rem;font-weight:700;color:var(--gold);">156</div><div style="font-size:0.75rem;color:rgba(255,255,255,0.5);">Likes (Avg)</div></div>
+            <div style="text-align:center;"><div style="font-size:1.4rem;font-weight:700;color:#6c63ff;">23</div><div style="font-size:0.75rem;color:rgba(255,255,255,0.5);">Shares (Avg)</div></div>
+            <div style="text-align:center;"><div style="font-size:1.4rem;font-weight:700;color:#e74c3c;">12</div><div style="font-size:0.75rem;color:rgba(255,255,255,0.5);">Comments (Avg)</div></div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ADMIN PANEL -->
+<div class="section-panel" id="sec-admin">
+    <div class="panel-header"><h3>Admin Activity Control Panel</h3><button class="panel-btn secondary"><i class="fas fa-shield-alt"></i> Admin Only</button></div>
+    <div class="stats-grid" style="margin-bottom:1.5rem;">
+        <div class="stat-card"><div class="stat-value" style="color:var(--primary-light);">22</div><div class="stat-label">Active Employees</div></div>
+        <div class="stat-card"><div class="stat-value" style="color:var(--gold);">5</div><div class="stat-label">Pending Approvals</div></div>
+        <div class="stat-card"><div class="stat-value" style="color:#6c63ff;">3</div><div class="stat-label">Active Tenders</div></div>
+        <div class="stat-card"><div class="stat-value" style="color:#e74c3c;">2</div><div class="stat-label">System Alerts</div></div>
+    </div>
+    <div class="glass-card">
+        <h4><i class="fas fa-tasks" style="color:var(--primary-light);margin-right:0.5rem;"></i> Quick Admin Actions</h4>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.8rem;margin-top:1rem;">
+            <button class="panel-btn" style="padding:0.8rem;"><i class="fas fa-user-plus"></i> Add Employee</button>
+            <button class="panel-btn" style="padding:0.8rem;"><i class="fas fa-money-check-alt"></i> Process Salary</button>
+            <button class="panel-btn" style="padding:0.8rem;"><i class="fas fa-check-circle"></i> Approve Leaves</button>
+            <button class="panel-btn" style="padding:0.8rem;"><i class="fas fa-chart-pie"></i> Generate Reports</button>
+            <button class="panel-btn secondary" style="padding:0.8rem;"><i class="fas fa-database"></i> Backup Data</button>
+            <button class="panel-btn secondary" style="padding:0.8rem;"><i class="fas fa-cog"></i> System Settings</button>
+        </div>
+    </div>
+    <div class="glass-card" style="overflow-x:auto;">
+        <h4><i class="fas fa-history" style="color:var(--gold);margin-right:0.5rem;"></i> Recent Activity Log</h4>
+        <table class="data-table">
+            <thead><tr><th>Time</th><th>User</th><th>Action</th><th>Details</th></tr></thead>
+            <tbody>
+                <tr><td>10:30 AM</td><td>Admin</td><td>Approved Leave</td><td>Ramesh S. - CL for Jan 15-17</td></tr>
+                <tr><td>09:15 AM</td><td>Admin</td><td>Rate Update</td><td>Groundnut Oil Commercial +&#8377;5</td></tr>
+                <tr><td>Yesterday</td><td>Manager</td><td>Order Created</td><td>#KOF-2601 - Sri Krishna Traders</td></tr>
+                <tr><td>Yesterday</td><td>Admin</td><td>Tender Published</td><td>KOF/TND/2026/001 - Packaging</td></tr>
+                <tr><td>2 days ago</td><td>Admin</td><td>Salary Processed</td><td>December 2025 - All employees</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+    </div><!-- end dashboard-content -->
+</div><!-- end main-content -->
+
+<!-- LEAVE APPLICATION MODAL -->
+<div class="modal-overlay" id="leaveModal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="document.getElementById('leaveModal').classList.remove('show')">&times;</button>
+        <h3>Apply for Leave</h3>
+        <form onsubmit="submitLeave(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Leave Type</label>
+                    <select class="form-select">
+                        <option>Casual Leave</option>
+                        <option>Earned Leave</option>
+                        <option>Sick Leave</option>
+                        <option>Compensatory Off</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Duration</label>
+                    <select class="form-select">
+                        <option>Full Day</option>
+                        <option>Half Day - Morning</option>
+                        <option>Half Day - Afternoon</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">From Date</label>
+                    <input type="date" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">To Date</label>
+                    <input type="date" class="form-input">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Reason</label>
+                <textarea class="form-textarea" placeholder="Enter reason for leave..."></textarea>
+            </div>
+            <div style="display:flex;gap:0.8rem;justify-content:flex-end;">
+                <button type="button" class="panel-btn secondary" onclick="document.getElementById('leaveModal').classList.remove('show')">Cancel</button>
+                <button type="submit" class="panel-btn">Submit Application</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
 <script>
-/* ============================================================
-   MOCK DATA — 8 employees, realistic distribution
-   ============================================================ */
-const EMPLOYEES = [
-  {
-    id: "e01", name: "Aarav Mehta", role: "Senior Frontend Engineer", team: "Web Platform",
-    status: "focus", currentTask: "Refactor auth flow (PR #842)",
-    scores: { productivity: 92, focus: 88, discipline: 90, consistency: 86, collaboration: 78 },
-    honesty: 96, risk: "low",
-    strengths: ["Consistently ships before deadline", "Mentors juniors in PR reviews", "Deep-work blocks > 2h/day"],
-    weaknesses: ["Skips standups occasionally", "Light on cross-team comms"],
-    summary: "Strong individual contributor in deep-focus mode. Output is steady and high quality; only friction is sporadic communication with adjacent teams.",
-    reco: "Pair with a designer on the auth redesign so context flows back to the design team. No intervention needed on output.",
-    trend: [78, 82, 80, 85, 84, 88, 86, 87, 89, 88, 90, 91, 90, 92]
-  },
-  {
-    id: "e02", name: "Priya Shah", role: "Product Designer", team: "Design Systems",
-    status: "active", currentTask: "Onboarding wireframes v3",
-    scores: { productivity: 84, focus: 75, discipline: 82, consistency: 88, collaboration: 94 },
-    honesty: 93, risk: "low",
-    strengths: ["Top collaboration score on the team", "Consistent daily delivery", "Detailed Figma documentation"],
-    weaknesses: ["Heavy meeting load fragments focus", "Estimation tends to be optimistic"],
-    summary: "Reliable and highly collaborative. Productivity is good but capped by meeting density; focus blocks are short and frequent rather than deep.",
-    reco: "Block 2 daily 'maker mornings' on the calendar. Move 1:1s to afternoons.",
-    trend: [70, 74, 72, 78, 76, 80, 79, 82, 81, 83, 82, 84, 83, 84]
-  },
-  {
-    id: "e03", name: "Daniel Park", role: "Backend Engineer", team: "Payments",
-    status: "idle", currentTask: "JIRA: PAY-1182 (idle 38m)",
-    scores: { productivity: 58, focus: 52, discipline: 64, consistency: 60, collaboration: 70 },
-    honesty: 71, risk: "med",
-    strengths: ["Strong domain knowledge in payments", "Helpful on incidents"],
-    weaknesses: ["Long idle stretches mid-afternoon", "Commits cluster late at night", "Skipped 3 retros this month"],
-    summary: "Output has dropped vs. 30-day baseline. Activity pattern suggests context-switching fatigue rather than disengagement, but trend is worth flagging.",
-    reco: "1:1 with manager this week. Check workload balance and whether on-call rotation is colliding with focus work.",
-    trend: [80, 78, 75, 72, 70, 68, 66, 65, 62, 60, 59, 58, 58, 58]
-  },
-  {
-    id: "e04", name: "Sara Lindgren", role: "Engineering Manager", team: "Web Platform",
-    status: "active", currentTask: "Q3 planning doc",
-    scores: { productivity: 81, focus: 70, discipline: 92, consistency: 90, collaboration: 96 },
-    honesty: 97, risk: "low",
-    strengths: ["Highest discipline score on team", "Balances IC and management work", "Excellent stakeholder updates"],
-    weaknesses: ["Limited deep-focus time", "Light on technical PRs this sprint"],
-    summary: "Operating as expected for an EM. Coordination output is excellent; individual contribution intentionally lower this cycle.",
-    reco: "No action needed. Continue current allocation.",
-    trend: [82, 80, 81, 83, 82, 80, 81, 82, 81, 80, 81, 82, 81, 81]
-  },
-  {
-    id: "e05", name: "Marcus Owens", role: "QA Engineer", team: "Quality",
-    status: "active", currentTask: "Regression suite — checkout",
-    scores: { productivity: 76, focus: 80, discipline: 78, consistency: 82, collaboration: 74 },
-    honesty: 90, risk: "low",
-    strengths: ["Catches edge cases reliably", "Good documentation habits"],
-    weaknesses: ["Limited automation contributions", "Could share more findings async"],
-    summary: "Solid contributor with healthy fundamentals. Room to grow into automation work.",
-    reco: "Pair with a senior on a small Playwright module to grow automation skills.",
-    trend: [70, 72, 74, 73, 75, 74, 76, 75, 77, 76, 77, 76, 76, 76]
-  },
-  {
-    id: "e06", name: "Lina Costa", role: "Data Analyst", team: "Growth",
-    status: "focus", currentTask: "Funnel analysis — paid signup",
-    scores: { productivity: 88, focus: 92, discipline: 85, consistency: 87, collaboration: 80 },
-    honesty: 95, risk: "low",
-    strengths: ["Highest focus score this week", "Self-directed, ships polished dashboards"],
-    weaknesses: ["Stakeholder updates can lag a day or two"],
-    summary: "Top-tier focus and steady output. The only gap is communication cadence with stakeholders consuming the analyses.",
-    reco: "Adopt a Friday async update post in #growth channel. No other intervention.",
-    trend: [80, 82, 84, 83, 85, 86, 87, 88, 87, 88, 89, 88, 88, 88]
-  },
-  {
-    id: "e07", name: "Jamal Reed", role: "Junior Backend Engineer", team: "Payments",
-    status: "active", currentTask: "Bugfix PAY-1190",
-    scores: { productivity: 49, focus: 45, discipline: 55, consistency: 48, collaboration: 60 },
-    honesty: 62, risk: "high",
-    strengths: ["Asks good questions", "Eager to take on tickets"],
-    weaknesses: ["Commit cadence inconsistent with self-reported progress", "Struggles to finish tasks within estimates", "Frequent context switching"],
-    summary: "Output diverges from self-reported progress. Likely a mix of skill ramp and unclear scope rather than disengagement, but the gap is large enough to flag.",
-    reco: "Assign a senior buddy. Break next 2 sprints into smaller, well-scoped tickets. Re-assess in 3 weeks.",
-    trend: [62, 60, 58, 55, 54, 52, 50, 50, 49, 48, 48, 49, 49, 49]
-  },
-  {
-    id: "e08", name: "Hiroko Tanaka", role: "DevOps Engineer", team: "Infra",
-    status: "offline", currentTask: "Off-shift",
-    scores: { productivity: 86, focus: 82, discipline: 88, consistency: 90, collaboration: 78 },
-    honesty: 94, risk: "low",
-    strengths: ["Highly consistent week-over-week", "Owns CI reliability"],
-    weaknesses: ["Works async — limited overlap with US team"],
-    summary: "Excellent steady-state contributor. Time-zone overlap is the only friction; not a performance issue.",
-    reco: "Document on-call handoffs more thoroughly to reduce sync dependency.",
-    trend: [84, 85, 86, 85, 86, 87, 86, 86, 87, 86, 86, 87, 86, 86]
-  }
-];
-
-const ALERTS = [
-  { sev: "high", who: "Jamal Reed",   when: "12 min ago", title: "Progress mismatch detected",
-    body: "Self-reported 70% complete on PAY-1190 but commit/PR activity ≈ 20%. Suggest manager check-in." },
-  { sev: "med",  who: "Daniel Park",  when: "38 min ago", title: "Extended idle window",
-    body: "Idle for 38 minutes during focus block. Third occurrence this week." },
-  { sev: "med",  who: "Priya Shah",   when: "1 hr ago",   title: "Meeting load above threshold",
-    body: "6.5 hrs of meetings today — focus blocks fragmented to <30 min average." },
-  { sev: "low",  who: "Aarav Mehta",  when: "2 hr ago",   title: "Deep-focus streak",
-    body: "Sustained focus for 2h 40m — productivity score trending up." },
-  { sev: "high", who: "Payments team",when: "3 hr ago",   title: "Deadline risk on PAY-1182",
-    body: "Velocity over last 3 days projects 2-day slippage on sprint goal." },
-  { sev: "low",  who: "Lina Costa",   when: "Today 09:14", title: "Top focus score this week",
-    body: "Lina has held top focus rank for 4 consecutive days." }
-];
-
-/* ============================================================
-   RENDERERS
-   ============================================================ */
-const $ = (s, r=document) => r.querySelector(s);
-const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
-
-const initials = (name) => name.split(/\s+/).map(p => p[0]).slice(0,2).join("").toUpperCase();
-const colorForName = (name) => {
-  const palettes = [
-    ["#ffd28a","#ff9b8a"], ["#9be7ff","#7c5cff"], ["#caffbf","#5ad1c8"],
-    ["#ffd6f5","#c490e4"], ["#ffe29a","#ffa17f"], ["#a0c4ff","#bdb2ff"],
-    ["#fdffb6","#ffadad"], ["#b9fbc0","#90dbf4"]
-  ];
-  let h = 0; for (const c of name) h = (h*31 + c.charCodeAt(0)) >>> 0;
-  return palettes[h % palettes.length];
-};
-const setAvatar = (el, name) => {
-  const [a,b] = colorForName(name);
-  el.style.background = `linear-gradient(135deg, ${a}, ${b})`;
-  el.textContent = initials(name);
-};
-const barClass = (v) => v >= 80 ? "good" : v >= 60 ? "" : v >= 45 ? "warn" : "bad";
-const riskLabel = (r) => r === "high" ? "High" : r === "med" ? "Medium" : "Low";
-
-/* ---- date / clock ---- */
-function tickClock() {
-  const now = new Date();
-  $("#clock").textContent = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-  $("#dateline").textContent = now.toLocaleDateString([], { weekday: "long", month: "long", day: "numeric", year: "numeric" })
-    + " · " + EMPLOYEES.length + " employees tracked";
-}
-tickClock(); setInterval(tickClock, 1000);
-
-/* ---- KPIs ---- */
-function renderKPIs() {
-  const online = EMPLOYEES.filter(e => e.status !== "offline").length;
-  const idle = EMPLOYEES.filter(e => e.status === "idle").length;
-  const avgProd = Math.round(EMPLOYEES.reduce((s,e)=>s+e.scores.productivity,0) / EMPLOYEES.length);
-  const atRisk = EMPLOYEES.filter(e => e.risk !== "low").length;
-
-  $("#kpis").innerHTML = `
-    <div class="kpi green">
-      <div class="icon">●</div>
-      <h4>Online now</h4>
-      <div class="val">${online}<span style="color:var(--muted);font-size:14px;font-weight:500"> / ${EMPLOYEES.length}</span></div>
-      <div class="delta">+1 vs. yesterday</div>
-    </div>
-    <div class="kpi">
-      <div class="icon">↗</div>
-      <h4>Avg productivity</h4>
-      <div class="val num">${avgProd}<span style="color:var(--muted);font-size:14px;font-weight:500">/100</span></div>
-      <div class="delta">+3.2 vs. 7-day avg</div>
-    </div>
-    <div class="kpi amber">
-      <div class="icon">◐</div>
-      <h4>Idle</h4>
-      <div class="val num">${idle}</div>
-      <div class="delta bad">+1 vs. yesterday</div>
-    </div>
-    <div class="kpi red">
-      <div class="icon">!</div>
-      <h4>At-risk employees</h4>
-      <div class="val num">${atRisk}</div>
-      <div class="delta bad">${atRisk > 0 ? "Review recommended" : "All clear"}</div>
-    </div>
-  `;
+// === LOGIN HANDLING ===
+function handleLogin(e) {
+    e.preventDefault();
+    const user = document.getElementById('loginUser').value;
+    const pass = document.getElementById('loginPass').value;
+    if (user && pass) {
+        document.getElementById('loginOverlay').classList.add('hidden');
+        setTimeout(() => {
+            document.getElementById('loginOverlay').style.display = 'none';
+        }, 500);
+    }
 }
 
-/* ---- chart ---- */
-function renderChart() {
-  const html = EMPLOYEES.map(e => {
-    const p = e.scores.productivity, f = e.scores.focus;
-    return `
-      <div class="bar-col" title="${e.name} — Prod ${p}, Focus ${f}">
-        <div class="stack">
-          <span class="s1" style="height:${p*0.9}%"></span>
-        </div>
-        <div class="stack" style="margin-top:-100%; opacity:.85">
-          <span class="s2" style="height:${f*0.9}%; width:60%; align-self:center"></span>
-        </div>
-        <label>${e.name.split(" ")[0]}</label>
-      </div>
-    `;
-  }).join("");
-  // simpler: side-by-side bars per person
-  $("#chart").innerHTML = EMPLOYEES.map(e => {
-    const p = e.scores.productivity, f = e.scores.focus;
-    return `
-      <div class="bar-col" title="${e.name} — Productivity ${p}, Focus ${f}">
-        <div style="display:flex; gap:4px; align-items:flex-end; height:100%;">
-          <span style="display:block; width:12px; height:${p}%; background:linear-gradient(180deg,var(--accent),#4a3bd6); border-radius:4px;"></span>
-          <span style="display:block; width:12px; height:${f}%; background:linear-gradient(180deg,var(--accent-2),#2f8e87); border-radius:4px;"></span>
-        </div>
-        <label>${e.name.split(" ")[0]}</label>
-      </div>
-    `;
-  }).join("");
+function logout() {
+    document.getElementById('loginOverlay').style.display = 'flex';
+    document.getElementById('loginOverlay').classList.remove('hidden');
+    document.getElementById('loginUser').value = '';
+    document.getElementById('loginPass').value = '';
 }
 
-/* ---- leaderboard ---- */
-function renderLeader() {
-  const ranked = [...EMPLOYEES]
-    .map(e => ({ ...e, total: e.scores.productivity + e.scores.focus + e.scores.discipline + e.scores.consistency + e.scores.collaboration }))
-    .sort((a,b) => b.total - a.total)
-    .slice(0, 6);
-  $("#leader").innerHTML = ranked.map((e,i) => `
-    <div class="leader-row" data-id="${e.id}" role="button">
-      <span class="rank ${i<3?'r'+(i+1):''}">${i+1}</span>
-      <div class="name">
-        <div class="avatar" data-init="${initials(e.name)}" style="width:24px;height:24px;font-size:10px;"></div>
-        <b>${e.name}</b>
-      </div>
-      <span class="pts num">${Math.round(e.total/5)}</span>
-    </div>
-  `).join("");
-  $$("#leader .avatar").forEach(a => {
-    const row = a.closest(".leader-row"); const emp = EMPLOYEES.find(x=>x.id===row.dataset.id);
-    setAvatar(a, emp.name);
-  });
-  $$("#leader .leader-row").forEach(row => {
-    row.addEventListener("click", () => openDrawer(row.dataset.id));
-  });
+// === SIDEBAR TOGGLE ===
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (window.innerWidth <= 768) {
+        sidebar.classList.toggle('mobile-open');
+    } else {
+        sidebar.classList.toggle('collapsed');
+    }
 }
 
-/* ---- employees table ---- */
-let currentFilter = "all";
-function renderEmployees() {
-  const list = EMPLOYEES.filter(e => {
-    if (currentFilter === "all") return true;
-    if (currentFilter === "risk") return e.risk !== "low";
-    return e.status === currentFilter;
-  });
-
-  $("#empBody").innerHTML = list.map(e => {
-    const p = e.scores.productivity, f = e.scores.focus;
-    return `
-      <tr data-id="${e.id}">
-        <td>
-          <div class="who">
-            <div class="avatar" data-init="${initials(e.name)}"></div>
-            <div class="meta"><b>${e.name}</b><span>${e.role}</span></div>
-          </div>
-        </td>
-        <td><span class="status ${e.status}"><span class="d"></span>${e.status}</span></td>
-        <td style="color:var(--muted)">${e.currentTask}</td>
-        <td class="score-cell">
-          <span class="num">${p}</span>/100
-          <div class="bar ${barClass(p)}"><i style="width:${p}%"></i></div>
-        </td>
-        <td class="score-cell">
-          <span class="num">${f}</span>/100
-          <div class="bar ${barClass(f)}"><i style="width:${f}%"></i></div>
-        </td>
-        <td><span class="risk ${e.risk==='med'?'med':e.risk}">${riskLabel(e.risk)}</span></td>
-      </tr>
-    `;
-  }).join("");
-
-  $$("#empBody .avatar").forEach(a => {
-    const row = a.closest("tr");
-    const emp = EMPLOYEES.find(x => x.id === row.dataset.id);
-    setAvatar(a, emp.name);
-  });
-  $$("#empBody tr").forEach(tr => {
-    tr.addEventListener("click", () => openDrawer(tr.dataset.id));
-  });
+// === SECTION SWITCHING ===
+function switchSection(sectionName) {
+    // Hide all sections
+    document.querySelectorAll('.section-panel').forEach(panel => {
+        panel.classList.remove('active');
+    });
+    // Show target section
+    const target = document.getElementById('sec-' + sectionName);
+    if (target) target.classList.add('active');
+    // Update nav active state
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.dataset.section === sectionName) {
+            item.classList.add('active');
+        }
+    });
+    // Close mobile sidebar
+    if (window.innerWidth <= 768) {
+        document.getElementById('sidebar').classList.remove('mobile-open');
+    }
+    // Update topbar title
+    const titles = {
+        dashboard: 'Employee Dashboard',
+        profile: 'My Profile',
+        salary: 'Salary Slips',
+        leave: 'Leave Management',
+        orders: 'Order Tracking',
+        rates: 'Rates & Pricing',
+        distributors: 'Distributor Locator',
+        tenders: 'Tender Notices',
+        service: 'Service Rules',
+        gallery: 'Photo Gallery',
+        marketing: 'Digital Marketing',
+        admin: 'Admin Panel'
+    };
+    document.querySelector('.topbar-title h2').textContent = titles[sectionName] || 'Dashboard';
 }
 
-/* ---- alerts ---- */
-function renderAlerts() {
-  $("#alerts").innerHTML = ALERTS.map(a => `
-    <div class="alert ${a.sev}">
-      <div class="a-head"><b>${a.title}</b><time>${a.when}</time></div>
-      <div class="a-body"><strong style="color:var(--text)">${a.who}</strong> — ${a.body}</div>
-    </div>
-  `).join("");
+// === LEAVE SUBMIT ===
+function submitLeave(e) {
+    e.preventDefault();
+    alert('Leave application submitted successfully! You will receive a notification once approved.');
+    document.getElementById('leaveModal').classList.remove('show');
 }
 
-/* ---- filters ---- */
-$$("#filters .filter").forEach(btn => {
-  btn.addEventListener("click", () => {
-    $$("#filters .filter").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    currentFilter = btn.dataset.f;
-    renderEmployees();
-  });
+// === Close modal on outside click ===
+document.getElementById('leaveModal').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('show');
 });
 
-$("#refreshBtn").addEventListener("click", () => {
-  // Simulate a refresh: nudge a couple of scores
-  EMPLOYEES.forEach(e => {
-    const drift = (Math.random() * 4) - 2;
-    e.scores.productivity = Math.max(20, Math.min(100, Math.round(e.scores.productivity + drift)));
-  });
-  renderKPIs(); renderChart(); renderLeader(); renderEmployees();
+// === Responsive handling ===
+window.addEventListener('resize', function() {
+    const sidebar = document.getElementById('sidebar');
+    if (window.innerWidth > 768) {
+        sidebar.classList.remove('mobile-open');
+    }
 });
-
-$("#reportBtn").addEventListener("click", () => {
-  alert("Daily AI Manager Report queued.\n\nA per-employee briefing will be emailed to managers in your org's preferred format.\n\n(In this demo, click any employee row to preview the report.)");
-});
-
-/* ---- drawer ---- */
-const overlay = $("#overlay"), drawer = $("#drawer");
-function openDrawer(id) {
-  const e = EMPLOYEES.find(x => x.id === id);
-  if (!e) return;
-  setAvatar($("#dAvatar"), e.name);
-  $("#dName").textContent = e.name;
-  $("#dRole").textContent = `${e.role} · ${e.team}`;
-  $("#dDate").textContent = new Date().toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
-  $("#dSummary").textContent = e.summary;
-
-  $("#dScores").innerHTML = Object.entries(e.scores).map(([k,v]) => `
-    <div class="item">
-      <div class="label">${k.charAt(0).toUpperCase()+k.slice(1)}</div>
-      <div class="val num">${v}<span style="color:var(--muted);font-size:13px;font-weight:500">/100</span></div>
-      <div class="bar ${barClass(v)}" style="margin-top:6px"><i style="width:${v}%"></i></div>
-    </div>
-  `).join("");
-
-  $("#dHonesty").innerHTML = `${e.honesty}<span style="color:var(--muted);font-size:13px;font-weight:500">%</span>`;
-  $("#dRisk").innerHTML = `<span class="risk ${e.risk==='med'?'med':e.risk}">${riskLabel(e.risk)}</span>`;
-
-  $("#dStrengths").innerHTML = e.strengths.map(s => `<li>${s}</li>`).join("");
-  $("#dWeak").innerHTML = e.weaknesses.map(s => `<li>${s}</li>`).join("");
-  $("#dReco").textContent = e.reco;
-
-  // sparkline
-  drawSpark("#dTrend", e.trend);
-
-  drawer.classList.add("open"); drawer.setAttribute("aria-hidden", "false");
-  overlay.classList.add("open");
-}
-function closeDrawer() {
-  drawer.classList.remove("open"); drawer.setAttribute("aria-hidden", "true");
-  overlay.classList.remove("open");
-}
-$("#dClose").addEventListener("click", closeDrawer);
-overlay.addEventListener("click", closeDrawer);
-document.addEventListener("keydown", e => { if (e.key === "Escape") closeDrawer(); });
-
-/* ---- sparkline ---- */
-function drawSpark(sel, data) {
-  const svg = $(sel);
-  const W = 280, H = 60, pad = 4;
-  const min = Math.min(...data), max = Math.max(...data);
-  const range = Math.max(1, max - min);
-  const step = (W - pad*2) / (data.length - 1);
-  const pts = data.map((v,i) => [
-    pad + i*step,
-    H - pad - ((v - min) / range) * (H - pad*2)
-  ]);
-  const d = pts.map((p,i) => (i===0?"M":"L") + p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ");
-  const fill = `M ${pts[0][0]},${H} ` + pts.map(p => `L ${p[0]},${p[1]}`).join(" ") + ` L ${pts[pts.length-1][0]},${H} Z`;
-  svg.innerHTML = `
-    <defs>
-      <linearGradient id="g1" x1="0" x2="0" y1="0" y2="1">
-        <stop offset="0%" stop-color="#7c5cff" stop-opacity=".5"/>
-        <stop offset="100%" stop-color="#7c5cff" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-    <path d="${fill}" fill="url(#g1)" />
-    <path d="${d}" fill="none" stroke="#7c5cff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-    ${pts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="2" fill="#7c5cff"/>`).join("")}
-  `;
-}
-
-/* ---- initial render ---- */
-renderKPIs();
-renderChart();
-renderLeader();
-renderEmployees();
-renderAlerts();
 </script>
 </body>
 </html>
