@@ -4,589 +4,469 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Employee Onboarding - Code Origin.Ai Private Limited</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
 <style>
-:root {
-  --primary: #1a73e8;
-  --primary-dark: #1557b0;
-  --primary-light: #e8f0fe;
-  --success: #0f9d58;
-  --danger: #d93025;
-  --warning: #f9ab00;
-  --bg: #f0f2f5;
-  --white: #ffffff;
-  --text: #202124;
-  --text-muted: #5f6368;
-  --border: #dadce0;
-  --shadow: 0 2px 10px rgba(0,0,0,0.08);
-  --radius: 12px;
+:root{
+  --primary:#0d47a1;--primary-hover:#1565c0;--primary-light:#e3f2fd;
+  --accent:#1976d2;--accent-light:#bbdefb;
+  --success:#2e7d32;--success-light:#e8f5e9;
+  --danger:#c62828;--danger-light:#ffebee;
+  --warning:#f57f17;--warning-light:#fff8e1;
+  --bg:#f5f7fa;--surface:#ffffff;
+  --text:#1a1a2e;--text-secondary:#546e7a;--text-light:#90a4ae;
+  --border:#e0e6ed;--border-light:#f0f4f8;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.06);
+  --shadow:0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg:0 12px 40px rgba(0,0,0,0.12);
+  --radius:10px;--radius-lg:16px;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-  background: var(--bg); color: var(--text); min-height: 100vh;
-}
-.header {
-  background: linear-gradient(135deg, #1a237e, #1a73e8);
-  color: white; padding: 18px 30px;
-  display: flex; align-items: center; justify-content: space-between;
-  box-shadow: 0 4px 20px rgba(26,115,232,0.3);
-}
-.header .logo-area { display: flex; align-items: center; gap: 14px; }
-.header .logo-area .logo-icon {
-  width: 46px; height: 46px; background: rgba(255,255,255,0.15);
-  border-radius: 10px; display: grid; place-items: center;
-  font-size: 20px; font-weight: 800;
-}
-.header h1 { font-size: 20px; font-weight: 700; }
-.header .subtitle { font-size: 12px; opacity: 0.85; margin-top: 2px; }
-.header .header-actions { display: flex; gap: 10px; }
-.btn {
-  padding: 10px 18px; border: none; border-radius: 8px;
-  font-size: 13px; font-weight: 600; cursor: pointer;
-  transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;
-}
-.btn-primary { background: var(--primary); color: white; }
-.btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
-.btn-success { background: var(--success); color: white; }
-.btn-success:hover { background: #0b8043; }
-.btn-danger { background: var(--danger); color: white; }
-.btn-danger:hover { background: #b3261e; }
-.btn-outline { background: white; color: var(--primary); border: 1px solid var(--border); }
-.btn-outline:hover { background: var(--primary-light); }
-.btn-white { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); }
-.btn-white:hover { background: rgba(255,255,255,0.3); }
-.container { max-width: 1300px; margin: 0 auto; padding: 24px; }
-.stats-row {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px; margin-bottom: 24px;
-}
-.stat-card {
-  background: var(--white); border-radius: var(--radius); padding: 20px;
-  box-shadow: var(--shadow); border-left: 4px solid var(--primary);
-}
-.stat-card .stat-num { font-size: 28px; font-weight: 700; color: var(--primary); }
-.stat-card .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-.stat-card.green { border-left-color: var(--success); }
-.stat-card.green .stat-num { color: var(--success); }
-.stat-card.orange { border-left-color: var(--warning); }
-.stat-card.orange .stat-num { color: var(--warning); }
-.card {
-  background: var(--white); border-radius: var(--radius);
-  box-shadow: var(--shadow); overflow: hidden;
-}
-.card-header {
-  padding: 16px 24px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-}
-.card-header h2 { font-size: 16px; font-weight: 600; }
-.card-body { padding: 24px; }
-.search-bar {
-  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
-}
-.search-bar input {
-  flex: 1; min-width: 200px; padding: 10px 14px;
-  border: 1px solid var(--border); border-radius: 8px;
-  font-size: 14px; outline: none; transition: border 0.2s;
-}
-.search-bar input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
-.table-wrap { overflow-x: auto; margin-top: 16px; }
-table { width: 100%; border-collapse: collapse; }
-thead th {
-  background: #f8f9fa; padding: 12px 14px; text-align: left;
-  font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
-  color: var(--text-muted); font-weight: 600; border-bottom: 2px solid var(--border);
-  white-space: nowrap;
-}
-tbody td {
-  padding: 12px 14px; border-bottom: 1px solid #f0f0f0;
-  font-size: 13px; vertical-align: middle;
-}
-tbody tr:hover { background: var(--primary-light); }
-.badge {
-  display: inline-block; padding: 3px 10px; border-radius: 20px;
-  font-size: 11px; font-weight: 600;
-}
-.badge-active { background: #e6f4ea; color: var(--success); }
-.badge-pending { background: #fef7e0; color: #e37400; }
-.badge-inactive { background: #fce8e6; color: var(--danger); }
-.action-btns { display: flex; gap: 6px; }
-.action-btns button {
-  width: 30px; height: 30px; border: 1px solid var(--border);
-  border-radius: 6px; background: white; cursor: pointer;
-  display: grid; place-items: center; font-size: 14px;
-  transition: all 0.2s;
-}
-.action-btns button:hover { background: var(--primary-light); border-color: var(--primary); }
-.action-btns button.del:hover { background: #fce8e6; border-color: var(--danger); }
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;}
 
-/* Modal / Form */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-  display: none; align-items: center; justify-content: center;
-  z-index: 1000; padding: 20px;
+/* === HEADER === */
+.app-header{
+  background:linear-gradient(135deg,#0d47a1 0%,#1565c0 50%,#1976d2 100%);
+  padding:0 32px;height:72px;display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 4px 24px rgba(13,71,161,0.25);position:sticky;top:0;z-index:100;
 }
-.modal-overlay.active { display: flex; }
-.modal {
-  background: white; border-radius: var(--radius); width: 100%;
-  max-width: 800px; max-height: 90vh; overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+.app-header .brand{display:flex;align-items:center;gap:14px;}
+.app-header .brand-icon{
+  width:42px;height:42px;background:rgba(255,255,255,0.15);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:16px;color:#fff;letter-spacing:-0.5px;
+  backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.1);
 }
-.modal-header {
-  padding: 20px 24px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top: 0; background: white; z-index: 1;
+.app-header .brand-text h1{font-size:18px;font-weight:700;color:#fff;letter-spacing:-0.3px;}
+.app-header .brand-text span{font-size:11px;color:rgba(255,255,255,0.75);letter-spacing:0.3px;}
+.app-header .header-actions{display:flex;gap:10px;align-items:center;}
+
+/* === BUTTONS === */
+.btn{
+  display:inline-flex;align-items:center;gap:7px;padding:9px 18px;
+  border:none;border-radius:8px;font-size:13px;font-weight:600;
+  cursor:pointer;transition:all 0.2s ease;text-decoration:none;
+  font-family:var(--font);white-space:nowrap;
 }
-.modal-header h2 { font-size: 18px; }
-.modal-close {
-  width: 32px; height: 32px; border-radius: 50%; border: none;
-  background: #f0f0f0; cursor: pointer; font-size: 18px;
-  display: grid; place-items: center;
+.btn:active{transform:scale(0.97);}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(25,118,210,0.3);}
+.btn-primary:hover{background:var(--primary-hover);box-shadow:0 4px 12px rgba(25,118,210,0.4);}
+.btn-success{background:var(--success);color:#fff;box-shadow:0 2px 8px rgba(46,125,50,0.3);}
+.btn-success:hover{background:#1b5e20;}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-danger:hover{background:#b71c1c;}
+.btn-outline{background:transparent;color:var(--accent);border:1.5px solid var(--border);}
+.btn-outline:hover{background:var(--primary-light);border-color:var(--accent);}
+.btn-ghost{background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.2);backdrop-filter:blur(4px);}
+.btn-ghost:hover{background:rgba(255,255,255,0.2);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-icon{width:34px;height:34px;padding:0;display:grid;place-items:center;border-radius:8px;background:var(--surface);border:1px solid var(--border);}
+.btn-icon:hover{background:var(--primary-light);border-color:var(--accent);color:var(--accent);}
+.btn-icon.danger:hover{background:var(--danger-light);border-color:var(--danger);color:var(--danger);}
+
+/* === CONTAINER === */
+.container{max-width:1360px;margin:0 auto;padding:28px 32px 60px;}
+
+/* === STATS === */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:28px;}
+.stat-card{
+  background:var(--surface);border-radius:var(--radius-lg);padding:22px 24px;
+  box-shadow:var(--shadow-sm);border:1px solid var(--border-light);
+  position:relative;overflow:hidden;transition:all 0.2s;
 }
-.modal-close:hover { background: #e0e0e0; }
-.modal-body { padding: 24px; }
-.form-section { margin-bottom: 24px; }
-.form-section h3 {
-  font-size: 14px; font-weight: 600; color: var(--primary);
-  margin-bottom: 12px; padding-bottom: 8px;
-  border-bottom: 1px solid var(--primary-light);
+.stat-card:hover{box-shadow:var(--shadow);transform:translateY(-2px);}
+.stat-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;border-radius:0 4px 4px 0;}
+.stat-card.blue::before{background:var(--accent);}
+.stat-card.green::before{background:var(--success);}
+.stat-card.orange::before{background:var(--warning);}
+.stat-card.purple::before{background:#7b1fa2;}
+.stat-card .stat-value{font-size:32px;font-weight:800;color:var(--text);letter-spacing:-1px;}
+.stat-card .stat-label{font-size:12px;color:var(--text-secondary);margin-top:4px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;}
+.stat-card .stat-icon{position:absolute;top:18px;right:18px;width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:18px;}
+.stat-card.blue .stat-icon{background:var(--primary-light);color:var(--accent);}
+.stat-card.green .stat-icon{background:var(--success-light);color:var(--success);}
+.stat-card.orange .stat-icon{background:var(--warning-light);color:var(--warning);}
+.stat-card.purple .stat-icon{background:#f3e5f5;color:#7b1fa2;}
+
+/* === TABLE CARD === */
+.main-card{background:var(--surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);border:1px solid var(--border-light);overflow:hidden;}
+.main-card .card-top{padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--border-light);}
+.main-card .card-top h2{font-size:17px;font-weight:700;color:var(--text);}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.search-input{
+  padding:9px 14px 9px 36px;border:1.5px solid var(--border);border-radius:8px;
+  font-size:13px;width:260px;outline:none;transition:all 0.2s;
+  background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2390a4ae' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242.656a5 5 0 1 1 0-10 5 5 0 0 1 0 10z'/%3E%3C/svg%3E") no-repeat 12px center;
+  font-family:var(--font);
 }
-.form-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 14px;
+.search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(25,118,210,0.1);background-color:var(--surface);}
+.filter-select{
+  padding:9px 14px;border:1.5px solid var(--border);border-radius:8px;
+  font-size:13px;outline:none;background:var(--bg);cursor:pointer;font-family:var(--font);
 }
-.form-group { display: flex; flex-direction: column; gap: 4px; }
-.form-group label { font-size: 12px; font-weight: 500; color: var(--text-muted); }
-.form-group input, .form-group select, .form-group textarea {
-  padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
-  font-size: 14px; outline: none; font-family: inherit; transition: border 0.2s;
+.filter-select:focus{border-color:var(--accent);}
+
+/* === TABLE === */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+thead th{
+  padding:14px 16px;text-align:left;font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.6px;color:var(--text-secondary);
+  background:var(--bg);border-bottom:1px solid var(--border);white-space:nowrap;
 }
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-  border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1);
+tbody td{padding:14px 16px;font-size:13px;border-bottom:1px solid var(--border-light);vertical-align:middle;}
+tbody tr{transition:background 0.15s;}
+tbody tr:hover{background:var(--primary-light);}
+.emp-name{font-weight:600;color:var(--text);}
+.emp-role{font-size:11px;color:var(--text-light);margin-top:1px;}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge::before{content:'';width:6px;height:6px;border-radius:50%;}
+.badge-active{background:var(--success-light);color:var(--success);}
+.badge-active::before{background:var(--success);}
+.badge-probation{background:var(--warning-light);color:var(--warning);}
+.badge-probation::before{background:var(--warning);}
+.badge-inactive{background:var(--danger-light);color:var(--danger);}
+.badge-inactive::before{background:var(--danger);}
+.badge-resigned{background:#f3e5f5;color:#7b1fa2;}
+.badge-resigned::before{background:#7b1fa2;}
+.actions-cell{display:flex;gap:6px;}
+.empty-state{text-align:center;padding:60px 20px;}
+.empty-state svg{width:80px;height:80px;margin-bottom:16px;opacity:0.4;}
+.empty-state h3{font-size:16px;color:var(--text-secondary);margin-bottom:6px;}
+.empty-state p{font-size:13px;color:var(--text-light);}
+
+/* === MODAL === */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:flex-start;justify-content:center;z-index:1000;padding:40px 20px;overflow-y:auto;backdrop-filter:blur(3px);}
+.modal-backdrop.open{display:flex;}
+.modal{background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:860px;box-shadow:var(--shadow-lg);animation:modalIn 0.25s ease;}
+@keyframes modalIn{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+.modal-head{padding:22px 28px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:1;border-radius:var(--radius-lg) var(--radius-lg) 0 0;}
+.modal-head h2{font-size:18px;font-weight:700;}
+.modal-close{width:34px;height:34px;border-radius:50%;border:none;background:var(--bg);cursor:pointer;font-size:20px;display:grid;place-items:center;transition:all 0.2s;}
+.modal-close:hover{background:var(--danger-light);color:var(--danger);}
+.modal-body{padding:28px;}
+.form-section{margin-bottom:28px;}
+.form-section-title{font-size:13px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--primary-light);display:flex;align-items:center;gap:8px;}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;}
+.form-field{display:flex;flex-direction:column;gap:5px;}
+.form-field label{font-size:12px;font-weight:600;color:var(--text-secondary);}
+.form-field input,.form-field select,.form-field textarea{
+  padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;
+  font-size:14px;font-family:var(--font);outline:none;transition:all 0.2s;background:var(--surface);
 }
-.form-group textarea { resize: vertical; min-height: 60px; }
-.modal-footer {
-  padding: 16px 24px; border-top: 1px solid var(--border);
-  display: flex; justify-content: flex-end; gap: 10px;
-  position: sticky; bottom: 0; background: white;
-}
-.tab-nav {
-  display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 20px;
-}
-.tab-btn {
-  padding: 12px 20px; background: none; border: none; border-bottom: 2px solid transparent;
-  margin-bottom: -2px; cursor: pointer; font-size: 13px; font-weight: 500;
-  color: var(--text-muted); transition: all 0.2s;
-}
-.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
-.tab-btn:hover { color: var(--text); background: var(--primary-light); }
-.view-card {
-  background: var(--white); border-radius: var(--radius); padding: 24px;
-  box-shadow: var(--shadow); margin-bottom: 20px;
-}
-.view-card h3 {
-  font-size: 14px; color: var(--primary); margin-bottom: 14px;
-  padding-bottom: 8px; border-bottom: 1px solid var(--primary-light);
-}
-.view-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px;
-}
-.view-field { display: flex; flex-direction: column; gap: 2px; }
-.view-field .field-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; }
-.view-field .field-value { font-size: 14px; font-weight: 500; }
-.avatar-lg {
-  width: 70px; height: 70px; border-radius: 50%;
-  background: linear-gradient(135deg, #1a73e8, #6c5ce7);
-  display: grid; place-items: center; color: white;
-  font-size: 24px; font-weight: 700;
-}
-.profile-header {
-  display: flex; align-items: center; gap: 18px; margin-bottom: 24px;
-  padding-bottom: 18px; border-bottom: 1px solid var(--border);
-}
-.profile-header .info h2 { font-size: 22px; }
-.profile-header .info p { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
-.empty-state {
-  text-align: center; padding: 60px 20px; color: var(--text-muted);
-}
-.empty-state .icon { font-size: 48px; margin-bottom: 12px; }
-.empty-state p { font-size: 14px; }
-@media (max-width: 768px) {
-  .header { flex-direction: column; gap: 12px; text-align: center; }
-  .container { padding: 16px; }
-  .stats-row { grid-template-columns: repeat(2, 1fr); }
-  .form-grid { grid-template-columns: 1fr; }
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(25,118,210,0.08);}
+.form-field textarea{resize:vertical;min-height:70px;}
+.form-field.full{grid-column:1/-1;}
+.checkbox-field{flex-direction:row;align-items:center;gap:8px;}
+.checkbox-field input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);cursor:pointer;}
+.checkbox-field label{cursor:pointer;font-size:13px;font-weight:500;color:var(--text);}
+.modal-foot{padding:18px 28px;border-top:1px solid var(--border-light);display:flex;justify-content:flex-end;gap:10px;background:var(--bg);border-radius:0 0 var(--radius-lg) var(--radius-lg);}
+
+/* === DETAIL VIEW === */
+.detail-back{margin-bottom:20px;}
+.profile-card{background:var(--surface);border-radius:var(--radius-lg);padding:28px 32px;box-shadow:var(--shadow-sm);border:1px solid var(--border-light);margin-bottom:20px;display:flex;align-items:center;gap:22px;}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center;color:#fff;font-size:24px;font-weight:800;flex-shrink:0;}
+.profile-info h2{font-size:22px;font-weight:700;margin-bottom:3px;}
+.profile-info p{font-size:13px;color:var(--text-secondary);}
+.profile-actions{margin-left:auto;display:flex;gap:8px;}
+.info-card{background:var(--surface);border-radius:var(--radius-lg);padding:24px 28px;box-shadow:var(--shadow-sm);border:1px solid var(--border-light);margin-bottom:16px;}
+.info-card h3{font-size:13px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--primary-light);}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+.info-item .info-label{font-size:11px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.4px;}
+.info-item .info-value{font-size:14px;font-weight:500;color:var(--text);margin-top:2px;}
+
+/* === TOAST === */
+.toast{position:fixed;bottom:24px;right:24px;padding:14px 22px;border-radius:10px;color:#fff;font-size:13px;font-weight:600;z-index:2000;animation:toastIn 0.3s ease;box-shadow:var(--shadow-lg);}
+.toast.success{background:var(--success);}
+.toast.error{background:var(--danger);}
+@keyframes toastIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* === RESPONSIVE === */
+@media(max-width:768px){
+  .app-header{padding:0 16px;height:auto;padding:14px 16px;flex-wrap:wrap;gap:12px;}
+  .container{padding:16px;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .main-card .card-top{flex-direction:column;align-items:stretch;}
+  .search-input{width:100%;}
+  .profile-card{flex-direction:column;text-align:center;}
+  .profile-actions{margin-left:0;}
+  .form-row{grid-template-columns:1fr;}
 }
 </style>
 </head>
 <body>
 <div id="app"></div>
 <script>
-// ============ DATA LAYER (localStorage) ============
-const STORAGE_KEY = 'codeorigin_employees';
+// ======== DATA LAYER ========
+const DB_KEY = 'codeorigin_onboarding_db';
+const getDB = () => { try { return JSON.parse(localStorage.getItem(DB_KEY)) || []; } catch { return []; } };
+const saveDB = (d) => localStorage.setItem(DB_KEY, JSON.stringify(d));
+const genId = () => 'E' + Date.now().toString(36) + Math.random().toString(36).substr(2,5);
+const initials = (n) => n.split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
 
-function getEmployees() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-  catch { return []; }
-}
-function saveEmployees(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
-function generateId() { return 'EMP' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substr(2,4).toUpperCase(); }
-
-// ============ EXCEL EXPORT ============
+// ======== EXCEL EXPORT (XLSX format - opens in Excel, not Notepad) ========
 function exportToExcel() {
-  const employees = getEmployees();
-  if (!employees.length) { alert('No employee records to export.'); return; }
-  const headers = [
-    'Employee ID','Full Name','Date of Birth','Gender','Marital Status','Blood Group',
-    'Phone','Email','Personal Email','Address','City','State','Pincode','Country',
-    'Aadhar Number','PAN Number','Passport Number','Driving License',
-    'Department','Designation','Date of Joining','Employment Type','Reporting Manager',
-    'Work Location','Employee Status','Probation End Date',
-    'Previous Company','Previous Designation','Total Experience (Years)',
-    'Highest Qualification','University','Year of Passing',
-    'Emergency Contact Name','Emergency Contact Relation','Emergency Contact Phone',
-    'Offer Letter Issued','ID Card Issued','NDA Signed','Laptop Assigned','Laptop Serial',
-    'Official Email Provided','Slack/Teams Added','Notes'
-  ];
-  let csv = headers.map(h => `"${h}"`).join(',') + '\n';
-  employees.forEach(e => {
-    const row = [
-      e.empId, e.fullName, e.dob, e.gender, e.maritalStatus, e.bloodGroup,
-      e.phone, e.email, e.personalEmail, e.address, e.city, e.state, e.pincode, e.country,
-      e.aadhar, e.pan, e.passport, e.drivingLicense,
-      e.department, e.designation, e.doj, e.employmentType, e.reportingManager,
-      e.workLocation, e.status, e.probationEnd,
-      e.prevCompany, e.prevDesignation, e.totalExp,
-      e.qualification, e.university, e.yearOfPassing,
-      e.emergencyName, e.emergencyRelation, e.emergencyPhone,
-      e.offerLetter?'Yes':'No', e.idCard?'Yes':'No', e.ndaSigned?'Yes':'No',
-      e.laptopAssigned?'Yes':'No', e.laptopSerial,
-      e.officialEmail, e.slackAdded?'Yes':'No', e.notes
-    ];
-    csv += row.map(v => `"${(v||'').toString().replace(/"/g,'""')}"`).join(',') + '\n';
-  });
-  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = `CodeOriginAi_Employees_${new Date().toISOString().slice(0,10)}.csv`;
-  link.click();
+  const data = getDB();
+  if (!data.length) { showToast('No records to export','error'); return; }
+  const rows = data.map(e => ({
+    'Employee ID': e.empId, 'Full Name': e.fullName, 'Date of Birth': e.dob, 'Gender': e.gender,
+    'Marital Status': e.maritalStatus, 'Blood Group': e.bloodGroup, 'Phone': e.phone,
+    'Official Email': e.email, 'Personal Email': e.personalEmail,
+    'Address': e.address, 'City': e.city, 'State': e.state, 'Pincode': e.pincode, 'Country': e.country,
+    'Aadhar Number': e.aadhar, 'PAN Number': e.pan, 'Passport': e.passport, 'Driving License': e.drivingLicense,
+    'Department': e.department, 'Designation': e.designation, 'Date of Joining': e.doj,
+    'Employment Type': e.employmentType, 'Reporting Manager': e.reportingManager,
+    'Work Location': e.workLocation, 'Status': e.status, 'Probation End': e.probationEnd,
+    'Previous Company': e.prevCompany, 'Previous Designation': e.prevDesignation, 'Experience (Yrs)': e.totalExp,
+    'Qualification': e.qualification, 'University': e.university, 'Year of Passing': e.yearOfPassing,
+    'Emergency Name': e.emergencyName, 'Emergency Relation': e.emergencyRelation, 'Emergency Phone': e.emergencyPhone,
+    'Offer Letter': e.offerLetter?'Yes':'No', 'ID Card': e.idCard?'Yes':'No', 'NDA Signed': e.ndaSigned?'Yes':'No',
+    'Laptop Assigned': e.laptopAssigned?'Yes':'No', 'Laptop Serial': e.laptopSerial,
+    'Official Email Given': e.officialEmail, 'Slack/Teams': e.slackAdded?'Yes':'No', 'Notes': e.notes
+  }));
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Employees');
+  // Auto-size columns
+  const colWidths = Object.keys(rows[0]).map(k => ({ wch: Math.max(k.length + 2, ...rows.map(r => String(r[k]||'').length + 2)) }));
+  ws['!cols'] = colWidths;
+  XLSX.writeFile(wb, `CodeOrigin_Employees_${new Date().toISOString().slice(0,10)}.xlsx`);
+  showToast('Excel file downloaded successfully!','success');
 }
 
-// ============ APP STATE ============
-let currentView = 'list'; // list | form | detail
-let editingId = null;
-let viewingId = null;
-let searchTerm = '';
-let filterStatus = 'all';
+// ======== TOAST ========
+function showToast(msg, type='success') {
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
 
-// ============ RENDER ============
+// ======== STATE ========
+let view = 'list', editId = null, viewId = null, search = '', statusFilter = 'all';
+
+// ======== RENDER ENGINE ========
 function render() {
-  const app = document.getElementById('app');
-  app.innerHTML = renderHeader() + '<div class="container">' + renderContent() + '</div>' + renderModal();
+  document.getElementById('app').innerHTML = renderHeader() + '<div class="container">' + (view === 'detail' ? renderDetail() : renderDashboard()) + '</div>' + renderModal();
 }
 
 function renderHeader() {
-  const emp = getEmployees();
-  return `
-    <header class="header">
-      <div class="logo-area">
-        <div class="logo-icon">CO</div>
-        <div>
-          <h1>Code Origin.Ai Private Limited</h1>
-          <div class="subtitle">Employee Onboarding &amp; Records Management System</div>
-        </div>
-      </div>
-      <div class="header-actions">
-        <button class="btn btn-white" onclick="exportToExcel()">&#x1f4e5; Export to Excel</button>
-        <button class="btn btn-white" onclick="openForm()">&#x2795; Add Employee</button>
-      </div>
-    </header>
-  `;
-}
-
-function renderContent() {
-  if (currentView === 'detail') return renderDetail();
-  return renderStats() + renderList();
-}
-
-function renderStats() {
-  const emp = getEmployees();
-  const active = emp.filter(e => e.status === 'Active').length;
-  const probation = emp.filter(e => e.status === 'Probation').length;
-  const thisMonth = emp.filter(e => {
-    if (!e.doj) return false;
-    const d = new Date(e.doj);
-    const now = new Date();
-    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-  }).length;
-  return `
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-num">${emp.length}</div><div class="stat-label">Total Employees</div></div>
-      <div class="stat-card green"><div class="stat-num">${active}</div><div class="stat-label">Active Employees</div></div>
-      <div class="stat-card orange"><div class="stat-num">${probation}</div><div class="stat-label">On Probation</div></div>
-      <div class="stat-card"><div class="stat-num">${thisMonth}</div><div class="stat-label">Joined This Month</div></div>
-    </div>
-  `;
-}
-
-function renderList() {
-  let emp = getEmployees();
-  if (searchTerm) {
-    const s = searchTerm.toLowerCase();
-    emp = emp.filter(e => e.fullName.toLowerCase().includes(s) || e.empId.toLowerCase().includes(s) ||
-      (e.department||'').toLowerCase().includes(s) || (e.designation||'').toLowerCase().includes(s));
-  }
-  if (filterStatus !== 'all') emp = emp.filter(e => e.status === filterStatus);
-
-  const rows = emp.length ? emp.map(e => `
-    <tr>
-      <td><strong>${e.empId}</strong></td>
-      <td>${e.fullName}</td>
-      <td>${e.department || '-'}</td>
-      <td>${e.designation || '-'}</td>
-      <td>${e.doj || '-'}</td>
-      <td>${e.phone || '-'}</td>
-      <td><span class="badge badge-${e.status==='Active'?'active':e.status==='Probation'?'pending':'inactive'}">${e.status}</span></td>
-      <td>
-        <div class="action-btns">
-          <button title="View" onclick="viewEmployee('${e.id}')">&#x1f441;</button>
-          <button title="Edit" onclick="editEmployee('${e.id}')">&#x270f;&#xfe0f;</button>
-          <button title="Delete" class="del" onclick="deleteEmployee('${e.id}')">&#x1f5d1;</button>
-        </div>
-      </td>
-    </tr>
-  `).join('') : `<tr><td colspan="8"><div class="empty-state"><div class="icon">&#x1f4cb;</div><p>No employees found. Click "Add Employee" to get started.</p></div></td></tr>`;
-
-  return `
-    <div class="card">
-      <div class="card-header">
-        <h2>Employee Records</h2>
-      </div>
-      <div class="card-body">
-        <div class="search-bar">
-          <input type="text" placeholder="Search by name, ID, department..." value="${searchTerm}" oninput="searchTerm=this.value;render()"/>
-          <select onchange="filterStatus=this.value;render()" class="btn btn-outline" style="padding:10px 14px;font-size:13px;">
-            <option value="all" ${filterStatus==='all'?'selected':''}>All Status</option>
-            <option value="Active" ${filterStatus==='Active'?'selected':''}>Active</option>
-            <option value="Probation" ${filterStatus==='Probation'?'selected':''}>Probation</option>
-            <option value="Inactive" ${filterStatus==='Inactive'?'selected':''}>Inactive</option>
-            <option value="Resigned" ${filterStatus==='Resigned'?'selected':''}>Resigned</option>
-          </select>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr>
-              <th>Emp ID</th><th>Name</th><th>Department</th><th>Designation</th>
-              <th>Date of Joining</th><th>Phone</th><th>Status</th><th>Actions</th>
-            </tr></thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>
+  return `<header class="app-header">
+    <div class="brand">
+      <div class="brand-icon">CO</div>
+      <div class="brand-text">
+        <h1>Code Origin.Ai Pvt Ltd</h1>
+        <span>Employee Onboarding Portal</span>
       </div>
     </div>
-  `;
+    <div class="header-actions">
+      <button class="btn btn-ghost" onclick="exportToExcel()">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Export .xlsx
+      </button>
+      <button class="btn btn-ghost" onclick="openForm()">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Add Employee
+      </button>
+    </div>
+  </header>`;
+}
+
+function renderDashboard() {
+  const db = getDB();
+  const active = db.filter(e => e.status === 'Active').length;
+  const prob = db.filter(e => e.status === 'Probation').length;
+  const joined = db.filter(e => { if(!e.doj) return false; const d=new Date(e.doj),n=new Date(); return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear(); }).length;
+  return renderStats(db.length, active, prob, joined) + renderTable(db);
+}
+
+function renderStats(total, active, prob, joined) {
+  return `<div class="stats-grid">
+    <div class="stat-card blue"><div class="stat-icon">&#x1f465;</div><div class="stat-value">${total}</div><div class="stat-label">Total Employees</div></div>
+    <div class="stat-card green"><div class="stat-icon">&#x2705;</div><div class="stat-value">${active}</div><div class="stat-label">Active</div></div>
+    <div class="stat-card orange"><div class="stat-icon">&#x23f3;</div><div class="stat-value">${prob}</div><div class="stat-label">On Probation</div></div>
+    <div class="stat-card purple"><div class="stat-icon">&#x1f4c5;</div><div class="stat-value">${joined}</div><div class="stat-label">Joined This Month</div></div>
+  </div>`;
+}
+
+function renderTable(db) {
+  let list = db;
+  if (search) { const s = search.toLowerCase(); list = list.filter(e => e.fullName.toLowerCase().includes(s)||e.empId.toLowerCase().includes(s)||(e.department||'').toLowerCase().includes(s)||(e.designation||'').toLowerCase().includes(s)); }
+  if (statusFilter !== 'all') list = list.filter(e => e.status === statusFilter);
+
+  const rows = list.length ? list.map(e => `<tr>
+    <td><strong style="color:var(--accent)">${e.empId}</strong></td>
+    <td><div class="emp-name">${e.fullName}</div><div class="emp-role">${e.designation||''}</div></td>
+    <td>${e.department||'-'}</td>
+    <td>${e.doj||'-'}</td>
+    <td>${e.phone||'-'}</td>
+    <td><span class="badge badge-${e.status.toLowerCase()}">${e.status}</span></td>
+    <td><div class="actions-cell">
+      <button class="btn-icon" title="View" onclick="viewEmp('${e.id}')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      <button class="btn-icon" title="Edit" onclick="editEmp('${e.id}')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+      <button class="btn-icon danger" title="Delete" onclick="delEmp('${e.id}')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
+    </div></td>
+  </tr>`).join('') : `<tr><td colspan="7"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg><h3>No Employee Records</h3><p>Click "Add Employee" to start onboarding</p></div></td></tr>`;
+
+  return `<div class="main-card">
+    <div class="card-top">
+      <h2>Employee Records</h2>
+      <div class="toolbar">
+        <input class="search-input" type="text" placeholder="Search name, ID, dept..." value="${search}" oninput="search=this.value;render()"/>
+        <select class="filter-select" onchange="statusFilter=this.value;render()">
+          <option value="all"${statusFilter==='all'?' selected':''}>All Status</option>
+          <option value="Active"${statusFilter==='Active'?' selected':''}>Active</option>
+          <option value="Probation"${statusFilter==='Probation'?' selected':''}>Probation</option>
+          <option value="Inactive"${statusFilter==='Inactive'?' selected':''}>Inactive</option>
+          <option value="Resigned"${statusFilter==='Resigned'?' selected':''}>Resigned</option>
+        </select>
+      </div>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>ID</th><th>Employee</th><th>Department</th><th>Joining Date</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+  </div>`;
 }
 
 function renderDetail() {
-  const emp = getEmployees().find(e => e.id === viewingId);
-  if (!emp) { currentView = 'list'; render(); return ''; }
-  const initials = emp.fullName.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
-  return `
-    <button class="btn btn-outline" onclick="currentView='list';render()" style="margin-bottom:16px;">&#x2190; Back to List</button>
-    <div class="profile-header" style="background:white;padding:24px;border-radius:var(--radius);box-shadow:var(--shadow);">
-      <div class="avatar-lg">${initials}</div>
-      <div class="info">
-        <h2>${emp.fullName}</h2>
-        <p>${emp.designation || 'N/A'} &middot; ${emp.department || 'N/A'} &middot; ID: ${emp.empId}</p>
-        <p style="margin-top:4px;"><span class="badge badge-${emp.status==='Active'?'active':emp.status==='Probation'?'pending':'inactive'}">${emp.status}</span></p>
-      </div>
-      <div style="margin-left:auto;display:flex;gap:8px;">
-        <button class="btn btn-primary" onclick="editEmployee('${emp.id}')">&#x270f;&#xfe0f; Edit</button>
-        <button class="btn btn-danger" onclick="deleteEmployee('${emp.id}')">&#x1f5d1; Delete</button>
-      </div>
+  const e = getDB().find(x => x.id === viewId);
+  if (!e) { view='list'; render(); return ''; }
+  const ini = initials(e.fullName);
+  const f = (l,v) => `<div class="info-item"><div class="info-label">${l}</div><div class="info-value">${v||'N/A'}</div></div>`;
+  return `<div class="detail-back"><button class="btn btn-outline" onclick="view='list';render()"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back</button></div>
+  <div class="profile-card">
+    <div class="profile-avatar">${ini}</div>
+    <div class="profile-info"><h2>${e.fullName}</h2><p>${e.designation||'N/A'} &bull; ${e.department||'N/A'} &bull; ${e.empId}</p><p style="margin-top:6px"><span class="badge badge-${e.status.toLowerCase()}">${e.status}</span></p></div>
+    <div class="profile-actions">
+      <button class="btn btn-primary btn-sm" onclick="editEmp('${e.id}')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="delEmp('${e.id}')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Delete</button>
     </div>
-    <div class="view-card"><h3>Personal Information</h3><div class="view-grid">
-      ${vf('Full Name',emp.fullName)}${vf('Date of Birth',emp.dob)}${vf('Gender',emp.gender)}
-      ${vf('Marital Status',emp.maritalStatus)}${vf('Blood Group',emp.bloodGroup)}${vf('Phone',emp.phone)}
-      ${vf('Official Email',emp.email)}${vf('Personal Email',emp.personalEmail)}
-    </div></div>
-    <div class="view-card"><h3>Address</h3><div class="view-grid">
-      ${vf('Address',emp.address)}${vf('City',emp.city)}${vf('State',emp.state)}
-      ${vf('Pincode',emp.pincode)}${vf('Country',emp.country)}
-    </div></div>
-    <div class="view-card"><h3>Identity &amp; Documents</h3><div class="view-grid">
-      ${vf('Aadhar Number',emp.aadhar)}${vf('PAN Number',emp.pan)}
-      ${vf('Passport Number',emp.passport)}${vf('Driving License',emp.drivingLicense)}
-    </div></div>
-    <div class="view-card"><h3>Employment Details</h3><div class="view-grid">
-      ${vf('Department',emp.department)}${vf('Designation',emp.designation)}
-      ${vf('Date of Joining',emp.doj)}${vf('Employment Type',emp.employmentType)}
-      ${vf('Reporting Manager',emp.reportingManager)}${vf('Work Location',emp.workLocation)}
-      ${vf('Status',emp.status)}${vf('Probation End Date',emp.probationEnd)}
-    </div></div>
-    <div class="view-card"><h3>Previous Experience</h3><div class="view-grid">
-      ${vf('Previous Company',emp.prevCompany)}${vf('Previous Designation',emp.prevDesignation)}
-      ${vf('Total Experience',emp.totalExp ? emp.totalExp+' years' : '')}
-    </div></div>
-    <div class="view-card"><h3>Education</h3><div class="view-grid">
-      ${vf('Highest Qualification',emp.qualification)}${vf('University',emp.university)}
-      ${vf('Year of Passing',emp.yearOfPassing)}
-    </div></div>
-    <div class="view-card"><h3>Emergency Contact</h3><div class="view-grid">
-      ${vf('Contact Name',emp.emergencyName)}${vf('Relation',emp.emergencyRelation)}
-      ${vf('Phone',emp.emergencyPhone)}
-    </div></div>
-    <div class="view-card"><h3>Onboarding Checklist</h3><div class="view-grid">
-      ${vf('Offer Letter Issued',emp.offerLetter?'Yes':'No')}${vf('ID Card Issued',emp.idCard?'Yes':'No')}
-      ${vf('NDA Signed',emp.ndaSigned?'Yes':'No')}${vf('Laptop Assigned',emp.laptopAssigned?'Yes':'No')}
-      ${vf('Laptop Serial No.',emp.laptopSerial)}${vf('Official Email Provided',emp.officialEmail)}
-      ${vf('Slack/Teams Added',emp.slackAdded?'Yes':'No')}
-    </div></div>
-    ${emp.notes ? `<div class="view-card"><h3>Notes</h3><p style="font-size:14px;color:var(--text-muted);">${emp.notes}</p></div>` : ''}
-  `;
-}
-
-function vf(label, value) {
-  return `<div class="view-field"><span class="field-label">${label}</span><span class="field-value">${value || 'N/A'}</span></div>`;
+  </div>
+  <div class="info-card"><h3>Personal Information</h3><div class="info-grid">${f('Full Name',e.fullName)}${f('Date of Birth',e.dob)}${f('Gender',e.gender)}${f('Marital Status',e.maritalStatus)}${f('Blood Group',e.bloodGroup)}${f('Phone',e.phone)}${f('Official Email',e.email)}${f('Personal Email',e.personalEmail)}</div></div>
+  <div class="info-card"><h3>Address</h3><div class="info-grid">${f('Address',e.address)}${f('City',e.city)}${f('State',e.state)}${f('Pincode',e.pincode)}${f('Country',e.country)}</div></div>
+  <div class="info-card"><h3>Identity Documents</h3><div class="info-grid">${f('Aadhar Number',e.aadhar)}${f('PAN Number',e.pan)}${f('Passport',e.passport)}${f('Driving License',e.drivingLicense)}</div></div>
+  <div class="info-card"><h3>Employment Details</h3><div class="info-grid">${f('Department',e.department)}${f('Designation',e.designation)}${f('Date of Joining',e.doj)}${f('Employment Type',e.employmentType)}${f('Reporting Manager',e.reportingManager)}${f('Work Location',e.workLocation)}${f('Status',e.status)}${f('Probation End',e.probationEnd)}</div></div>
+  <div class="info-card"><h3>Previous Experience</h3><div class="info-grid">${f('Company',e.prevCompany)}${f('Designation',e.prevDesignation)}${f('Total Experience',e.totalExp?e.totalExp+' years':'')}</div></div>
+  <div class="info-card"><h3>Education</h3><div class="info-grid">${f('Qualification',e.qualification)}${f('University',e.university)}${f('Year of Passing',e.yearOfPassing)}</div></div>
+  <div class="info-card"><h3>Emergency Contact</h3><div class="info-grid">${f('Name',e.emergencyName)}${f('Relation',e.emergencyRelation)}${f('Phone',e.emergencyPhone)}</div></div>
+  <div class="info-card"><h3>Onboarding Checklist</h3><div class="info-grid">${f('Offer Letter',e.offerLetter?'Yes':'No')}${f('ID Card',e.idCard?'Yes':'No')}${f('NDA Signed',e.ndaSigned?'Yes':'No')}${f('Laptop Assigned',e.laptopAssigned?'Yes':'No')}${f('Laptop Serial',e.laptopSerial)}${f('Official Email',e.officialEmail)}${f('Slack/Teams',e.slackAdded?'Yes':'No')}</div></div>
+  ${e.notes?`<div class="info-card"><h3>Notes</h3><p style="color:var(--text-secondary);font-size:14px;">${e.notes}</p></div>`:''}`;
 }
 
 function renderModal() {
-  return `
-    <div class="modal-overlay" id="modalOverlay">
-      <div class="modal">
-        <div class="modal-header">
-          <h2 id="modalTitle">Add New Employee</h2>
-          <button class="modal-close" onclick="closeForm()">&times;</button>
+  return `<div class="modal-backdrop" id="modal">
+    <div class="modal">
+      <div class="modal-head"><h2 id="modalTitle">Add New Employee</h2><button class="modal-close" onclick="closeForm()">&times;</button></div>
+      <div class="modal-body"><form id="empForm" onsubmit="saveForm(event)">
+        <div class="form-section"><div class="form-section-title"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Personal Information</div>
+          <div class="form-row">
+            <div class="form-field"><label>Full Name *</label><input type="text" id="f_fullName" required/></div>
+            <div class="form-field"><label>Date of Birth</label><input type="date" id="f_dob"/></div>
+            <div class="form-field"><label>Gender</label><select id="f_gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+            <div class="form-field"><label>Marital Status</label><select id="f_maritalStatus"><option value="">Select</option><option>Single</option><option>Married</option><option>Divorced</option><option>Widowed</option></select></div>
+            <div class="form-field"><label>Blood Group</label><select id="f_bloodGroup"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+            <div class="form-field"><label>Phone *</label><input type="tel" id="f_phone" required/></div>
+            <div class="form-field"><label>Official Email</label><input type="email" id="f_email"/></div>
+            <div class="form-field"><label>Personal Email</label><input type="email" id="f_personalEmail"/></div>
+          </div>
         </div>
-        <div class="modal-body">
-          <form id="empForm" onsubmit="saveForm(event)">
-            <div class="form-section"><h3>&#x1f464; Personal Information</h3>
-              <div class="form-grid">
-                <div class="form-group"><label>Full Name *</label><input type="text" id="f_fullName" required/></div>
-                <div class="form-group"><label>Date of Birth</label><input type="date" id="f_dob"/></div>
-                <div class="form-group"><label>Gender</label><select id="f_gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div>
-                <div class="form-group"><label>Marital Status</label><select id="f_maritalStatus"><option value="">Select</option><option>Single</option><option>Married</option><option>Divorced</option><option>Widowed</option></select></div>
-                <div class="form-group"><label>Blood Group</label><select id="f_bloodGroup"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
-                <div class="form-group"><label>Phone *</label><input type="tel" id="f_phone" required/></div>
-                <div class="form-group"><label>Official Email</label><input type="email" id="f_email"/></div>
-                <div class="form-group"><label>Personal Email</label><input type="email" id="f_personalEmail"/></div>
-              </div>
-            </div>
-            <div class="form-section"><h3>&#x1f3e0; Address</h3>
-              <div class="form-grid">
-                <div class="form-group" style="grid-column:1/-1;"><label>Address</label><textarea id="f_address" rows="2"></textarea></div>
-                <div class="form-group"><label>City</label><input type="text" id="f_city"/></div>
-                <div class="form-group"><label>State</label><input type="text" id="f_state"/></div>
-                <div class="form-group"><label>Pincode</label><input type="text" id="f_pincode"/></div>
-                <div class="form-group"><label>Country</label><input type="text" id="f_country" value="India"/></div>
-              </div>
-            </div>
-            <div class="form-section"><h3>&#x1f4c4; Identity &amp; Documents (No Bank Details)</h3>
-              <div class="form-grid">
-                <div class="form-group"><label>Aadhar Number</label><input type="text" id="f_aadhar" maxlength="12"/></div>
-                <div class="form-group"><label>PAN Number</label><input type="text" id="f_pan" maxlength="10" style="text-transform:uppercase;"/></div>
-                <div class="form-group"><label>Passport Number</label><input type="text" id="f_passport"/></div>
-                <div class="form-group"><label>Driving License</label><input type="text" id="f_drivingLicense"/></div>
-              </div>
-            </div>
-            <div class="form-section"><h3>&#x1f3e2; Employment Details</h3>
-              <div class="form-grid">
-                <div class="form-group"><label>Department *</label><input type="text" id="f_department" required/></div>
-                <div class="form-group"><label>Designation *</label><input type="text" id="f_designation" required/></div>
-                <div class="form-group"><label>Date of Joining *</label><input type="date" id="f_doj" required/></div>
-                <div class="form-group"><label>Employment Type</label><select id="f_employmentType"><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Intern</option></select></div>
-                <div class="form-group"><label>Reporting Manager</label><input type="text" id="f_reportingManager"/></div>
-                <div class="form-group"><label>Work Location</label><input type="text" id="f_workLocation"/></div>
-                <div class="form-group"><label>Employee Status</label><select id="f_status"><option>Active</option><option>Probation</option><option>Inactive</option><option>Resigned</option></select></div>
-                <div class="form-group"><label>Probation End Date</label><input type="date" id="f_probationEnd"/></div>
-              </div>
-            </div>
-            <div class="form-section"><h3>&#x1f4bc; Previous Experience</h3>
-              <div class="form-grid">
-                <div class="form-group"><label>Previous Company</label><input type="text" id="f_prevCompany"/></div>
-                <div class="form-group"><label>Previous Designation</label><input type="text" id="f_prevDesignation"/></div>
-                <div class="form-group"><label>Total Experience (Years)</label><input type="number" id="f_totalExp" min="0" step="0.5"/></div>
-              </div>
-            </div>
-            <div class="form-section"><h3>&#x1f393; Education</h3>
-              <div class="form-grid">
-                <div class="form-group"><label>Highest Qualification</label><input type="text" id="f_qualification"/></div>
-                <div class="form-group"><label>University/Institute</label><input type="text" id="f_university"/></div>
-                <div class="form-group"><label>Year of Passing</label><input type="number" id="f_yearOfPassing" min="1980" max="2030"/></div>
-              </div>
-            </div>
-            <div class="form-section"><h3>&#x1f6a8; Emergency Contact</h3>
-              <div class="form-grid">
-                <div class="form-group"><label>Contact Name</label><input type="text" id="f_emergencyName"/></div>
-                <div class="form-group"><label>Relation</label><input type="text" id="f_emergencyRelation"/></div>
-                <div class="form-group"><label>Phone</label><input type="tel" id="f_emergencyPhone"/></div>
-              </div>
-            </div>
-            <div class="form-section"><h3>&#x2705; Onboarding Checklist</h3>
-              <div class="form-grid">
-                <div class="form-group"><label><input type="checkbox" id="f_offerLetter"/> Offer Letter Issued</label></div>
-                <div class="form-group"><label><input type="checkbox" id="f_idCard"/> ID Card Issued</label></div>
-                <div class="form-group"><label><input type="checkbox" id="f_ndaSigned"/> NDA Signed</label></div>
-                <div class="form-group"><label><input type="checkbox" id="f_laptopAssigned"/> Laptop Assigned</label></div>
-                <div class="form-group"><label>Laptop Serial No.</label><input type="text" id="f_laptopSerial"/></div>
-                <div class="form-group"><label>Official Email Provided</label><input type="email" id="f_officialEmail"/></div>
-                <div class="form-group"><label><input type="checkbox" id="f_slackAdded"/> Slack/Teams Added</label></div>
-              </div>
-            </div>
-            <div class="form-section"><h3>&#x1f4dd; Additional Notes</h3>
-              <div class="form-group"><textarea id="f_notes" rows="3" placeholder="Any additional notes about the employee..."></textarea></div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-outline" onclick="closeForm()">Cancel</button>
-              <button type="submit" class="btn btn-primary">&#x1f4be; Save Employee</button>
-            </div>
-          </form>
+        <div class="form-section"><div class="form-section-title"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg> Address</div>
+          <div class="form-row">
+            <div class="form-field full"><label>Address</label><textarea id="f_address" rows="2"></textarea></div>
+            <div class="form-field"><label>City</label><input type="text" id="f_city"/></div>
+            <div class="form-field"><label>State</label><input type="text" id="f_state"/></div>
+            <div class="form-field"><label>Pincode</label><input type="text" id="f_pincode"/></div>
+            <div class="form-field"><label>Country</label><input type="text" id="f_country" value="India"/></div>
+          </div>
         </div>
-      </div>
+        <div class="form-section"><div class="form-section-title"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/></svg> Identity &amp; Documents</div>
+          <div class="form-row">
+            <div class="form-field"><label>Aadhar Number</label><input type="text" id="f_aadhar" maxlength="12" placeholder="1234 5678 9012"/></div>
+            <div class="form-field"><label>PAN Number</label><input type="text" id="f_pan" maxlength="10" style="text-transform:uppercase;" placeholder="ABCDE1234F"/></div>
+            <div class="form-field"><label>Passport Number</label><input type="text" id="f_passport"/></div>
+            <div class="form-field"><label>Driving License</label><input type="text" id="f_drivingLicense"/></div>
+          </div>
+        </div>
+        <div class="form-section"><div class="form-section-title"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3v4M8 3v4"/></svg> Employment Details</div>
+          <div class="form-row">
+            <div class="form-field"><label>Department *</label><input type="text" id="f_department" required/></div>
+            <div class="form-field"><label>Designation *</label><input type="text" id="f_designation" required/></div>
+            <div class="form-field"><label>Date of Joining *</label><input type="date" id="f_doj" required/></div>
+            <div class="form-field"><label>Employment Type</label><select id="f_employmentType"><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Intern</option></select></div>
+            <div class="form-field"><label>Reporting Manager</label><input type="text" id="f_reportingManager"/></div>
+            <div class="form-field"><label>Work Location</label><input type="text" id="f_workLocation"/></div>
+            <div class="form-field"><label>Status</label><select id="f_status"><option>Active</option><option>Probation</option><option>Inactive</option><option>Resigned</option></select></div>
+            <div class="form-field"><label>Probation End Date</label><input type="date" id="f_probationEnd"/></div>
+          </div>
+        </div>
+        <div class="form-section"><div class="form-section-title"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/></svg> Previous Experience</div>
+          <div class="form-row">
+            <div class="form-field"><label>Previous Company</label><input type="text" id="f_prevCompany"/></div>
+            <div class="form-field"><label>Previous Designation</label><input type="text" id="f_prevDesignation"/></div>
+            <div class="form-field"><label>Total Experience (Years)</label><input type="number" id="f_totalExp" min="0" step="0.5"/></div>
+          </div>
+        </div>
+        <div class="form-section"><div class="form-section-title"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 3 3 6 3s6-1 6-3v-5"/></svg> Education</div>
+          <div class="form-row">
+            <div class="form-field"><label>Highest Qualification</label><input type="text" id="f_qualification"/></div>
+            <div class="form-field"><label>University / Institute</label><input type="text" id="f_university"/></div>
+            <div class="form-field"><label>Year of Passing</label><input type="number" id="f_yearOfPassing" min="1980" max="2030"/></div>
+          </div>
+        </div>
+        <div class="form-section"><div class="form-section-title"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg> Emergency Contact</div>
+          <div class="form-row">
+            <div class="form-field"><label>Contact Name</label><input type="text" id="f_emergencyName"/></div>
+            <div class="form-field"><label>Relation</label><input type="text" id="f_emergencyRelation"/></div>
+            <div class="form-field"><label>Phone</label><input type="tel" id="f_emergencyPhone"/></div>
+          </div>
+        </div>
+        <div class="form-section"><div class="form-section-title"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9,11 12,14 22,4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> Onboarding Checklist</div>
+          <div class="form-row">
+            <div class="form-field checkbox-field"><input type="checkbox" id="f_offerLetter"/><label for="f_offerLetter">Offer Letter Issued</label></div>
+            <div class="form-field checkbox-field"><input type="checkbox" id="f_idCard"/><label for="f_idCard">ID Card Issued</label></div>
+            <div class="form-field checkbox-field"><input type="checkbox" id="f_ndaSigned"/><label for="f_ndaSigned">NDA Signed</label></div>
+            <div class="form-field checkbox-field"><input type="checkbox" id="f_laptopAssigned"/><label for="f_laptopAssigned">Laptop Assigned</label></div>
+            <div class="form-field"><label>Laptop Serial No.</label><input type="text" id="f_laptopSerial"/></div>
+            <div class="form-field"><label>Official Email Provided</label><input type="email" id="f_officialEmail"/></div>
+            <div class="form-field checkbox-field"><input type="checkbox" id="f_slackAdded"/><label for="f_slackAdded">Slack / Teams Added</label></div>
+          </div>
+        </div>
+        <div class="form-section"><div class="form-section-title"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg> Notes</div>
+          <div class="form-row"><div class="form-field full"><textarea id="f_notes" rows="3" placeholder="Any additional notes..."></textarea></div></div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn btn-outline" onclick="closeForm()">Cancel</button>
+          <button type="submit" class="btn btn-primary"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg> Save Employee</button>
+        </div>
+      </form></div>
     </div>
-  `;
+  </div>`;
 }
 
-// ============ FORM ACTIONS ============
+// ======== FORM LOGIC ========
 function openForm(id) {
-  editingId = id || null;
+  editId = id || null;
   render();
-  const modal = document.getElementById('modalOverlay');
-  modal.style.display = 'flex';
+  document.getElementById('modal').classList.add('open');
   document.getElementById('modalTitle').textContent = id ? 'Edit Employee' : 'Add New Employee';
-  if (id) {
-    const emp = getEmployees().find(e => e.id === id);
-    if (emp) populateForm(emp);
-  }
+  if (id) { const e = getDB().find(x=>x.id===id); if(e) fillForm(e); }
+}
+function closeForm() { document.getElementById('modal').classList.remove('open'); editId = null; }
+
+function fillForm(e) {
+  const fields = ['fullName','dob','gender','maritalStatus','bloodGroup','phone','email','personalEmail','address','city','state','pincode','country','aadhar','pan','passport','drivingLicense','department','designation','doj','employmentType','reportingManager','workLocation','status','probationEnd','prevCompany','prevDesignation','totalExp','qualification','university','yearOfPassing','emergencyName','emergencyRelation','emergencyPhone','laptopSerial','officialEmail','notes'];
+  fields.forEach(f => { const el=document.getElementById('f_'+f); if(el) el.value=e[f]||''; });
+  ['offerLetter','idCard','ndaSigned','laptopAssigned','slackAdded'].forEach(f => { const el=document.getElementById('f_'+f); if(el) el.checked=!!e[f]; });
 }
 
-function closeForm() {
-  document.getElementById('modalOverlay').style.display = 'none';
-  editingId = null;
-}
-
-function populateForm(emp) {
-  const fields = ['fullName','dob','gender','maritalStatus','bloodGroup','phone','email','personalEmail',
-    'address','city','state','pincode','country','aadhar','pan','passport','drivingLicense',
-    'department','designation','doj','employmentType','reportingManager','workLocation','status','probationEnd',
-    'prevCompany','prevDesignation','totalExp','qualification','university','yearOfPassing',
-    'emergencyName','emergencyRelation','emergencyPhone','laptopSerial','officialEmail','notes'];
-  fields.forEach(f => {
-    const el = document.getElementById('f_' + f);
-    if (el) el.value = emp[f] || '';
-  });
-  const checks = ['offerLetter','idCard','ndaSigned','laptopAssigned','slackAdded'];
-  checks.forEach(f => {
-    const el = document.getElementById('f_' + f);
-    if (el) el.checked = !!emp[f];
-  });
-}
-
-function saveForm(e) {
-  e.preventDefault();
-  const employees = getEmployees();
-  const data = {
-    id: editingId || generateId(),
-    empId: '',
+function saveForm(ev) {
+  ev.preventDefault();
+  const db = getDB();
+  const d = {
+    id: editId || genId(), empId: '',
     fullName: document.getElementById('f_fullName').value.trim(),
     dob: document.getElementById('f_dob').value,
     gender: document.getElementById('f_gender').value,
@@ -628,44 +508,34 @@ function saveForm(e) {
     laptopSerial: document.getElementById('f_laptopSerial').value.trim(),
     officialEmail: document.getElementById('f_officialEmail').value.trim(),
     slackAdded: document.getElementById('f_slackAdded').checked,
-    notes: document.getElementById('f_notes').value.trim(),
+    notes: document.getElementById('f_notes').value.trim()
   };
-
-  if (editingId) {
-    const idx = employees.findIndex(x => x.id === editingId);
-    if (idx > -1) { data.empId = employees[idx].empId; employees[idx] = data; }
+  if (editId) {
+    const idx = db.findIndex(x=>x.id===editId);
+    if (idx>-1) { d.empId = db[idx].empId; db[idx] = d; }
   } else {
-    data.empId = 'CO-' + String(employees.length + 1).padStart(4, '0');
-    employees.push(data);
+    d.empId = 'CO-' + String(db.length+1).padStart(4,'0');
+    db.push(d);
   }
-
-  saveEmployees(employees);
+  saveDB(db);
   closeForm();
-  currentView = 'list';
+  view = 'list';
   render();
+  showToast(editId ? 'Employee updated successfully!' : 'Employee added successfully!');
 }
 
-function viewEmployee(id) {
-  viewingId = id;
-  currentView = 'detail';
+function viewEmp(id) { viewId=id; view='detail'; render(); }
+function editEmp(id) { view='list'; render(); openForm(id); }
+function delEmp(id) {
+  if (!confirm('Are you sure you want to delete this employee record?')) return;
+  const db = getDB().filter(x=>x.id!==id);
+  saveDB(db);
+  if (view==='detail'&&viewId===id) view='list';
   render();
+  showToast('Employee deleted','error');
 }
 
-function editEmployee(id) {
-  currentView = 'list';
-  render();
-  openForm(id);
-}
-
-function deleteEmployee(id) {
-  if (!confirm('Are you sure you want to delete this employee record? This cannot be undone.')) return;
-  const employees = getEmployees().filter(e => e.id !== id);
-  saveEmployees(employees);
-  if (currentView === 'detail' && viewingId === id) currentView = 'list';
-  render();
-}
-
-// ============ INIT ============
+// ======== INIT ========
 render();
 </script>
 </body>
