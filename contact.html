@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | KOF Chitradurga</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <header id="navbar" class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"><i class="fas fa-leaf"></i></div>
+                <div class="logo-text">
+                    <span class="logo-main">KOF</span>
+                    <span class="logo-sub">Chitradurga</span>
+                </div>
+            </a>
+            <nav class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="about.html" class="nav-link">About Us</a>
+                <a href="activities.html" class="nav-link">Activities</a>
+                <a href="products.html" class="nav-link">Products</a>
+                <a href="farmers.html" class="nav-link">For Farmers</a>
+                <a href="contact.html" class="nav-link active">Contact</a>
+            </nav>
+            <div class="nav-actions">
+                <button class="btn btn-primary nav-cta">Get Started</button>
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="page-hero-bg"></div>
+        <div class="container">
+            <div class="page-hero-content">
+                <span class="section-tag light"><i class="fas fa-envelope"></i> Contact Us</span>
+                <h1 class="page-hero-title">Get in <span class="text-gradient">Touch</span></h1>
+                <p class="page-hero-subtitle">We'd love to hear from you - whether you're a farmer, distributor, or consumer</p>
+                <div class="breadcrumb">
+                    <a href="index.html">Home</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Contact</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Content -->
+    <section class="section">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-info-cards scroll-reveal">
+                    <div class="contact-info-card">
+                        <div class="contact-info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <h4>Visit Us</h4>
+                        <p>ROGCSU Ltd.,<br>Chitradurga District,<br>Karnataka - 577501, India</p>
+                    </div>
+                    <div class="contact-info-card">
+                        <div class="contact-info-icon"><i class="fas fa-phone-alt"></i></div>
+                        <h4>Call Us</h4>
+                        <p>Office: +91-XXXX-XXXXXX<br>Toll Free: 1800-XXX-XXXX<br>Mon-Sat: 9:00 AM - 5:30 PM</p>
+                    </div>
+                    <div class="contact-info-card">
+                        <div class="contact-info-icon"><i class="fas fa-envelope"></i></div>
+                        <h4>Email Us</h4>
+                        <p>General: info@kofchitradurga.com<br>Sales: sales@kofchitradurga.com<br>Farmer Support: support@kofchitradurga.com</p>
+                    </div>
+                    <div class="contact-info-card">
+                        <div class="contact-info-icon"><i class="fas fa-clock"></i></div>
+                        <h4>Working Hours</h4>
+                        <p>Monday - Saturday<br>9:00 AM - 5:30 PM<br>Sunday: Closed</p>
+                    </div>
+                </div>
+                <div class="contact-form-container scroll-reveal">
+                    <h3>Send Us a Message</h3>
+                    <form class="modern-form" id="contactForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="cname">Full Name *</label>
+                                <input type="text" id="cname" name="cname" required placeholder="Your full name">
+                            </div>
+                            <div class="form-group">
+                                <label for="cemail">Email Address *</label>
+                                <input type="email" id="cemail" name="cemail" required placeholder="your@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="cphone">Phone Number</label>
+                                <input type="tel" id="cphone" name="cphone" placeholder="+91 XXXXX XXXXX">
+                            </div>
+                            <div class="form-group">
+                                <label for="csubject">Subject *</label>
+                                <select id="csubject" name="csubject" required>
+                                    <option value="">Select Subject</option>
+                                    <option value="product">Product Enquiry</option>
+                                    <option value="bulk">Bulk Order</option>
+                                    <option value="farmer">Farmer Registration</option>
+                                    <option value="distributor">Distributorship</option>
+                                    <option value="complaint">Complaint/Feedback</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="cmessage">Your Message *</label>
+                            <textarea id="cmessage" name="cmessage" rows="5" required placeholder="Write your message here..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="section map-section">
+        <div class="container">
+            <div class="section-header text-center scroll-reveal">
+                <span class="section-tag"><i class="fas fa-map"></i> Location</span>
+                <h2 class="section-title">Find <span class="text-gradient">Us</span></h2>
+            </div>
+            <div class="map-container scroll-reveal">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d122295.75082082988!2d76.3343444!3d14.2305!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bba4e0f97e38a1f%3A0x4b3d7e2ecac0e8c4!2sChitradurga%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+                    width="100%" 
+                    height="450" 
+                    style="border:0; border-radius: 16px;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <div class="logo-icon"><i class="fas fa-leaf"></i></div>
+                        <div class="logo-text">
+                            <span class="logo-main">KOF</span>
+                            <span class="logo-sub">Chitradurga</span>
+                        </div>
+                    </div>
+                    <p>ROGCSU Ltd., Chitradurga - Part of Karnataka Co-operative Oilseeds Growers Federation. Empowering farmers since 1984.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <a href="about.html">About Us</a>
+                    <a href="activities.html">Activities</a>
+                    <a href="products.html">Products</a>
+                    <a href="farmers.html">For Farmers</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Our Products</h4>
+                    <a href="products.html">Sungold Sunflower Oil</a>
+                    <a href="products.html">Safal Groundnut Oil</a>
+                    <a href="products.html">Safal Rice Bran Oil</a>
+                    <a href="products.html">Safal Soybean Oil</a>
+                    <a href="products.html">Safal Palmolein Oil</a>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contact Info</h4>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>ROGCSU Ltd., Chitradurga, Karnataka, India</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>+91-XXXX-XXXXXX</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>info@kofchitradurga.com</span>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 KOF Chitradurga - ROGCSU Ltd. All Rights Reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
