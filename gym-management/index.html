@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GymPro - Gym Management Software</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1>💪 GymPro</h1>
+                <p class="tagline">Management Software</p>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-page="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </li>
+                <li class="nav-item" data-page="members">
+                    <span class="nav-icon">👥</span>
+                    <span>Members</span>
+                </li>
+                <li class="nav-item" data-page="subscriptions">
+                    <span class="nav-icon">📋</span>
+                    <span>Subscriptions</span>
+                </li>
+                <li class="nav-item" data-page="payments">
+                    <span class="nav-icon">💳</span>
+                    <span>Payments</span>
+                </li>
+                <li class="nav-item" data-page="attendance">
+                    <span class="nav-icon">✅</span>
+                    <span>Attendance</span>
+                </li>
+                <li class="nav-item" data-page="trainers">
+                    <span class="nav-icon">🏃</span>
+                    <span>Trainers</span>
+                </li>
+                <li class="nav-item" data-page="reports">
+                    <span class="nav-icon">📈</span>
+                    <span>Reports</span>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <p>v1.0.0 MVP</p>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="search-box">
+                    <input type="text" id="globalSearch" placeholder="Search members, trainers...">
+                </div>
+                <div class="top-bar-right">
+                    <span class="today-date" id="todayDate"></span>
+                    <div class="admin-profile">
+                        <span>Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content" id="pageContent">
+                <!-- Dashboard Page (Default) -->
+                <div class="page active" id="page-dashboard">
+                    <h2>Dashboard</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">👥</div>
+                            <div class="stat-info">
+                                <h3 id="totalMembers">0</h3>
+                                <p>Total Members</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">✅</div>
+                            <div class="stat-info">
+                                <h3 id="activeMembers">0</h3>
+                                <p>Active Members</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">💰</div>
+                            <div class="stat-info">
+                                <h3 id="monthRevenue">$0</h3>
+                                <p>This Month Revenue</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">⚠️</div>
+                            <div class="stat-info">
+                                <h3 id="overduePayments">0</h3>
+                                <p>Overdue Payments</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📅</div>
+                            <div class="stat-info">
+                                <h3 id="todayCheckins">0</h3>
+                                <p>Today's Check-ins</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🏃</div>
+                            <div class="stat-info">
+                                <h3 id="totalTrainers">0</h3>
+                                <p>Trainers</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <h3>Recent Members</h3>
+                            <div id="recentMembers" class="list-container"></div>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>Expiring Soon</h3>
+                            <div id="expiringSoon" class="list-container"></div>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>Today's Attendance</h3>
+                            <div id="todayAttendance" class="list-container"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Members Page -->
+                <div class="page" id="page-members">
+                    <div class="page-header">
+                        <h2>Members</h2>
+                        <button class="btn btn-primary" onclick="openMemberModal()">+ Add Member</button>
+                    </div>
+                    <div class="filter-bar">
+                        <input type="text" id="memberSearch" placeholder="Search members..." oninput="filterMembers()">
+                        <select id="memberFilter" onchange="filterMembers()">
+                            <option value="all">All Members</option>
+                            <option value="active">Active</option>
+                            <option value="expired">Expired</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Plan</th>
+                                    <th>Status</th>
+                                    <th>Join Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="membersTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Subscriptions Page -->
+                <div class="page" id="page-subscriptions">
+                    <div class="page-header">
+                        <h2>Subscription Plans</h2>
+                        <button class="btn btn-primary" onclick="openPlanModal()">+ Add Plan</button>
+                    </div>
+                    <div class="plans-grid" id="plansGrid"></div>
+                </div>
+
+                <!-- Payments Page -->
+                <div class="page" id="page-payments">
+                    <div class="page-header">
+                        <h2>Payments</h2>
+                        <button class="btn btn-primary" onclick="openPaymentModal()">+ Record Payment</button>
+                    </div>
+                    <div class="filter-bar">
+                        <input type="text" id="paymentSearch" placeholder="Search payments..." oninput="filterPayments()">
+                        <select id="paymentFilter" onchange="filterPayments()">
+                            <option value="all">All Payments</option>
+                            <option value="paid">Paid</option>
+                            <option value="overdue">Overdue</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Member</th>
+                                    <th>Amount</th>
+                                    <th>Plan</th>
+                                    <th>Date</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Attendance Page -->
+                <div class="page" id="page-attendance">
+                    <div class="page-header">
+                        <h2>Attendance</h2>
+                        <button class="btn btn-primary" onclick="openCheckinModal()">+ Check In</button>
+                    </div>
+                    <div class="filter-bar">
+                        <input type="date" id="attendanceDate" onchange="filterAttendance()">
+                        <input type="text" id="attendanceSearch" placeholder="Search member..." oninput="filterAttendance()">
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Member</th>
+                                    <th>Check In</th>
+                                    <th>Check Out</th>
+                                    <th>Duration</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Trainers Page -->
+                <div class="page" id="page-trainers">
+                    <div class="page-header">
+                        <h2>Trainers</h2>
+                        <button class="btn btn-primary" onclick="openTrainerModal()">+ Add Trainer</button>
+                    </div>
+                    <div class="trainers-grid" id="trainersGrid"></div>
+                </div>
+
+                <!-- Reports Page -->
+                <div class="page" id="page-reports">
+                    <div class="page-header">
+                        <h2>Reports & Analytics</h2>
+                        <select id="reportPeriod" onchange="generateReports()">
+                            <option value="week">This Week</option>
+                            <option value="month" selected>This Month</option>
+                            <option value="quarter">This Quarter</option>
+                            <option value="year">This Year</option>
+                        </select>
+                    </div>
+                    <div class="reports-grid">
+                        <div class="report-card">
+                            <h3>Revenue Summary</h3>
+                            <div id="revenueReport" class="report-content"></div>
+                        </div>
+                        <div class="report-card">
+                            <h3>Membership Overview</h3>
+                            <div id="membershipReport" class="report-content"></div>
+                        </div>
+                        <div class="report-card">
+                            <h3>Attendance Stats</h3>
+                            <div id="attendanceReport" class="report-content"></div>
+                        </div>
+                        <div class="report-card">
+                            <h3>Top Trainers</h3>
+                            <div id="trainerReport" class="report-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Member Modal -->
+    <div class="modal" id="memberModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="memberModalTitle">Add Member</h3>
+                <button class="modal-close" onclick="closeModal('memberModal')">&times;</button>
+            </div>
+            <form id="memberForm" onsubmit="saveMember(event)">
+                <input type="hidden" id="memberId">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="memberName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="memberEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="memberPhone" required>
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <input type="date" id="memberDob">
+                </div>
+                <div class="form-group">
+                    <label>Gender</label>
+                    <select id="memberGender">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Subscription Plan</label>
+                    <select id="memberPlan" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Assigned Trainer (Optional)</label>
+                    <select id="memberTrainer">
+                        <option value="">No Trainer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Emergency Contact</label>
+                    <input type="text" id="memberEmergency">
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="memberNotes"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('memberModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Plan Modal -->
+    <div class="modal" id="planModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="planModalTitle">Add Plan</h3>
+                <button class="modal-close" onclick="closeModal('planModal')">&times;</button>
+            </div>
+            <form id="planForm" onsubmit="savePlan(event)">
+                <input type="hidden" id="planId">
+                <div class="form-group">
+                    <label>Plan Name</label>
+                    <input type="text" id="planName" required>
+                </div>
+                <div class="form-group">
+                    <label>Duration (Days)</label>
+                    <input type="number" id="planDuration" required min="1">
+                </div>
+                <div class="form-group">
+                    <label>Price ($)</label>
+                    <input type="number" id="planPrice" required min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Features (one per line)</label>
+                    <textarea id="planFeatures" placeholder="Access to gym floor&#10;Locker room access&#10;Free WiFi"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('planModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Plan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Record Payment</h3>
+                <button class="modal-close" onclick="closeModal('paymentModal')">&times;</button>
+            </div>
+            <form id="paymentForm" onsubmit="savePayment(event)">
+                <div class="form-group">
+                    <label>Member</label>
+                    <select id="paymentMember" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Amount ($)</label>
+                    <input type="number" id="paymentAmount" required min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Payment Date</label>
+                    <input type="date" id="paymentDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select id="paymentMethod">
+                        <option value="cash">Cash</option>
+                        <option value="card">Card</option>
+                        <option value="bank">Bank Transfer</option>
+                        <option value="online">Online</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="paymentNotes"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('paymentModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Payment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Check-in Modal -->
+    <div class="modal" id="checkinModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Member Check In</h3>
+                <button class="modal-close" onclick="closeModal('checkinModal')">&times;</button>
+            </div>
+            <form id="checkinForm" onsubmit="saveCheckin(event)">
+                <div class="form-group">
+                    <label>Member</label>
+                    <select id="checkinMember" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Check In Time</label>
+                    <input type="datetime-local" id="checkinTime" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('checkinModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Check In</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Trainer Modal -->
+    <div class="modal" id="trainerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="trainerModalTitle">Add Trainer</h3>
+                <button class="modal-close" onclick="closeModal('trainerModal')">&times;</button>
+            </div>
+            <form id="trainerForm" onsubmit="saveTrainer(event)">
+                <input type="hidden" id="trainerId">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="trainerName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="trainerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="trainerPhone" required>
+                </div>
+                <div class="form-group">
+                    <label>Specialization</label>
+                    <select id="trainerSpecialization">
+                        <option value="general">General Fitness</option>
+                        <option value="strength">Strength Training</option>
+                        <option value="cardio">Cardio</option>
+                        <option value="yoga">Yoga</option>
+                        <option value="crossfit">CrossFit</option>
+                        <option value="boxing">Boxing</option>
+                        <option value="nutrition">Nutrition</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Experience (Years)</label>
+                    <input type="number" id="trainerExperience" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Hourly Rate ($)</label>
+                    <input type="number" id="trainerRate" min="0" step="0.01">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('trainerModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Trainer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
